@@ -1,4 +1,4 @@
-# Indra Project
+# Indra
 
 * Indra is a web service which allows easy access to four different distributional semantics models (DSM) in 13 languages.
     * Languages: English, German, Spanish, French, Portuguese, Italian, Swedish	, Chinese, Dutch, Russian, Korean, Arabic and Persian;
@@ -110,24 +110,3 @@ Specify the function applied to calculate the relatedness between vectors
 * LIN
 * TANIMOTO
 
-## Tech Details/Important TODOs (not relevant for users):
-
-* This Project generates two main artifacts:
-    * The Java Indra Client that reads the indices from a MongoDB intance and implements all
-    distributional models;
-    * And a REST Service to expose Relatedness features.
-    
-* If you got the source files just run `mvn package` to build all aritifacts.
-
-* There are a lot of TODOs scattered all over the code but here the most important ones:
-    * JavaDocs of all public interfaces;
-    * Configure generation of JavaDoc / Maven Site?
-    * Improve unit tests. Specially for the VectorSpace implementation;
-    * Unit tests to enforce JSON contract on the REST interface;
-    * Decouple the composition method of multi-term vectors;
-    * <s>Add an authentication method to the REST service;</s>
-    * Improve Error messages on the REST interface;
-    * <s>Distribute the REST Java Bean Interfaces to ease serialization on the REST Client side;</s>  
-    * Evaluate the results;
-    * Add the Java Client to build the distributional indices from the corpus.
- 
