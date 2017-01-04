@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>indra-core</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Indra Core</name>
+    
+    <parent>
+        <groupId>org.indra_project</groupId>
+        <artifactId>indra-project</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.indra_project</groupId>
+            <artifactId>indra-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+        <!--
+         TODO: Snowball are carried by both lucene and sspace libraries!
+         The classloader can mix up these versions and
+         some weird errors may happen. We expect to remove S-Space soon.
+         Hence don't change the folowing declaration order.
+        -->
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucla.sspace</groupId>
+            <artifactId>sspace</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

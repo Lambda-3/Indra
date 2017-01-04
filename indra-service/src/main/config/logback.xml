@@ -1,0 +1,38 @@
+<configuration debug="false" scan="true" scanPeriod="2 seconds">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>; %date{HH:mm:ss.SSS} %thread %-5level|%logger{25} %M - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/indra.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>indra.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>8</maxIndex>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <pattern>%d{yyyyMMdd-HH:mm:ss.SSS} [%marker] %-5level %logger{0} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="LogService" level="INFO" additivity="true"/>
+    <logger name="org.restlet" level="INFO" additivity="true"/>
+    <logger name="org.mongodb" level="WARN" additivity="true"/>
+
+    <logger name="org.indra_project" level="INFO" additivity="true"/>
+
+</configuration>
