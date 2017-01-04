@@ -33,6 +33,6 @@
     <logger name="org.restlet" level="INFO" additivity="true"/>
     <logger name="org.mongodb" level="WARN" additivity="true"/>
 
-    <logger name="org.indra_project" level="INFO" additivity="true"/>
+    <logger name="org.lambda3" level="INFO" additivity="true"/>
 
 </configuration>

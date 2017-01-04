@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <server.mainClass>org.indra_project.service.Indra</server.mainClass>
+        <server.mainClass>org.lambda3.indra.service.Indra</server.mainClass>
     </properties>
 
     <repositories>
@@ -77,7 +77,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.indra_project.service.Indra</mainClass>
+                    <mainClass>org.lambda3.indra.service.Indra</mainClass>
                 </configuration>
             </plugin>
 

@@ -1,6 +1,6 @@
 # Code Snippet
  
- You just need to add the dependency to the `org.indra_project:indra-rest` artifact.
+ You just need to add the dependency to the `org.lambda3.indra:indra-rest` artifact.
 
         ClientResource cli =
                 new ClientResource("http://example.com:8916/indra/v1/relatedness");
