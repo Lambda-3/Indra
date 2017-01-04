@@ -1,3 +1,6 @@
+# Tests
+[![Build Status](https://travis-ci.org/Lambda-3/indra.svg?branch=master)](https://travis-ci.org/Lambda-3/indra)
+
 # Indra
 
 * Indra is a web service which allows easy access to four different distributional semantics models (DSM) in 13 languages.
