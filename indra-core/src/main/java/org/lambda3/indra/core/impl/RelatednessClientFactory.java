@@ -1,6 +1,5 @@
 package org.lambda3.indra.core.impl;
 
-import com.google.common.base.Preconditions;
 import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.Params;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//TODO: JavaDoc
 public final class RelatednessClientFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final MongoClientURI mURI;
@@ -18,7 +16,9 @@ public final class RelatednessClientFactory {
 
 
     public RelatednessClientFactory(String mongoURI) {
-        Preconditions.checkNotNull(mongoURI);
+        if (mongoURI == null || mongoURI.isEmpty()) {
+            throw new IllegalArgumentException("mongoURI is mandatory");
+        }
         this.mURI = new MongoClientURI(mongoURI);
         logger.debug("Factory initialized.");
     }

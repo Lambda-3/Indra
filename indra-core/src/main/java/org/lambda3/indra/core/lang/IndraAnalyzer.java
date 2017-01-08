@@ -1,6 +1,5 @@
 package org.lambda3.indra.core.lang;
 
-import com.google.common.base.Preconditions;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
@@ -34,7 +33,9 @@ public class IndraAnalyzer {
     private TokenStream stream;
 
     public IndraAnalyzer(Language lang, boolean stemming) {
-        Preconditions.checkNotNull(lang);
+        if (lang == null) {
+            throw new IllegalArgumentException("lang is missing");
+        }
         logger.info("Creating analyzer, lang={} (stemming={})", lang, stemming);
         tokenizer = new StandardTokenizer();
         stream = createStream(lang, stemming, tokenizer);

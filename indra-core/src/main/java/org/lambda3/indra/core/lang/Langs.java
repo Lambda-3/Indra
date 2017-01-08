@@ -1,6 +1,5 @@
 package org.lambda3.indra.core.lang;
 
-import com.google.common.base.Preconditions;
 import org.lambda3.indra.common.client.Language;
 
 import java.util.Map;
@@ -26,7 +25,6 @@ public final class Langs {
         final boolean stemming;
 
         public Tuple(Language language, boolean stemming) {
-            Preconditions.checkNotNull(language);
             this.language = language;
             this.stemming = stemming;
         }

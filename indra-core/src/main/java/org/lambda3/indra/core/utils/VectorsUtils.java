@@ -1,13 +1,14 @@
 package org.lambda3.indra.core.utils;
 
-import com.google.common.base.Preconditions;
 
 import java.util.*;
 
 public class VectorsUtils {
 
     public static Map<Integer, Double> add(List<Map<Integer, Double>> vectors) {
-        Preconditions.checkNotNull(vectors);
+        if (vectors == null) {
+            throw new IllegalArgumentException("vectors can't be null");
+        }
 
         Set<Integer> dimensions = new HashSet<>();
         vectors.forEach(d -> dimensions.addAll(d.keySet()));

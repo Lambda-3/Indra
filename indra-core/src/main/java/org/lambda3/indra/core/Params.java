@@ -1,11 +1,9 @@
 package org.lambda3.indra.core;
 
-import com.google.common.base.Preconditions;
 import org.lambda3.indra.common.client.Language;
 import org.lambda3.indra.common.client.Model;
 import org.lambda3.indra.common.client.ScoreFunction;
 
-//TODO: JavaDoc
 public final class Params {
     public final String corpusName;
     public final Language language;
@@ -13,10 +11,9 @@ public final class Params {
     public final ScoreFunction func;
 
     public Params(String corpusName, ScoreFunction func, Language language, Model model) {
-        Preconditions.checkNotNull(corpusName);
-        Preconditions.checkNotNull(func);
-        Preconditions.checkNotNull(language);
-        Preconditions.checkNotNull(model);
+        if (corpusName == null || func == null || language == null || model == null) {
+            throw new IllegalArgumentException("All arguments are mandatory!");
+        }
 
         this.corpusName = corpusName;
         this.func = func;

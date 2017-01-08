@@ -1,7 +1,5 @@
 package org.lambda3.indra.common.client;
 
-import com.google.common.base.Preconditions;
-
 public final class ScoredTextPair {
     public String t1;
     public String t2;
@@ -10,7 +8,9 @@ public final class ScoredTextPair {
     public ScoredTextPair() { } // serializer happy
 
     public ScoredTextPair(AnalyzedPair analyzedPair, double score) {
-        Preconditions.checkNotNull(analyzedPair);
+        if (analyzedPair == null) {
+            throw new IllegalArgumentException("analyzedPair can't be null");
+        }
         this.t1 = analyzedPair.getTextPair().t1;
         this.t2 = analyzedPair.getTextPair().t2;
         this.score = score;

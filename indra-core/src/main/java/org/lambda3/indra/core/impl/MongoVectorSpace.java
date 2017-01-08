@@ -1,6 +1,5 @@
 package org.lambda3.indra.core.impl;
 
-import com.google.common.base.Preconditions;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
@@ -45,7 +44,9 @@ class MongoVectorSpace implements VectorSpace {
 
     @Override
     public VectorPair getVector(AnalyzedPair pair, int limit) {
-        Preconditions.checkNotNull(pair);
+        if (pair == null) {
+            throw new IllegalArgumentException("pair can't be null");
+        }
 
         collectVectors(new HashSet<String>(){{
             addAll(pair.getT1());
@@ -70,7 +71,10 @@ class MongoVectorSpace implements VectorSpace {
 
     @Override
     public Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> pairs, int limit) {
-        Preconditions.checkNotNull(pairs);
+        if (pairs == null) {
+            throw new IllegalArgumentException("pairs can't be null");
+        }
+
         Map<AnalyzedPair, VectorPair> res = new ConcurrentHashMap<>();
 
         Set<String> allTerms = new HashSet<>();

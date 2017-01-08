@@ -1,7 +1,5 @@
 package org.lambda3.indra.common.client;
 
-import com.google.common.base.Preconditions;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +9,9 @@ public final class AnalyzedPair {
     private final TextPair pair;
 
     public AnalyzedPair(TextPair pair) {
-        Preconditions.checkNotNull(pair);
+        if (pair == null) {
+            throw new IllegalArgumentException("pair can't be null");
+        }
         this.pair = pair;
     }
 

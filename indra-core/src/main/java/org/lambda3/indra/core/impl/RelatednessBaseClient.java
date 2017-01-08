@@ -1,23 +1,24 @@
 package org.lambda3.indra.core.impl;
 
-import com.google.common.base.Preconditions;
-import org.lambda3.indra.core.*;
 import org.lambda3.indra.common.client.AnalyzedPair;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.common.client.ScoredTextPair;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessClient;
+import org.lambda3.indra.core.VectorPair;
+import org.lambda3.indra.core.VectorSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//TODO: JavaDoc
 abstract class RelatednessBaseClient extends RelatednessClient {
     private VectorSpace vectorSpace;
     private Params params;
 
     RelatednessBaseClient(Params params, MongoVectorSpace vectorSpace) {
-        Preconditions.checkNotNull(vectorSpace);
-        Preconditions.checkNotNull(params);
+        if (params == null || vectorSpace == null) {
+            throw new IllegalArgumentException("Missing required arguments.");
+        }
         this.vectorSpace = vectorSpace;
         this.params = params;
 
