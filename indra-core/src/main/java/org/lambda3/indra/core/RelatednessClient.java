@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: JavaDoc
 public abstract class RelatednessClient {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());

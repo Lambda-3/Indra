@@ -54,7 +54,7 @@ public final class RelatednessClientFactory {
         }
     }
 
-    //TODO: VectorSpace implements a cache and is thread-safe, should we share between clients?
+    //VectorSpace implements a cache and is thread-safe, should we share between clients?
 
     private RelatednessClient getCosineClient(final Params params) {
         return clients.computeIfAbsent(params, (p) -> {
