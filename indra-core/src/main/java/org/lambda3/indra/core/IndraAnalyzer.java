@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.lang;
+package org.lambda3.indra.core;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -23,16 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class IndraAnalyzer {
-    public static final int MIN_WORD_LENGTH = 3;
-    public static final int MAX_WORD_LENGTH = 100;
+class IndraAnalyzer {
+    private static final int MIN_WORD_LENGTH = 3;
+    private static final int MAX_WORD_LENGTH = 100;
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
     private Tokenizer tokenizer;
     private TokenStream stream;
 
-    public IndraAnalyzer(Language lang, boolean stemming) {
+    IndraAnalyzer(Language lang, boolean stemming) {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
@@ -41,7 +41,7 @@ public class IndraAnalyzer {
         stream = createStream(lang, stemming, tokenizer);
     }
 
-    public List<String> analyze(String text) throws IOException {
+    List<String> analyze(String text) throws IOException {
         List<String> result = new ArrayList<>();
         try (StringReader reader = new StringReader(text)) {
             tokenizer.setReader(reader);
@@ -59,7 +59,7 @@ public class IndraAnalyzer {
         return result;
     }
 
-    public AnalyzedPair analyze(TextPair pair) throws IOException {
+    AnalyzedPair analyze(TextPair pair) throws IOException {
         AnalyzedPair analyzedPair = new AnalyzedPair(pair);
         analyzedPair.add(pair.t1, analyze(pair.t1));
         analyzedPair.add(pair.t2, analyze(pair.t2));

@@ -4,7 +4,6 @@ import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
 import org.lambda3.indra.common.client.TextPair;
 import org.lambda3.indra.core.exception.RelatednessError;
-import org.lambda3.indra.core.lang.IndraAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
