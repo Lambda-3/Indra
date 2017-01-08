@@ -1,11 +1,10 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.core.exception.RelatednessError;
-import org.lambda3.indra.core.lang.IndraAnalyzer;
-import org.lambda3.indra.core.lang.Langs;
 import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
 import org.lambda3.indra.common.client.TextPair;
+import org.lambda3.indra.core.exception.RelatednessError;
+import org.lambda3.indra.core.lang.IndraAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ public abstract class RelatednessClient {
     private List<ScoredTextPair> doCompute(List<TextPair> pairs)  {
         logger.debug("Analyzing {} pairs", pairs.size());
         try {
-            IndraAnalyzer analyzer = Langs.newInstanceAnalyzer(getParams().language, getParams().useStemming());
+            IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, getParams().useStemming());
             List<AnalyzedPair> analyzedPairs = new ArrayList<>();
             pairs.forEach(p -> {
                 AnalyzedPair analyzedPair = doAnalyze(analyzer, p);
