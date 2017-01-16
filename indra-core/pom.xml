@@ -48,13 +48,6 @@
             <version>3.0.4</version>
         </dependency>
 
-        <!--
-         TODO: Snowball are carried by both lucene and sspace libraries!
-         The classloader can mix up these versions and
-         some weird errors may happen. We expect to remove S-Space soon.
-         Hence don't change the folowing declaration order.
-        -->
-
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
@@ -62,15 +55,17 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucla.sspace</groupId>
-            <artifactId>sspace</artifactId>
-            <version>2.0.4</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
+
     </dependencies>
 
 </project>

@@ -22,10 +22,8 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import edu.ucla.sspace.common.Similarity;
-import edu.ucla.sspace.similarity.SimilarityFunction;
-import edu.ucla.sspace.vector.DoubleVector;
-import edu.ucla.sspace.vector.Vectors;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 
 public class CosineClient extends RelatednessBaseClient {
@@ -44,9 +42,8 @@ public class CosineClient extends RelatednessBaseClient {
 
     @Override
     protected double sim(double[] v1, double[] v2) {
-        DoubleVector dv1 = Vectors.asVector(v1);
-        DoubleVector dv2 = Vectors.asVector(v2);
-        SimilarityFunction f = Similarity.getSimilarityFunction(Similarity.SimType.COSINE);
-        return f.sim(dv1, dv2);
+        RealVector rv1 = new ArrayRealVector(v1);
+        RealVector rv2 = new ArrayRealVector(v2);
+        return rv1.cosine(rv2);
     }
 }
