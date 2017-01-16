@@ -19,14 +19,6 @@
         <server.mainClass>org.lambda3.indra.service.Indra</server.mainClass>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>maven-restlet</id>
-            <name>Restlet repository</name>
-            <url>https://maven.restlet.com</url>
-        </repository>
-    </repositories>
-
     <build>
         <plugins>
             <plugin>
