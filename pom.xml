@@ -10,7 +10,22 @@
     <packaging>pom</packaging>
 
     <name>Indra</name>
-    <url>http://lambda3.org</url>
+    <description>A Web Service which allows easy access to different Distributional Semantics Models.</description>
+    <url>https://github.com/Lambda-3/indra</url>
+
+    <organization>
+        <name>Lambda^3</name>
+        <url>http://lambda3.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v2.0</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <inceptionYear>2016</inceptionYear>
 
     <modules>
         <module>indra-service</module>
@@ -23,6 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.7.12</slf4j-version>
         <restlet-version>2.3.6</restlet-version>
+        <license.licenseName>gpl_v2</license.licenseName>
     </properties>
    
     <repositories>
@@ -65,6 +81,62 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.12</version>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <configuration>
+                            <processStartTag>==========================License-Start=============================</processStartTag>
+                            <sectionDelimiter>--------------------------------------------------------------------</sectionDelimiter>
+                            <processEndTag>==========================License-End===============================</processEndTag>
+                            <emptyLineAfterHeader>true</emptyLineAfterHeader>
+                            <roots>
+                                <root>src/main/java</root>
+                                <root>src/test/java</root>
+                            </roots>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>second</id>
+                        <goals>
+                            <goal>aggregate-add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <licenseMerges>
+                                <licenseMerge>
+                                    Apache Software License Version 2.0|
+                                    Apache 2|
+                                    Apache License, Version 2.0|
+                                    Apache License Version 2.0|
+                                    Apache 2.0 license|
+                                    The Apache Software License, Version 2.0
+                                </licenseMerge>
+                                <licenseMerge>
+                                    MIT License|MIT
+                                </licenseMerge>
+                                <licenseMerge>
+                                    BSD License|BSD|BSD License|BSD Style|BSD style
+                                </licenseMerge>
+                                <licenseMerge>
+                                    CDDL 1.0|
+                                    CDDL 1.0 license|
+                                    COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+                                </licenseMerge>
+                            </licenseMerges>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencyManagement>

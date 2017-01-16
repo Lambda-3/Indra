@@ -7,7 +7,7 @@
     <artifactId>indra-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>Core</name>
+    <name>Indra Core Module</name>
     
     <parent>
         <groupId>org.lambda3</groupId>

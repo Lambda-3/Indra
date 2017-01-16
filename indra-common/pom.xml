@@ -7,12 +7,21 @@
     <artifactId>indra-common</artifactId>
     <packaging>jar</packaging>
 
-    <name>Common</name>
+    <name>Indra Common Module</name>
 
     <parent>
         <groupId>org.lambda3</groupId>
         <artifactId>indra-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
