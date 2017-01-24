@@ -1,4 +1,4 @@
-package org.lambda3.indra.rest.resources;
+package org.lambda3.indra.service.resources;
 
 /*-
  * ==========================License-Start=============================

@@ -28,8 +28,8 @@ package org.lambda3.indra.service.impl;
 
 import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
-import org.lambda3.indra.rest.resources.RelatednessRequest;
-import org.lambda3.indra.rest.resources.RelatednessResponse;
+import org.lambda3.indra.service.resources.RelatednessRequest;
+import org.lambda3.indra.service.resources.RelatednessResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;

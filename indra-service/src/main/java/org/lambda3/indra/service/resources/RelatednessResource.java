@@ -1,4 +1,4 @@
-package org.lambda3.indra.rest.resources;
+package org.lambda3.indra.service.resources;
 
 /*-
  * ==========================License-Start=============================
@@ -26,28 +26,12 @@ package org.lambda3.indra.rest.resources;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.Language;
-import org.lambda3.indra.common.client.Model;
-import org.lambda3.indra.common.client.ScoreFunction;
-import org.lambda3.indra.common.client.ScoredTextPair;
+import org.restlet.resource.Post;
 
-import java.util.Collection;
+import java.io.Serializable;
 
-public final class RelatednessResponse {
-    public String corpus;
-    public Model model;
-    public Language language;
-    public Collection<ScoredTextPair> pairs;
-    public ScoreFunction scoreFunction;
+public interface RelatednessResource extends Serializable {
 
-    @Override
-    public String toString() {
-        return "RelatednessResponse{" +
-                "corpus='" + corpus + '\'' +
-                ", model=" + model +
-                ", language=" + language +
-                ", pairs=" + pairs +
-                ", scoreFunction=" + scoreFunction +
-                '}';
-    }
+    @Post("json")
+    RelatednessResponse getRelatedness(RelatednessRequest request);
 }

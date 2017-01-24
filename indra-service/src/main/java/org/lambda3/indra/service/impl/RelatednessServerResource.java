@@ -26,7 +26,7 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.rest.resources.RelatednessResource;
+import org.lambda3.indra.service.resources.RelatednessResource;
 import org.restlet.resource.ServerResource;
 
 abstract class RelatednessServerResource
