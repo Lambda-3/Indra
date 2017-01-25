@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/usr/bin/env bash
 
 cd "${0%/*}"
 
@@ -10,14 +10,8 @@ LIBDIR="${ROOTDIR}/lib"
 INDRA_JAVA_OPTS=${INDRA_JAVA_OPTS:--Xmx4g}
 echo "INDRA_JAVA_OPTS: ${INDRA_JAVA_OPTS}"
 
-cmd="java -jar -server ${INDRA_JAVA_OPTS} \
--Djava.net.preferIPv4Stack=true \
--Dfile.encoding=UTF-8 \
--Dlogback.configurationFile=${CONFDIR}/logback.xml \
-${LIBDIR}/${project.artifactId}-${project.version}.jar $@ ../conf/indra.yaml"
-
-
-eval "${cmd}"
-
-
-
+java -jar -server ${INDRA_JAVA_OPTS} \
+ -Djava.net.preferIPv4Stack=true \
+ -Dfile.encoding=UTF-8 \
+ -Dlogback.configurationFile=${CONFDIR}/logback.xml \
+ ${LIBDIR}/${project.artifactId}-${project.version}.jar
