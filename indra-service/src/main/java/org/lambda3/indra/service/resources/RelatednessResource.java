@@ -26,12 +26,21 @@ package org.lambda3.indra.service.resources;
  * ==========================License-End===============================
  */
 
-import org.restlet.resource.Post;
 
-import java.io.Serializable;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-public interface RelatednessResource extends Serializable {
+@Path("relatedness")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public interface RelatednessResource {
 
-    @Post("json")
+    @POST
+    @Valid
+    @Path("/")
     RelatednessResponse getRelatedness(RelatednessRequest request);
 }

@@ -31,44 +31,23 @@ import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.impl.RelatednessClientFactory;
 import org.lambda3.indra.service.resources.RelatednessRequest;
+import org.lambda3.indra.service.resources.RelatednessResource;
 import org.lambda3.indra.service.resources.RelatednessResponse;
-import org.lambda3.indra.service.config.Configuration;
-import org.restlet.data.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO: Add Authorization! Token based?
-public class RelatednessResourceImpl extends RelatednessServerResource {
+class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Configuration configuration;
-    private static RelatednessClientFactory relatednessClientFactory;
+    private RelatednessClientFactory relatednessClientFactory;
+
+    RelatednessResourceImpl(String mongoURI) {
+        this.relatednessClientFactory = new RelatednessClientFactory(mongoURI);
+    }
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
-        if (request == null) {
-            setStatus(Status.CLIENT_ERROR_BAD_REQUEST);
-            return null;
-        }
-
         logger.trace("User Request: {}", request); //TODO: Maybe we should trunk to avoid logging long messages
         return process(request);
-    }
-
-
-    @Override
-    protected void doCatch(Throwable throwable) {
-        logger.error("Caught an exception..", throwable);
-        super.doCatch(throwable);
-    }
-
-    @Override
-    protected void doInit() {
-        synchronized (RelatednessResourceImpl.class) {
-            if (relatednessClientFactory == null) {
-                configuration = (Configuration) getContext().getAttributes().get(Configuration.class.getCanonicalName());
-                relatednessClientFactory = new RelatednessClientFactory(configuration.mongoURI);
-            }
-        }
     }
 
     private RelatednessResponse process(RelatednessRequest request) {

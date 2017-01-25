@@ -31,23 +31,13 @@
         <module>indra-service</module>
         <module>indra-core</module>
         <module>indra-common</module>
-        <module>indra-rest</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.7.12</slf4j-version>
-        <restlet-version>2.3.6</restlet-version>
         <license.licenseName>mit</license.licenseName>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>maven-restlet</id>
-            <name>Restlet repository</name>
-            <url>https://maven.restlet.com</url>
-        </repository>
-    </repositories>
 
     <profiles>
         <profile>
@@ -151,29 +141,18 @@
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.restlet.jse</groupId>
-                <artifactId>org.restlet</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.restlet.jse</groupId>
-                <artifactId>org.restlet.ext.jackson</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.restlet.jse</groupId>
-                <artifactId>org.restlet.ext.slf4j</artifactId>
-                <version>${restlet-version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -197,12 +176,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
                 <version>${slf4j-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sourceforge.argparse4j</groupId>
-                <artifactId>argparse4j</artifactId>
-                <version>0.7.0</version>
             </dependency>
 
             <dependency>

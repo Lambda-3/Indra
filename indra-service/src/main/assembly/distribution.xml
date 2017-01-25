@@ -37,7 +37,6 @@
             <directory>${project.basedir}/src/main/config</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
-                <include>indra.yaml</include>
                 <include>logback.xml</include>
             </includes>
         </fileSet>

@@ -7,8 +7,6 @@ ROOTDIR="${BINDIR}/.."
 CONFDIR="${ROOTDIR}/conf"
 LIBDIR="${ROOTDIR}/lib"
 
-pidFile=${BINDIR}/indra.pid
-
 INDRA_JAVA_OPTS=${INDRA_JAVA_OPTS:--Xmx4g}
 echo "INDRA_JAVA_OPTS: ${INDRA_JAVA_OPTS}"
 
