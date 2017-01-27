@@ -26,17 +26,17 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.Language;
-import org.lambda3.indra.common.client.Model;
 import org.lambda3.indra.common.client.ScoreFunction;
+
+import java.util.Objects;
 
 public final class Params {
     public final String corpusName;
-    public final Language language;
-    public final Model model;
+    public final String language;
+    public final String model;
     public final ScoreFunction func;
 
-    public Params(String corpusName, ScoreFunction func, Language language, Model model) {
+    public Params(String corpusName, ScoreFunction func, String language, String model) {
         if (corpusName == null || func == null || language == null || model == null) {
             throw new IllegalArgumentException("All arguments are mandatory!");
         }
@@ -53,8 +53,8 @@ public final class Params {
 
     public String getDBName() {
         return String.format("%s-%s-%s",
-                model.name().toLowerCase(),
-                language.name().toLowerCase(),
+                model.toLowerCase(),
+                language.toLowerCase(),
                 corpusName.toLowerCase());
     }
 
@@ -63,23 +63,15 @@ public final class Params {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Params params = (Params) o;
-
-        if (!corpusName.equals(params.corpusName)) return false;
-        if (language != params.language) return false;
-        if (model != params.model) return false;
-        return func == params.func;
-
+        return Objects.equals(corpusName, params.corpusName) &&
+                Objects.equals(language, params.language) &&
+                Objects.equals(model, params.model) &&
+                func == params.func;
     }
 
     @Override
     public int hashCode() {
-        int result = corpusName.hashCode();
-        result = 31 * result + language.hashCode();
-        result = 31 * result + model.hashCode();
-        result = 31 * result + func.hashCode();
-        return result;
+        return Objects.hash(corpusName, language, model, func);
     }
-
 }

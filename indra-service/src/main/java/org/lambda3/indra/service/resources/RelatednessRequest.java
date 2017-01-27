@@ -26,8 +26,6 @@ package org.lambda3.indra.service.resources;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.Language;
-import org.lambda3.indra.common.client.Model;
 import org.lambda3.indra.common.client.ScoreFunction;
 import org.lambda3.indra.common.client.TextPair;
 
@@ -36,8 +34,8 @@ import java.util.List;
 public final class RelatednessRequest {
 
     public String corpus;
-    public Model model;
-    public Language language;
+    public String model;
+    public String language;
     public List<TextPair> pairs;
     public ScoreFunction scoreFunction;
 

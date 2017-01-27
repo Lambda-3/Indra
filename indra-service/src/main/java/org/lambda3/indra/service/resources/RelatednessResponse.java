@@ -26,8 +26,6 @@ package org.lambda3.indra.service.resources;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.Language;
-import org.lambda3.indra.common.client.Model;
 import org.lambda3.indra.common.client.ScoreFunction;
 import org.lambda3.indra.common.client.ScoredTextPair;
 
@@ -35,8 +33,8 @@ import java.util.Collection;
 
 public final class RelatednessResponse {
     public String corpus;
-    public Model model;
-    public Language language;
+    public String model;
+    public String language;
     public Collection<ScoredTextPair> pairs;
     public ScoreFunction scoreFunction;
 

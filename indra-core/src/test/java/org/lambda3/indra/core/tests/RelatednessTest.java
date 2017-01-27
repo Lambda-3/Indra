@@ -37,7 +37,7 @@ public class RelatednessTest {
 
     @Test
     public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, Language.EN, Model.ESA);
+        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
         RelatednessDummyClient cli = new RelatednessDummyClient(params);
         TextPair pair = new TextPair("car", "engine");
 

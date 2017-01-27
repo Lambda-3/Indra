@@ -38,7 +38,6 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.lambda3.indra.common.client.AnalyzedPair;
-import org.lambda3.indra.common.client.Language;
 import org.lambda3.indra.common.client.TextPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,7 @@ class IndraAnalyzer {
     private Tokenizer tokenizer;
     private TokenStream stream;
 
-    IndraAnalyzer(Language lang, boolean stemming) {
+    IndraAnalyzer(String lang, boolean stemming) {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
@@ -92,13 +91,13 @@ class IndraAnalyzer {
         return analyzedPair;
     }
 
-    private TokenStream createStream(Language lang, boolean stemming, Tokenizer tokenizer) {
+    private TokenStream createStream(String lang, boolean stemming, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
 
         StopFilter stopFilterStream = getStopFilter(lang, stream);
         stream = stopFilterStream != null ? stopFilterStream : stream;
 
-        if (lang != Language.ZH && lang != Language.KO)
+        if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO"))
             stream = new LengthFilter(stream, MIN_WORD_LENGTH, MAX_WORD_LENGTH);
 
         TokenStream stemmerStream = stemming ? getStemmer(lang, stream) : null;
@@ -108,43 +107,43 @@ class IndraAnalyzer {
         return new ASCIIFoldingFilter(stream);
     }
 
-    private SnowballFilter getStemmer(Language lang, TokenStream stream) {
-        switch (lang) {
-            case EN:
+    private SnowballFilter getStemmer(String lang, TokenStream stream) {
+        switch (lang.toUpperCase()) {
+            case "EN":
                 return new SnowballFilter(stream, new EnglishStemmer());
-            case PT:
+            case "PT":
                 return new SnowballFilter(stream, new PortugueseStemmer());
-            case ES:
+            case "ES":
                 return new SnowballFilter(stream, new SpanishStemmer());
-            case DE:
+            case "DE":
                 return new SnowballFilter(stream, new GermanStemmer());
-            case FR:
+            case "FR":
                 return new SnowballFilter(stream, new FrenchStemmer());
-            case SV:
+            case "SV":
                 return new SnowballFilter(stream, new SwedishStemmer());
-            case IT:
+            case "IT":
                 return new SnowballFilter(stream, new ItalianStemmer());
-            case NL:
+            case "NL":
                 return new SnowballFilter(stream, new DutchStemmer());
-            case RU:
+            case "RU":
                 return new SnowballFilter(stream, new RussianStemmer());
 
             /**
              * TODO
              */
-            case AR:
-            case FA:
-            case ZH:
-            case KO:
+            case "AR":
+            case "FA":
+            case "ZH":
+            case "KO":
                 throw new RuntimeException("Language not implemented yet!");
             default:
                 throw new RuntimeException("Language not supported yet!");
         }
     }
 
-    private StopFilter getStopFilter(Language lang, TokenStream stream) {
+    private StopFilter getStopFilter(String lang, TokenStream stream) {
         try {
-            InputStream in = ClassLoader.getSystemResourceAsStream(lang.toString().toLowerCase() + ".stopwords");
+            InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
             if (in != null) {
                 logger.debug("Loading Stop words for lang={}", lang);
                 CharArraySet stopWords = new CharArraySet(30, true);
