@@ -1,8 +1,8 @@
-<configuration debug="true" scan="true" scanPeriod="2 seconds">
+<configuration debug="false" scan="true" scanPeriod="2 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>; %date{HH:mm:ss.SSS} %-5level %logger{50} - %msg %n</pattern>
+            <pattern>%date{HH:mm:ss.SSS} %-5level %logger{50} - %msg %n</pattern>
         </encoder>
     </appender>
 
