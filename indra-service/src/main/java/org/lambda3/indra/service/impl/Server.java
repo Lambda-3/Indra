@@ -27,8 +27,8 @@ package org.lambda3.indra.service.impl;
  */
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,9 @@ public final class Server {
     public Server() {
         logger.info("Initializing Indra Service.");
         ResourceConfig rc = new ResourceConfig();
-        rc.register(LoggingFeature.class);
+        rc.register(LoggingFilter.class);
+        rc.register(CatchAllExceptionMapper.class);
+        rc.register(ErrorMapper.class);
 
 
         if (mockMode) {
@@ -70,7 +72,7 @@ public final class Server {
             rc.register(new RelatednessResourceImpl(mongoURI));
         }
 
-        httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+        httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);
     }
 
     public synchronized void start() throws IOException {

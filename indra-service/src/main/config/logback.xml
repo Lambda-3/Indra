@@ -1,8 +1,8 @@
-<configuration debug="false" scan="true" scanPeriod="2 seconds">
+<configuration debug="true" scan="true" scanPeriod="2 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>; %date{HH:mm:ss.SSS} %thread %-5level %logger{30} - %msg %n</pattern>
+            <pattern>; %date{HH:mm:ss.SSS} %-5level %logger{50} - %msg %n</pattern>
         </encoder>
     </appender>
 
@@ -11,7 +11,8 @@
     </root>
 
     <logger name="org.mongodb" level="WARN" additivity="true"/>
-    <logger name="org.glassfish" level="INFO" additivity="true"/>
+    <logger name="org.glassfish" level="WARN" additivity="true"/>
+    <logger name="org.glassfish.jersey.filter.LoggingFilter" level="WARN" additivity="true"/>
     <logger name="org.lambda3" level="INFO" additivity="true"/>
 
 </configuration>
