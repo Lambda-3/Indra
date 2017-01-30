@@ -46,7 +46,7 @@ class RelatednessResourceImpl implements RelatednessResource {
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
-        logger.trace("User Request: {}", request); //TODO: Maybe we should trunk to avoid logging long messages
+        logger.trace("User Request: {}", request);
         return process(request);
     }
 
@@ -63,7 +63,6 @@ class RelatednessResourceImpl implements RelatednessResource {
         response.scoreFunction = request.scoreFunction;
         response.pairs = result.getScores();
 
-        //TODO: Maybe we should trunk to avoid logging long messages
         logger.trace("Response: {}", response);
 
         return response;
