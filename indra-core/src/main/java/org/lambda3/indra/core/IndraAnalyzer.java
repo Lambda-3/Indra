@@ -128,17 +128,14 @@ class IndraAnalyzer {
             case "RU":
                 return new SnowballFilter(stream, new RussianStemmer());
 
-            /**
-             * TODO
-             */
             case "AR":
             case "FA":
             case "ZH":
             case "KO":
-                throw new RuntimeException("Language not implemented yet!");
-            default:
-                throw new RuntimeException("Language not supported yet!");
+                logger.warn("No stemmer is being used for '{}'", lang);
+                return null;
         }
+        return null;
     }
 
     private StopFilter getStopFilter(String lang, TokenStream stream) {
