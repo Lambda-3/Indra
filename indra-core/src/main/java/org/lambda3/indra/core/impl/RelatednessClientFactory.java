@@ -26,15 +26,18 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.common.client.ScoreFunction;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
+import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class RelatednessClientFactory {
-    private final Map<String, RelatednessClient> clients = new ConcurrentHashMap<>();
+    private final Map<String, VectorSpace> vectorSpaces = new ConcurrentHashMap<>();
+    private final Map<ScoreFunction, RelatednessClient> clients = new ConcurrentHashMap<>();
     private VectorSpaceFactory vectorSpaceFactory;
 
     public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory) {
@@ -45,43 +48,34 @@ public final class RelatednessClientFactory {
     }
 
     public RelatednessClient create(Params params) {
+        VectorSpace vectorSpace = vectorSpaces.computeIfAbsent(params.getDBName(),
+                (String) -> vectorSpaceFactory.create(params));
+
         switch (params.func) {
             case COSINE:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new CosineClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new CosineClient(params, vectorSpace));
             case CORRELATION:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new CorrelationClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new CorrelationClient(params, vectorSpace));
             case EUCLIDEAN:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new EuclideanClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new EuclideanClient(params, vectorSpace));
             case JACCARD:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new JaccardClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new JaccardClient(params, vectorSpace));
             case LIN:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new LinClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new LinClient(params, vectorSpace));
             case TANIMOTO:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new TanimotoClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new TanimotoClient(params, vectorSpace));
             case ALPHASKEW:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new AlphaSkewClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new AlphaSkewClient(params, vectorSpace));
             case CHEBYSHEV:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new ChebyshevClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new ChebyshevClient(params, vectorSpace));
             case CITYBLOCK:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new CityBlockClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new CityBlockClient(params, vectorSpace));
             case DICE:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new DiceClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new DiceClient(params, vectorSpace));
             case JACCARD2:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new Jaccard2Client(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new Jaccard2Client(params, vectorSpace));
             case JENSENSHANNON:
-                return clients.computeIfAbsent(params.getDBName(), (dbName) ->
-                        new JensenShannonClient(params, vectorSpaceFactory.create(params)));
+                return clients.computeIfAbsent(params.func, (String) -> new JensenShannonClient(params, vectorSpace));
             default:
                 throw new RuntimeException("Unsupported Score Function.");
         }
