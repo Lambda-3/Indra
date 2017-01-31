@@ -104,16 +104,15 @@ Specify the distributional semantics model. Four models are available:
 
 ### scoreFunction
 Specify the function applied to calculate the relatedness between vectors
+* COSINE
 * ALPHASKEW
 * CHEBYSHEV
 * CITYBLOCK
-* CORRELATION
-* COSINE
+* SPEARMAN
+* PEARSON
 * DICE
 * EUCLIDEAN
 * JACCARD
 * JACCARD2
 * JENSENSHANNON
-* LIN
-* TANIMOTO
 
