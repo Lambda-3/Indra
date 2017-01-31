@@ -32,11 +32,11 @@ import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
 
-public class SpearmansClient extends RelatednessBaseClient {
+public class SpearmanClient extends RelatednessBaseClient {
 
     private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
 
-    SpearmansClient(Params params, VectorSpace vectorSpace) {
+    SpearmanClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 
