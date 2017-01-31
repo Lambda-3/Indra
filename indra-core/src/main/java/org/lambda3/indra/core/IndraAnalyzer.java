@@ -61,7 +61,7 @@ class IndraAnalyzer {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
-        logger.info("Creating analyzer, lang={} (stemming={})", lang, stemming);
+        logger.debug("Creating analyzer, lang={} (stemming={})", lang, stemming);
         tokenizer = new StandardTokenizer();
         stream = createStream(lang, stemming, tokenizer);
     }
