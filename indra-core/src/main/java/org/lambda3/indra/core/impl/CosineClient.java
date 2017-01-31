@@ -38,14 +38,6 @@ public class CosineClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected int getVectorSizeLimit() {
-        //TODO: Should be configurable?
-        // Attention: May break the cache vectors if comes from client requests
-        // Pay attention to the same behavior on the other clients.
-        return 1500;
-    }
-
-    @Override
     protected double sim(double[] v1, double[] v2) {
         RealVector rv1 = new ArrayRealVector(v1);
         RealVector rv2 = new ArrayRealVector(v2);

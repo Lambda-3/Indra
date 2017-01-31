@@ -37,11 +37,6 @@ public class ChebyshevClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected int getVectorSizeLimit() {
-        return 1500;
-    }
-
-    @Override
     protected double sim(double[] a, double[] b) {
         if (a.length != b.length)
             return 0;

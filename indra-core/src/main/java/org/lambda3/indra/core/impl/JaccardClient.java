@@ -36,11 +36,6 @@ public class JaccardClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected int getVectorSizeLimit() {
-        return 1500;
-    }
-
-    @Override
     protected double sim(double[] v1, double[] v2) {
         throw new UnsupportedOperationException();
     }

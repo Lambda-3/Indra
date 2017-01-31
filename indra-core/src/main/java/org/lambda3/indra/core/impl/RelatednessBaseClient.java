@@ -50,8 +50,6 @@ abstract class RelatednessBaseClient extends RelatednessClient {
 
     }
 
-    protected abstract int getVectorSizeLimit();
-
     protected abstract double sim(double[] v1, double[] v2);
 
     @Override
