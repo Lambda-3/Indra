@@ -1,13 +1,17 @@
-# Tests
+![](indra_logo.png)
+
 [![Build Status](https://travis-ci.org/Lambda-3/indra.svg?branch=master)](https://travis-ci.org/Lambda-3/indra)
 
 # Indra
 
-* Indra is a web service which allows easy access to four different distributional semantics models (DSM) in 13 languages.
-    * Languages: English, German, Spanish, French, Portuguese, Italian, Swedish	, Chinese, Dutch, Russian, Korean, Arabic and Persian;
-    * DSM: Latent Semantic Analysis (LSA), Explicit Semantic Analysis (ESA), Skip-gram (W2V) and Global Vectors (GloVe).
-    * Score Function: ALPHASKEW, CHEBYSHEV, CITYBLOCK, CORRELATION, COSINE, DICE, EUCLIDEAN, JACCARD, JACCARD2, JENSENSHANNON, LIN, TANIMOTO.
+Indra is a Web Service which allows easy access to several [Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics), currently in English, German, Spanish, French, Portuguese, Italian, Swedish, Chinese, Dutch, Russian, Korean, Arabic and Persian.
 
+The Supported models are:
+* Latent Semantic Analysis (LSA)
+* Explicit Semantic Analysis (ESA)
+* Word2Vec (W2V)
+* Global Vectors (GloVe)
+    
 ## Code Examples
 * Python. This relies on the library `requests`.
 
