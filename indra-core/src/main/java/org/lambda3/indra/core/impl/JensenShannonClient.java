@@ -27,10 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class JensenShannonClient extends RelatednessBaseClient {
 
-    JensenShannonClient(Params params, MongoVectorSpace vectorSpace) {
+    JensenShannonClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

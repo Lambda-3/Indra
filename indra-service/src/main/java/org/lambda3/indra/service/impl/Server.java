@@ -29,7 +29,9 @@ package org.lambda3.indra.service.impl;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,16 +62,18 @@ public final class Server {
         logger.info("Initializing Indra Service.");
         ResourceConfig rc = new ResourceConfig();
         rc.register(LoggingFilter.class);
+        rc.register(JacksonFeature.class);
         rc.register(CatchAllExceptionMapper.class);
+        rc.register(SerializationExceptionMapper.class);
         rc.register(ErrorMapper.class);
-
 
         if (mockMode) {
             logger.warn("MOCK mode.");
             rc.register(new MockedRelatednessResourceImpl());
         }
         else {
-            rc.register(new RelatednessResourceImpl(mongoURI));
+            MongoVectorSpaceFactory vectorSpaceFactory = new MongoVectorSpaceFactory(mongoURI);
+            rc.register(new RelatednessResourceImpl(vectorSpaceFactory));
         }
 
         httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);

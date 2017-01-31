@@ -27,10 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class DiceClient extends RelatednessBaseClient {
 
-    DiceClient(Params params, MongoVectorSpace vectorSpace) {
+    DiceClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

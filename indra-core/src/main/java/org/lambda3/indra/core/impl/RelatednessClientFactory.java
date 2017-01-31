@@ -26,144 +26,55 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import com.mongodb.MongoClientURI;
-import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.Params;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.lambda3.indra.core.RelatednessClient;
+import org.lambda3.indra.core.VectorSpace;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class RelatednessClientFactory {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private final MongoClientURI mURI;
     private final Map<String, RelatednessClient> clients = new ConcurrentHashMap<>();
+    private VectorSpaceFactory vectorSpaceFactory;
 
-
-    public RelatednessClientFactory(String mongoURI) {
-        if (mongoURI == null || mongoURI.isEmpty()) {
-            throw new IllegalArgumentException("mongoURI is mandatory");
+    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory) {
+        if (vectorSpaceFactory == null) {
+            throw new IllegalArgumentException("vectorSpaceFactory is mandatory");
         }
-        this.mURI = new MongoClientURI(mongoURI);
-        logger.debug("Factory initialized.");
+        this.vectorSpaceFactory = vectorSpaceFactory;
     }
 
     public RelatednessClient create(Params params) {
+        VectorSpace vSpace = vectorSpaceFactory.create(params);
+
         switch (params.func) {
             case COSINE:
-                return getCosineClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new CosineClient(params, vSpace));
             case CORRELATION:
-                return getCorrelationClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new CorrelationClient(params, vSpace));
             case EUCLIDEAN:
-                return getEuclideanClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new EuclideanClient(params, vSpace));
             case JACCARD:
-                return getJaccardClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new JaccardClient(params, vSpace));
             case LIN:
-                return getLinClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new LinClient(params, vSpace));
             case TANIMOTO:
-                return getTanimotoClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new TanimotoClient(params, vSpace));
             case ALPHASKEW:
-                return getAlphaSkewClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new AlphaSkewClient(params, vSpace));
             case CHEBYSHEV:
-                return getChebyshevClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new ChebyshevClient(params, vSpace));
             case CITYBLOCK:
-                return getCityBlockClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new CityBlockClient(params, vSpace));
             case DICE:
-                return getDiceClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new DiceClient(params, vSpace));
             case JACCARD2:
-                return getJaccard2Client(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new Jaccard2Client(params, vSpace));
             case JENSENSHANNON:
-                return getJensenShannonClient(params);
+                return clients.computeIfAbsent(params.getDBName(), (dbName) ->  new JensenShannonClient(params, vSpace));
             default:
                 throw new RuntimeException("Unsupported Score Function.");
         }
-    }
-
-    //VectorSpace implements a cache and is thread-safe, should we share between clients?
-
-    private RelatednessClient getCosineClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new CosineClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getCorrelationClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new CorrelationClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getEuclideanClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new EuclideanClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getJaccardClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new JaccardClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getLinClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new LinClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getTanimotoClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new TanimotoClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getAlphaSkewClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new AlphaSkewClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getChebyshevClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new ChebyshevClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getCityBlockClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new CityBlockClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getDiceClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new DiceClient(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getJaccard2Client(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
-            return new Jaccard2Client(params, vectorSpace);
-        });
-    }
-
-    private RelatednessClient getJensenShannonClient(final Params params) {
-        return clients.computeIfAbsent(params.getDBName(), (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p);
-            return new JensenShannonClient(params, vectorSpace);
-        });
     }
 
 }

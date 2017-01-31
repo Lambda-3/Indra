@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.exception;
 
 /*-
  * ==========================License-Start=============================
@@ -26,22 +26,12 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.VectorSpace;
+/**
+ * Indra Errors must have self explanatory message as it can be serialized back to the API's user.
+ */
+public class IndraError extends RuntimeException {
 
-public class JaccardClient extends RelatednessBaseClient {
-
-    JaccardClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
-
-    @Override
-    protected int getVectorSizeLimit() {
-        return 1500;
-    }
-
-    @Override
-    protected double sim(double[] v1, double[] v2) {
-        throw new UnsupportedOperationException();
+    public IndraError(String message) {
+        super(message);
     }
 }

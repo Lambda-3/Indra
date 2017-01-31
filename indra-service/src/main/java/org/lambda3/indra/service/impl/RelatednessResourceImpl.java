@@ -30,6 +30,7 @@ import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.impl.RelatednessClientFactory;
+import org.lambda3.indra.core.impl.VectorSpaceFactory;
 import org.lambda3.indra.service.resources.RelatednessRequest;
 import org.lambda3.indra.service.resources.RelatednessResource;
 import org.lambda3.indra.service.resources.RelatednessResponse;
@@ -40,8 +41,8 @@ class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private RelatednessClientFactory relatednessClientFactory;
 
-    RelatednessResourceImpl(String mongoURI) {
-        this.relatednessClientFactory = new RelatednessClientFactory(mongoURI);
+    RelatednessResourceImpl(VectorSpaceFactory vectorSpaceFactory) {
+        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
     }
 
     @Override

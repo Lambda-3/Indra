@@ -27,10 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class CityBlockClient extends RelatednessBaseClient {
 
-    CityBlockClient(Params params, MongoVectorSpace vectorSpace) {
+    CityBlockClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

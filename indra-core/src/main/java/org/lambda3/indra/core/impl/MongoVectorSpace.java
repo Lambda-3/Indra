@@ -27,16 +27,15 @@ package org.lambda3.indra.core.impl;
  */
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.Binary;
+import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.utils.VectorsUtils;
-import org.lambda3.indra.common.client.AnalyzedPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +56,9 @@ class MongoVectorSpace implements VectorSpace {
     private MongoClient mongoClient;
     private final String dbName;
 
-    MongoVectorSpace(MongoClientURI mURI, String dbName) {
-        logger.info("Creating new vector space");
-        this.mongoClient = new MongoClient(mURI);
+    MongoVectorSpace(MongoClient client, String dbName) {
+        logger.info("Creating new vector space from {}", dbName);
+        this.mongoClient = client;
         this.dbName = dbName;
     }
 

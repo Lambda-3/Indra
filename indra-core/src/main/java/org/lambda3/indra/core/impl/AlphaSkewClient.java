@@ -27,10 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class AlphaSkewClient extends RelatednessBaseClient {
 
-    AlphaSkewClient(Params params, MongoVectorSpace vectorSpace) {
+    AlphaSkewClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

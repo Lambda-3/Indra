@@ -28,10 +28,11 @@ package org.lambda3.indra.core.impl;
 
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class ChebyshevClient extends RelatednessBaseClient {
 
-    ChebyshevClient(Params params, MongoVectorSpace vectorSpace) {
+    ChebyshevClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

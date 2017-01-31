@@ -41,7 +41,7 @@ abstract class RelatednessBaseClient extends RelatednessClient {
     private VectorSpace vectorSpace;
     private Params params;
 
-    RelatednessBaseClient(Params params, MongoVectorSpace vectorSpace) {
+    RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
         if (params == null || vectorSpace == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }

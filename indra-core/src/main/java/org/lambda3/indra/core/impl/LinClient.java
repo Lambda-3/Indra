@@ -27,10 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpace;
 
 public class LinClient extends RelatednessBaseClient {
 
-    LinClient(Params params, MongoVectorSpace vectorSpace) {
+    LinClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

@@ -29,7 +29,6 @@ package org.lambda3.indra.core;
 import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
 import org.lambda3.indra.common.client.TextPair;
-import org.lambda3.indra.core.exception.RelatednessError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,23 +55,18 @@ public abstract class RelatednessClient {
 
     private List<ScoredTextPair> doCompute(List<TextPair> pairs)  {
         logger.debug("Analyzing {} pairs", pairs.size());
-        try {
-            IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, getParams().useStemming());
-            List<AnalyzedPair> analyzedPairs = new ArrayList<>();
-            pairs.forEach(p -> {
-                AnalyzedPair analyzedPair = doAnalyze(analyzer, p);
-                if (analyzedPair != null)
-                    analyzedPairs.add(doAnalyze(analyzer, p));
-            });
+        IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, getParams().useStemming());
+        List<AnalyzedPair> analyzedPairs = new ArrayList<>();
+        pairs.forEach(p -> {
+            AnalyzedPair analyzedPair = doAnalyze(analyzer, p);
+            if (analyzedPair != null)
+                analyzedPairs.add(doAnalyze(analyzer, p));
+        });
 
-            logger.debug("Computing relatedness..");
-            List<ScoredTextPair> r = compute(analyzedPairs);
-            logger.debug("Done.");
-            return r;
-        }
-        catch(Exception e) {
-            throw new RelatednessError(e);
-        }
+        logger.debug("Computing relatedness..");
+        List<ScoredTextPair> r = compute(analyzedPairs);
+        logger.debug("Done.");
+        return r;
     }
 
     public final RelatednessResult getRelatedness(List<TextPair> pairs) {
