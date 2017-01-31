@@ -28,6 +28,7 @@ package org.lambda3.indra.core.impl;
 
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
+import org.lambda3.indra.core.VectorSpaceFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

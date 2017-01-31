@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core;
 
 /*-
  * ==========================License-Start=============================
@@ -28,20 +28,16 @@ package org.lambda3.indra.core.impl;
 
 import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessClient;
-import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.core.VectorSpace;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-abstract class RelatednessBaseClient extends RelatednessClient {
+public abstract class RelatednessBaseClient extends RelatednessClient {
     private VectorSpace vectorSpace;
     private Params params;
 
-    RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
+    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
         if (params == null || vectorSpace == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }

@@ -29,6 +29,7 @@ package org.lambda3.indra.core.impl;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
 
 public class CosineClient extends RelatednessBaseClient {

@@ -29,6 +29,7 @@ package org.lambda3.indra.core.impl;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.ModelNoFound;
 
 import java.util.HashSet;

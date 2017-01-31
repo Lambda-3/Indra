@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core;
 
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.VectorSpace;
