@@ -30,6 +30,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.core.exception.IndraError;
 
 public class JaccardClient extends RelatednessBaseClient {
 
@@ -39,6 +40,6 @@ public class JaccardClient extends RelatednessBaseClient {
 
     @Override
     protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        throw new UnsupportedOperationException();
+        throw new IndraError("Score function Not implemented yet!");
     }
 }

@@ -30,13 +30,12 @@ public enum ScoreFunction {
     ALPHASKEW,
     CHEBYSHEV,
     CITYBLOCK,
-    CORRELATION,
+    SPEARMAN,
+    PEARSON,
     COSINE,
     DICE,
     EUCLIDEAN,
     JACCARD,
     JACCARD2,
     JENSENSHANNON,
-    LIN,
-    TANIMOTO
 }

@@ -31,6 +31,7 @@ import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.exception.IndraError;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,16 +55,14 @@ public final class RelatednessClientFactory {
         switch (params.func) {
             case COSINE:
                 return clients.computeIfAbsent(params.func, (String) -> new CosineClient(params, vectorSpace));
-            case CORRELATION:
-                return clients.computeIfAbsent(params.func, (String) -> new CorrelationClient(params, vectorSpace));
+            case SPEARMAN:
+                return clients.computeIfAbsent(params.func, (String) -> new SpearmansClient(params, vectorSpace));
             case EUCLIDEAN:
                 return clients.computeIfAbsent(params.func, (String) -> new EuclideanClient(params, vectorSpace));
             case JACCARD:
                 return clients.computeIfAbsent(params.func, (String) -> new JaccardClient(params, vectorSpace));
-            case LIN:
-                return clients.computeIfAbsent(params.func, (String) -> new LinClient(params, vectorSpace));
-            case TANIMOTO:
-                return clients.computeIfAbsent(params.func, (String) -> new TanimotoClient(params, vectorSpace));
+            case PEARSON:
+                return clients.computeIfAbsent(params.func, (String) -> new PearsonClient(params, vectorSpace));
             case ALPHASKEW:
                 return clients.computeIfAbsent(params.func, (String) -> new AlphaSkewClient(params, vectorSpace));
             case CHEBYSHEV:
@@ -77,7 +76,7 @@ public final class RelatednessClientFactory {
             case JENSENSHANNON:
                 return clients.computeIfAbsent(params.func, (String) -> new JensenShannonClient(params, vectorSpace));
             default:
-                throw new RuntimeException("Unsupported Score Function.");
+                throw new IndraError("Unsupported Score Function.");
         }
     }
 

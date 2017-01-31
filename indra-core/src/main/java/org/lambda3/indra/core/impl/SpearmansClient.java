@@ -27,19 +27,22 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
 
-public class CorrelationClient extends RelatednessBaseClient {
+public class SpearmansClient extends RelatednessBaseClient {
 
-    CorrelationClient(Params params, VectorSpace vectorSpace) {
+    private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
+
+    SpearmansClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 
     @Override
     protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        throw new UnsupportedOperationException();
+        return spearmansCorrelation.correlation(r1.toArray(), r2.toArray());
     }
 
 }
