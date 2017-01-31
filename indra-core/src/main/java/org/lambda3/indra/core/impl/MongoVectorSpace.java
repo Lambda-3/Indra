@@ -63,6 +63,11 @@ class MongoVectorSpace implements VectorSpace {
     }
 
     @Override
+    public boolean isSparse() {
+        return dbName.toLowerCase().startsWith("esa-");
+    }
+
+    @Override
     public int getVectorSize() {
         return 1500;
     }
