@@ -56,7 +56,7 @@ public final class RelatednessClientFactory {
             case COSINE:
                 return clients.computeIfAbsent(params.func, (String) -> new CosineClient(params, vectorSpace));
             case SPEARMAN:
-                return clients.computeIfAbsent(params.func, (String) -> new SpearmansClient(params, vectorSpace));
+                return clients.computeIfAbsent(params.func, (String) -> new SpearmanClient(params, vectorSpace));
             case EUCLIDEAN:
                 return clients.computeIfAbsent(params.func, (String) -> new EuclideanClient(params, vectorSpace));
             case JACCARD:
