@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class RelatednessClientFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final MongoClientURI mURI;
-    private final Map<Params, RelatednessClient> clients = new ConcurrentHashMap<>();
+    private final Map<String, RelatednessClient> clients = new ConcurrentHashMap<>();
 
 
     public RelatednessClientFactory(String mongoURI) {
@@ -83,86 +83,86 @@ public final class RelatednessClientFactory {
     //VectorSpace implements a cache and is thread-safe, should we share between clients?
 
     private RelatednessClient getCosineClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new CosineClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new CosineClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getCorrelationClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new CorrelationClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new CorrelationClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getEuclideanClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new EuclideanClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new EuclideanClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getJaccardClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new JaccardClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new JaccardClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getLinClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new LinClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new LinClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getTanimotoClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new TanimotoClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new TanimotoClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getAlphaSkewClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new AlphaSkewClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new AlphaSkewClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getChebyshevClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new ChebyshevClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new ChebyshevClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getCityBlockClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new CityBlockClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new CityBlockClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getDiceClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new DiceClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new DiceClient(params, vectorSpace);
         });
     }
 
     private RelatednessClient getJaccard2Client(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new Jaccard2Client(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (dbName) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, dbName);
+            return new Jaccard2Client(params, vectorSpace);
         });
     }
 
     private RelatednessClient getJensenShannonClient(final Params params) {
-        return clients.computeIfAbsent(params, (p) -> {
-            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p.getDBName());
-            return new JensenShannonClient(p, vectorSpace);
+        return clients.computeIfAbsent(params.getDBName(), (p) -> {
+            MongoVectorSpace vectorSpace = new MongoVectorSpace(mURI, p);
+            return new JensenShannonClient(params, vectorSpace);
         });
     }
 
