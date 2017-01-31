@@ -4,14 +4,19 @@
 
 # Indra
 
-Indra is a Web Service which allows easy access to several [Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics), currently in English, German, Spanish, French, Portuguese, Italian, Swedish, Chinese, Dutch, Russian, Korean, Arabic and Persian.
+Indra is a Web Service which allows easy access to several [Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics), currently in English, German, Spanish, French, Portuguese, Italian, Swedish, Chinese, Dutch, Russian, Korean, Arabic, Japanese and Persian.
 
 The Supported models are:
-* Latent Semantic Analysis (LSA)
-* Explicit Semantic Analysis (ESA)
-* Word2Vec (W2V)
-* Global Vectors (GloVe)
-    
+* [Latent Semantic Analysis (LSA)](https://en.wikipedia.org/wiki/Latent_semantic_analysis)
+* [Explicit Semantic Analysis (ESA)](https://en.wikipedia.org/wiki/Explicit_semantic_analysis)
+* [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
+* [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/Glove)
+
+# Usage
+
+If you want to give a try on your own infrastructure take a look on [Indra-Composed](https://github.com/Lambda-3/indra-composed).
+
+
 ## Code Examples
 * Python. This relies on the library `requests`.
 
