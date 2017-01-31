@@ -26,6 +26,9 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.OpenMapRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.common.client.AnalyzedPair;
 import org.lambda3.indra.common.client.ScoredTextPair;
 
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class RelatednessBaseClient extends RelatednessClient {
+    private static int MAXSDIMENSIONS = 5000000;
     private VectorSpace vectorSpace;
     private Params params;
 
@@ -46,7 +50,7 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
 
     }
 
-    protected abstract double sim(double[] v1, double[] v2);
+    protected abstract double sim(RealVector r1, RealVector r2, boolean sparse);
 
     @Override
     protected Params getParams() {
@@ -62,11 +66,25 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
         vectorPairs.entrySet().forEach(e -> {
             AnalyzedPair pair = e.getKey();
             VectorPair vectorPair = e.getValue();
-
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
-                double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
-                double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
-                scoredTextPairs.add(new ScoredTextPair(pair, sim(v1, v2)));
+
+                if (!vectorSpace.isSparse()) {
+                    double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
+                    double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
+                    scoredTextPairs.add(new ScoredTextPair(pair,
+                            sim(new ArrayRealVector(v1), new ArrayRealVector(v2), false)));
+                }
+                else {
+                    //TODO: Fix me!
+                    // Currently only ESA is sparse.
+                    // This max value comes from the number of wikipedia articles for english, the largest corpus.
+                    OpenMapRealVector r1 = new OpenMapRealVector(MAXSDIMENSIONS);
+                    OpenMapRealVector r2 = new OpenMapRealVector(MAXSDIMENSIONS);
+                    vectorPair.v1.forEach(r1::setEntry);
+                    vectorPair.v2.forEach(r2::setEntry);
+                    scoredTextPairs.add(new ScoredTextPair(pair, sim(r1, r2, true)));
+                }
+
             } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }

@@ -26,6 +26,7 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
@@ -37,7 +38,7 @@ public class EuclideanClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected double sim(double[] v1, double[] v2) {
-        throw new UnsupportedOperationException();
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return r1.getDistance(r2);
     }
 }

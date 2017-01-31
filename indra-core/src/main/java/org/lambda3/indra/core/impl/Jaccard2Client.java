@@ -26,6 +26,7 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
@@ -37,25 +38,27 @@ public class Jaccard2Client extends RelatednessBaseClient {
     }
 
     @Override
-    protected double sim(double[] a, double[] b) {
-        if (a.length != b.length)
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        if (r1.getDimension() != r2.getDimension()) {
             return 0;
+        }
 
         double min = 0.0;
         double max = 0.0;
 
-        for (int i = 0; i < a.length; ++i) {
-            if (a[i] > b[i]) {
-                min += b[i];
-                max += a[i];
+        for (int i = 0; i <r1.getDimension(); ++i) {
+            if (r1.getEntry(i) > r2.getEntry(i)) {
+                min +=r2.getEntry(i);
+                max += r1.getEntry(i);
             } else {
-                min += a[i];
-                max += b[i];
+                min += r1.getEntry(i);
+                max += r2.getEntry(i);
             }
         }
 
-        if (max == 0)
+        if (max == 0) {
             return 0;
+        }
 
         return Math.abs(min / max);
     }

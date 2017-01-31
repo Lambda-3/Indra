@@ -26,7 +26,6 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
@@ -39,9 +38,7 @@ public class CosineClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected double sim(double[] v1, double[] v2) {
-        RealVector rv1 = new ArrayRealVector(v1);
-        RealVector rv2 = new ArrayRealVector(v2);
-        return rv1.cosine(rv2);
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return r1.cosine(r2);
     }
 }

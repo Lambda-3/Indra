@@ -26,6 +26,7 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
@@ -37,14 +38,15 @@ public class CityBlockClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected double sim(double[] a, double[] b) {
-        if (a.length != b.length)
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        if (r1.getDimension() != r2.getDimension()) {
             return 0;
+        }
 
         double sum = 0.0;
 
-        for (int i = 0; i < a.length; ++i) {
-            sum += Math.abs((a[i] - b[i]));
+        for (int i = 0; i < r1.getDimension(); ++i) {
+            sum += Math.abs((r1.getEntry(i) - r2.getEntry(i)));
         }
 
         double result = 1 / (1 + (sum == Double.NaN ? 0 : sum));

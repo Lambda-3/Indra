@@ -26,6 +26,7 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
@@ -37,16 +38,17 @@ public class AlphaSkewClient extends RelatednessBaseClient {
     }
 
     @Override
-    protected double sim(double[] a, double[] b) {
-        if (a.length != b.length)
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        if (r1.getDimension() != r2.getDimension()) {
             return 0;
+        }
 
         double alpha = 0.99;
         double divergence = 0.0;
 
-        for (int i = 0; i < a.length; ++i) {
-            if (a[i] > 0.0 && b[i] > 0.0) {
-                divergence += a[i] * Math.log(a[i] / ((1 - alpha) * a[i] + alpha * b[i]));
+        for (int i = 0; i < r1.getDimension(); ++i) {
+            if (r1.getEntry(i) > 0.0 && r2.getEntry(i) > 0.0) {
+                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / ((1 - alpha) * r1.getEntry(i) + alpha * r2.getEntry(i)));
             }
         }
 
