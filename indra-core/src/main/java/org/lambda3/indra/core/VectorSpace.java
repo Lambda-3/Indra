@@ -33,9 +33,7 @@ import java.util.Map;
 
 public interface VectorSpace {
 
-    VectorPair getVector(AnalyzedPair pair);
+    int getVectorSize();
 
-    VectorPair getVector(AnalyzedPair pair, int limit);
-
-    Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> terms, int limit);
+    Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> terms);
 }

@@ -63,39 +63,12 @@ class MongoVectorSpace implements VectorSpace {
     }
 
     @Override
-    public VectorPair getVector(AnalyzedPair pair) {
-        return getVector(pair, Integer.MAX_VALUE);
+    public int getVectorSize() {
+        return 1500;
     }
 
     @Override
-    public VectorPair getVector(AnalyzedPair pair, int limit) {
-        if (pair == null) {
-            throw new IllegalArgumentException("pair can't be null");
-        }
-
-        collectVectors(new HashSet<String>(){{
-            addAll(pair.getT1());
-            addAll(pair.getT2());
-        }}, limit);
-
-        VectorPair vectorPair = new VectorPair();
-
-        vectorPair.v1 = composeVectors(pair.getT1());
-
-        if (vectorPair.v1 == null) {
-            logger.warn("Vector for {} not found", pair.getTextPair().t1);
-        }
-        else {
-            vectorPair.v2 = composeVectors(pair.getT2());
-            if (vectorPair.v2 == null) {
-                logger.warn("Vector for {} not found", pair.getTextPair().t2);
-            }
-        }
-        return vectorPair;
-    }
-
-    @Override
-    public Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> pairs, int limit) {
+    public Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> pairs) {
         if (pairs == null) {
             throw new IllegalArgumentException("pairs can't be null");
         }
@@ -108,7 +81,7 @@ class MongoVectorSpace implements VectorSpace {
             allTerms.addAll(p.getT2());
         }
 
-        collectVectors(allTerms, limit);
+        collectVectors(allTerms, getVectorSize());
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();

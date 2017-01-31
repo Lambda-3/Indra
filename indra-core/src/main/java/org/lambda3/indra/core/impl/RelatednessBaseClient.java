@@ -61,11 +61,11 @@ abstract class RelatednessBaseClient extends RelatednessClient {
 
     @Override
     protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectors(pairs, getVectorSizeLimit());
+        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectors(pairs);
 
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
 
-        vectorPairs.entrySet().stream().forEach(e -> {
+        vectorPairs.entrySet().forEach(e -> {
             AnalyzedPair pair = e.getKey();
             VectorPair vectorPair = e.getValue();
 
@@ -73,8 +73,7 @@ abstract class RelatednessBaseClient extends RelatednessClient {
                 double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
                 double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
                 scoredTextPairs.add(new ScoredTextPair(pair, sim(v1, v2)));
-            }
-            else {
+            } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
 
