@@ -13,24 +13,25 @@ The Supported models are:
 * [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
 * [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/GloVe_(machine_learning))
 
-# Usage
-
-If you want to give a try on your own infrastructure take a look on [Indra-Composed](https://github.com/Lambda-3/indra-composed).
-
 # JSON over HTTP API (REST like ;)
 
 This is the payload consumed by Indra to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
 
+## Request data model
 
 ```json
 {
 	"corpus": "wiki-2014",
 	"model": "W2V",
 	"language": "EN",
-	"scoreFunction": "CORRELATION",
+	"scoreFunction": "COSINE",
 	"pairs": [{
-		"t2": "father",
+		"t2": "love",
 		"t1": "mother"
+	},
+	{
+		"t2": "love",
+		"t1": "father"
 	}]
 }
 ```
@@ -74,4 +75,52 @@ This is the payload consumed by Indra to compute [Semantic Similarity](https://e
  * JACCARD2
  * JENSENSHANNON
 
+## Response model
 
+This is the response for the request above.
+```json
+{
+  "corpus": "wiki-2014",
+  "model": "W2V",
+  "language": "EN",
+  "pairs": [
+    {
+      "t1": "mother",
+      "t2": "love",
+      "score": 0.45996829519139865
+    },
+    {
+      "t1": "father",
+      "t2": "love",
+      "score": 0.32337835808129745
+    }
+  ],
+  "scoreFunction": "COSINE"
+}
+```
+
+# Usage
+
+If you want to give a try on your own infrastructure take a look on [Indra-Composed](https://github.com/Lambda-3/indra-composed).
+
+## Public Endpoint
+
+We have a public endpoint for demonstration only hence you can try right now with _cURL_ on the command line:
+```
+curl -X POST -H "Content-Type: application/json" -d '{
+	"corpus": "wiki-2014",
+	"model": "W2V",
+	"language": "EN",
+	"scoreFunction": "COSINE",
+	"pairs": [{
+		"t2": "love",
+		"t1": "mother"
+	},
+	{
+		"t2": "love",
+		"t1": "father"
+	}]
+}' "http://indra.lambda3.org/relatedness"
+```
+
+---
