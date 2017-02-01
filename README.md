@@ -10,7 +10,7 @@ The Supported models are:
 * [Latent Semantic Analysis (LSA)](https://en.wikipedia.org/wiki/Latent_semantic_analysis)
 * [Explicit Semantic Analysis (ESA)](https://en.wikipedia.org/wiki/Explicit_semantic_analysis)
 * [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
-* [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/Glove)
+* [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/GloVe_(machine_learning))
 
 # Usage
 
