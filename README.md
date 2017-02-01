@@ -1,6 +1,7 @@
 ![](indra_logo.png)
 
 [![Build Status](https://travis-ci.org/Lambda-3/indra.svg?branch=master)](https://travis-ci.org/Lambda-3/indra)
+[![Chat](https://badges.gitter.im/Lambda-3/gitter.png)](https://gitter.im/Lambda-3/Lobby)
 
 # Indra
 
