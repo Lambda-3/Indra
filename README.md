@@ -16,108 +16,61 @@ The Supported models are:
 
 If you want to give a try on your own infrastructure take a look on [Indra-Composed](https://github.com/Lambda-3/indra-composed).
 
+# JSON over HTTP API (REST like ;)
 
-## Code Examples
-* Python. This relies on the library `requests`.
+This is the payload consumed by Indra to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
 
-```python
 
-import requests
-import json
-
-pairs = [
-    {'t1': 'house', 't2': 'beer'},
-    {'t1': 'car', 't2': 'engine'}]
-
-data = {'corpus': 'wiki-2014',
-        'model': 'W2V',
-        'language': 'EN',
-        'scoreFunction': 'COSINE', 'pairs': pairs}
-
-headers = {
-    'accept': "application/json",
-    'content-type': "application/json",
-    'cache-control': "no-cache"
+```json
+{
+	"corpus": "wiki-2014",
+	"model": "W2V",
+	"language": "EN",
+	"scoreFunction": "CORRELATION",
+	"pairs": [{
+		"t2": "father",
+		"t1": "mother"
+	}]
 }
-
-res = requests.post("http://example.com:8916/indra/v1/relatedness", data=json.dumps(data), headers=headers)
-res.raise_for_status()
-print(res.json())
 ```
 
-* Java. This code depends on the [OkHttp lib] (http://square.github.io/okhttp/), whose maven dependency entry is bellow
+* model: The distributional model
+ * W2V
+ * GLOVE
+ * LSA 
+ * ESA
 
-```xml
-<dependency>
-  <groupId>com.squareup.okhttp3</groupId>
-  <artifactId>okhttp</artifactId>
-  <version>3.4.1</version>
-</dependency>
-```
+* language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+ * EN - English
+ * DE - German
+ * ES - Spanish
+ * FR - French
+ * PT - Portuguese
+ * IT - Italian
+ * SV - Swedish
+ * ZH - Chinese
+ * NL - Dutch
+ * RU - Russian
+ * KO - Korean
+ * JP - Japanese
+ * AR - Arabic
+ * FA - Persian
 
-```java
-    OkHttpClient client = new OkHttpClient();
-    String content = "{\"corpus\": \"wiki-2014\", \"model\": \"W2V\", \"language\": \"EN\","
-	    		+ "\"scoreFunction\": \"COSINE\", \"pairs\": [{\"t1\": \"wife\", \"t2\": \"mother\"}]}";
+* corpus: The name of the corpus used to build the models.
+ * wiki-2014 (except JP and KO)
+ * wiki-2016 (only JP and KO)
 
-    MediaType mediaType = MediaType.parse("application/json");
-    RequestBody body = RequestBody.create(mediaType, content);
-    Request request = new Request.Builder()
-      .url("http://indra.amtera.net:80/indra/v1/relatedness")
-      .post(body)
-      .addHeader("accept", "application/json")
-      .addHeader("content-type", "application/json")
-      .addHeader("authorization", "<ADD HERE>")
-      .addHeader("cache-control", "no-cache")
-      .build();
-    
-    Response response = client.newCall(request).execute();
-    System.out.println(response.body().string());
-```
+* scoreFunction: The function to compute the relatedness between the distributional vectors
+ * COSINE
+ * ALPHASKEW
+ * CHEBYSHEV
+ * CITYBLOCK
+ * SPEARMAN
+ * PEARSON
+ * DICE
+ * EUCLIDEAN
+ * JACCARD
+ * JACCARD2
+ * JENSENSHANNON
 
-
-## Parameters
-The indra service requires five parameters:
-
-### language
-Specify the model language according to the two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
-The following languages are available in the current version of Indra:
-* EN - English
-* DE - German
-* ES - Spanish
-* FR - French
-* PT - Portuguese
-* IT - Italian
-* SV - Swedish
-* ZH - Chinese
-* NL - Dutch
-* RU - Russian
-* KO - Korean
-* AR - Arabic
-* FA - Persian
-
-### corpus
-Define the corpus from which the model where generated.
-Currently there is only one option of model per language. for Korean, the corpus name is wiki-2016, while for all others it is wiki-2014.
-
-### model
-Specify the distributional semantics model. Four models are available:
-* LSA - Latent Semantic Analysis
-* ESA - Explicit Semantic Analysis
-* W2V - Skip-gram
-* GLOVE - Global Vectors
-
-### scoreFunction
-Specify the function applied to calculate the relatedness between vectors
-* COSINE
-* ALPHASKEW
-* CHEBYSHEV
-* CITYBLOCK
-* SPEARMAN
-* PEARSON
-* DICE
-* EUCLIDEAN
-* JACCARD
-* JACCARD2
-* JENSENSHANNON
 
