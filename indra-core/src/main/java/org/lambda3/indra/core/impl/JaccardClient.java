@@ -34,7 +34,7 @@ import org.lambda3.indra.core.exception.IndraError;
 
 public class JaccardClient extends RelatednessBaseClient {
 
-    JaccardClient(Params params, VectorSpace vectorSpace) {
+    public JaccardClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

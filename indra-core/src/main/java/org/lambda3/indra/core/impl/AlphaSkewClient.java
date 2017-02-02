@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class AlphaSkewClient extends RelatednessBaseClient {
 
-    AlphaSkewClient(Params params, VectorSpace vectorSpace) {
+    public AlphaSkewClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

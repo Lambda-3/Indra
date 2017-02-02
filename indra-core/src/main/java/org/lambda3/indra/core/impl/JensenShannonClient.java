@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class JensenShannonClient extends RelatednessBaseClient {
 
-    JensenShannonClient(Params params, VectorSpace vectorSpace) {
+    public JensenShannonClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

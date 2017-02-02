@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class CityBlockClient extends RelatednessBaseClient {
 
-    CityBlockClient(Params params, VectorSpace vectorSpace) {
+    public CityBlockClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core;
 
 /*-
  * ==========================License-Start=============================
@@ -26,19 +26,15 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.ScoreFunction;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.impl.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class RelatednessClientFactory {
     private final Map<String, VectorSpace> vectorSpaces = new ConcurrentHashMap<>();
-    private final Map<ScoreFunction, RelatednessClient> clients = new ConcurrentHashMap<>();
+    private final Map<Params, RelatednessClient> clients = new ConcurrentHashMap<>();
     private VectorSpaceFactory vectorSpaceFactory;
 
     public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory) {
@@ -54,27 +50,27 @@ public final class RelatednessClientFactory {
 
         switch (params.func) {
             case COSINE:
-                return clients.computeIfAbsent(params.func, (String) -> new CosineClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new CosineClient(p, vectorSpace));
             case SPEARMAN:
-                return clients.computeIfAbsent(params.func, (String) -> new SpearmanClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new SpearmanClient(p, vectorSpace));
             case EUCLIDEAN:
-                return clients.computeIfAbsent(params.func, (String) -> new EuclideanClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new EuclideanClient(p, vectorSpace));
             case JACCARD:
-                return clients.computeIfAbsent(params.func, (String) -> new JaccardClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new JaccardClient(p, vectorSpace));
             case PEARSON:
-                return clients.computeIfAbsent(params.func, (String) -> new PearsonClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new PearsonClient(p, vectorSpace));
             case ALPHASKEW:
-                return clients.computeIfAbsent(params.func, (String) -> new AlphaSkewClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new AlphaSkewClient(p, vectorSpace));
             case CHEBYSHEV:
-                return clients.computeIfAbsent(params.func, (String) -> new ChebyshevClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new ChebyshevClient(p, vectorSpace));
             case CITYBLOCK:
-                return clients.computeIfAbsent(params.func, (String) -> new CityBlockClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new CityBlockClient(p, vectorSpace));
             case DICE:
-                return clients.computeIfAbsent(params.func, (String) -> new DiceClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new DiceClient(p, vectorSpace));
             case JACCARD2:
-                return clients.computeIfAbsent(params.func, (String) -> new Jaccard2Client(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new Jaccard2Client(p, vectorSpace));
             case JENSENSHANNON:
-                return clients.computeIfAbsent(params.func, (String) -> new JensenShannonClient(params, vectorSpace));
+                return clients.computeIfAbsent(params, (p) -> new JensenShannonClient(p, vectorSpace));
             default:
                 throw new IndraError("Unsupported Score Function.");
         }

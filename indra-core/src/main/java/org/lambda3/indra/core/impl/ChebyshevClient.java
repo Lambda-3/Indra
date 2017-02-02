@@ -34,7 +34,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class ChebyshevClient extends RelatednessBaseClient {
 
-    ChebyshevClient(Params params, VectorSpace vectorSpace) {
+    public ChebyshevClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

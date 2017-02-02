@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class Jaccard2Client extends RelatednessBaseClient {
 
-    Jaccard2Client(Params params, VectorSpace vectorSpace) {
+    public Jaccard2Client(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

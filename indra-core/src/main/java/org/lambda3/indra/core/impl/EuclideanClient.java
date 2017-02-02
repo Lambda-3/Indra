@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class EuclideanClient extends RelatednessBaseClient {
 
-    EuclideanClient(Params params, VectorSpace vectorSpace) {
+    public EuclideanClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

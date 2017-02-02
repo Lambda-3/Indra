@@ -29,7 +29,7 @@ package org.lambda3.indra.service.impl;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.impl.RelatednessClientFactory;
+import org.lambda3.indra.core.RelatednessClientFactory;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.service.resources.RelatednessRequest;
 import org.lambda3.indra.service.resources.RelatednessResource;

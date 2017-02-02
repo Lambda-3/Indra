@@ -36,7 +36,7 @@ public class PearsonClient extends RelatednessBaseClient {
 
     private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
 
-    PearsonClient(Params params, VectorSpace vectorSpace) {
+    public PearsonClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 

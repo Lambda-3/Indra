@@ -111,7 +111,7 @@ class MongoVectorSpace implements VectorSpace {
                 terms.size() - toFetch.size(), toFetch.size());
 
         if (!toFetch.isEmpty()) {
-            logger.info("Collecting {} term vectors", toFetch.size());
+            logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
             FindIterable<Document> docs = getColl().find(Filters.in(termFieldName, toFetch));
             if (docs != null) {
                 docs.batchSize(toFetch.size());

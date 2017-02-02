@@ -33,7 +33,7 @@ import org.lambda3.indra.core.VectorSpace;
 
 public class CosineClient extends RelatednessBaseClient {
 
-    CosineClient(Params params, VectorSpace vectorSpace) {
+    public CosineClient(Params params, VectorSpace vectorSpace) {
         super(params, vectorSpace);
     }
 
