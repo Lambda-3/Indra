@@ -3,11 +3,29 @@
 [![Build Status](https://travis-ci.org/Lambda-3/indra.svg?branch=master)](https://travis-ci.org/Lambda-3/indra)
 [![Chat](https://badges.gitter.im/Lambda-3/gitter.png)](https://gitter.im/Lambda-3/Lobby)
 
-# Indra
+# What is Indra?
 
-Indra is a Web Service which allows easy access to several [Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics), currently in English, German, Spanish, French, Portuguese, Italian, Swedish, Chinese, Dutch, Russian, Korean, Arabic, Japanese and Persian.
+The creation of real-world Artificial Intelligence (AI) applications is dependent on leveraging a large volume of commonsense knowledge. Simple semantic interpretation tasks such as understanding that if 'A is married to B' then 'A is the spouse of B' or that 'car, vehicle, auto' have very similar meanings are examples of semantic approximation operations/inferences that are present in practically all applications of AI that interpret natural language.
 
-The Supported models are:
+Many AI applications depend on being semantically flexible, i.e. coping with the large vocabulary variation that is permited by natural language. Sentiment Analysis, Question Answering, Information Extraction, Semantic Search and Classification tasks are examples of tasks in which the ability to do semantic approximation is a central requirement.
+
+[Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics) and Word Vector models emerged as successful approaches for supporting semantic approximations due to their ability to build comprehensive semantic approximation models and also to their simplicity of representation.
+
+Indra is a distributional semantics engine which facilitates the deployment of robust distributional semantic models for industry-level applications.
+
+# Features
+
+* Supports multiple distributional semantic models and distance measures.
+* No strings attached: permissive license for commercial and academic use.
+* Access to the semantic models as a service.
+* High performance vector computation.
+* Easy deploy: Deploy the infrastructure in 3 steps.
+* Intrinsically multi-lingual.
+* Pre-build models from different languages.
+
+
+# Supported Models
+
 * [Latent Semantic Analysis (LSA)](https://en.wikipedia.org/wiki/Latent_semantic_analysis)
 * [Explicit Semantic Analysis (ESA)](https://en.wikipedia.org/wiki/Explicit_semantic_analysis)
 * [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
