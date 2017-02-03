@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.resources;
+package org.lambda3.indra.common.client;
 
 /*-
  * ==========================License-Start=============================
@@ -47,5 +47,29 @@ public final class RelatednessResponse {
                 ", pairs=" + pairs +
                 ", scoreFunction=" + scoreFunction +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RelatednessResponse that = (RelatednessResponse) o;
+
+        if (corpus != null ? !corpus.equals(that.corpus) : that.corpus != null) return false;
+        if (model != null ? !model.equals(that.model) : that.model != null) return false;
+        if (language != null ? !language.equals(that.language) : that.language != null) return false;
+        if (pairs != null ? !pairs.equals(that.pairs) : that.pairs != null) return false;
+        return scoreFunction == that.scoreFunction;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = corpus != null ? corpus.hashCode() : 0;
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        result = 31 * result + (pairs != null ? pairs.hashCode() : 0);
+        result = 31 * result + (scoreFunction != null ? scoreFunction.hashCode() : 0);
+        return result;
     }
 }
