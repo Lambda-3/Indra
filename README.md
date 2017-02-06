@@ -160,7 +160,7 @@ Please cite Indra in your paper, if you use it in your experiments.
  acmid = {2767870},
  publisher = {ACM},
  address = {New York, NY, USA},
- keywords = {distirbutional infrastructure, distributional semantic models, multilingual semantic relatedness},
+ keywords = {distributional infrastructure, distributional semantic models, multilingual semantic relatedness},
 }
 ```
 ---
