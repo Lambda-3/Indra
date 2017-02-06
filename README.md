@@ -141,4 +141,26 @@ curl -X POST -H "Content-Type: application/json" -d '{
 }' "http://indra.lambda3.org/relatedness"
 ```
 
+# Citing Indra in papers
+
+Please cite Indra in your paper, if you use it in your experiments.
+```latex
+@inproceedings{Barzegar:2015:DOS:2766462.2767870,
+ author = {Barzegar, Siamak and Sales, Juliano Efson and Freitas, Andre and Handschuh, Siegfried and Davis, Brian},
+ title = {DINFRA: A One Stop Shop for Computing Multilingual Semantic Relatedness},
+ booktitle = {Proceedings of the 38th International ACM SIGIR Conference on Research and Development in Information Retrieval},
+ series = {SIGIR '15},
+ year = {2015},
+ isbn = {978-1-4503-3621-5},
+ location = {Santiago, Chile},
+ pages = {1027--1028},
+ numpages = {2},
+ url = {http://doi.acm.org/10.1145/2766462.2767870},
+ doi = {10.1145/2766462.2767870},
+ acmid = {2767870},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {distirbutional infrastructure, distributional semantic models, multilingual semantic relatedness},
+}
+```
 ---
