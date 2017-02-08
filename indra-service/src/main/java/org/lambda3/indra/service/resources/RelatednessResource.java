@@ -27,6 +27,9 @@ package org.lambda3.indra.service.resources;
  */
 
 
+import org.lambda3.indra.common.client.RelatednessRequest;
+import org.lambda3.indra.common.client.RelatednessResponse;
+
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
