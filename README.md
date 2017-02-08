@@ -140,27 +140,29 @@ curl -X POST -H "Content-Type: application/json" -d '{
 	}]
 }' "http://indra.lambda3.org/relatedness"
 ```
+# Citing Indra
 
-# Citing Indra in papers
-
-Please cite Indra in your paper, if you use it in your experiments.
+Please cite Indra, if you use it in your experiments or project.
 ```latex
-@inproceedings{Barzegar:2015:DOS:2766462.2767870,
- author = {Barzegar, Siamak and Sales, Juliano Efson and Freitas, Andre and Handschuh, Siegfried and Davis, Brian},
- title = {DINFRA: A One Stop Shop for Computing Multilingual Semantic Relatedness},
- booktitle = {Proceedings of the 38th International ACM SIGIR Conference on Research and Development in Information Retrieval},
- series = {SIGIR '15},
- year = {2015},
- isbn = {978-1-4503-3621-5},
- location = {Santiago, Chile},
- pages = {1027--1028},
- numpages = {2},
- url = {http://doi.acm.org/10.1145/2766462.2767870},
- doi = {10.1145/2766462.2767870},
- acmid = {2767870},
- publisher = {ACM},
- address = {New York, NY, USA},
- keywords = {distributional infrastructure, distributional semantic models, multilingual semantic relatedness},
+@Inbook{Freitas2016,
+author="Freitas, Andr{\'e}
+and Barzegar, Siamak
+and Sales, Juliano Efson
+and Handschuh, Siegfried
+and Davis, Brian",
+editor="Blomqvist, Eva
+and Ciancarini, Paolo
+and Poggi, Francesco
+and Vitali, Fabio",
+title="Semantic Relatedness for All (Languages): A Comparative Analysis of Multilingual Semantic Relatedness Using Machine Translation",
+bookTitle="Knowledge Engineering and Knowledge Management: 20th International Conference, EKAW 2016, Bologna, Italy, November 19-23, 2016, Proceedings",
+year="2016",
+publisher="Springer International Publishing",
+address="Cham",
+pages="212--222",
+isbn="978-3-319-49004-5",
+doi="10.1007/978-3-319-49004-5_14",
+url="http://dx.doi.org/10.1007/978-3-319-49004-5_14"
 }
 ```
 ---
