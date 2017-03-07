@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3</groupId>
-            <artifactId>indra-common</artifactId>
+            <artifactId>indra-client</artifactId>
             <version>${project.version}</version>
         </dependency>
 

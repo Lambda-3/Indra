@@ -26,11 +26,11 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.AnalyzedPair;
-import org.lambda3.indra.common.client.ScoredTextPair;
-import org.lambda3.indra.service.resources.RelatednessRequest;
-import org.lambda3.indra.service.resources.RelatednessResource;
-import org.lambda3.indra.service.resources.RelatednessResponse;
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.client.RelatednessResource;
+import org.lambda3.indra.client.RelatednessResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,20 +46,13 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
-        RelatednessResponse response = new RelatednessResponse();
-        response.corpus = request.corpus;
-        response.language = request.language;
-        response.model = request.model;
-        response.scoreFunction = request.scoreFunction;
-
         Collection<ScoredTextPair> scored = new ArrayList<>();
-        request.pairs.forEach(p -> {
+        request.getPairs().forEach(p -> {
             AnalyzedPair analyzedPair = new AnalyzedPair(p);
             ScoredTextPair stp = new ScoredTextPair(analyzedPair, rnd.nextDouble());
             scored.add(stp);
         });
 
-        response.pairs = scored;
-        return response;
+        return new RelatednessResponse(request, scored);
     }
 }

@@ -26,8 +26,8 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.ScoredTextPair;
-import org.lambda3.indra.common.client.TextPair;
+import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.client.TextPair;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

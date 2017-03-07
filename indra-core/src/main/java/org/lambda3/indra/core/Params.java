@@ -26,7 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.ScoreFunction;
+import org.lambda3.indra.client.ScoreFunction;
 
 import java.util.Objects;
 

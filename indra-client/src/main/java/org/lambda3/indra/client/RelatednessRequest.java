@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.resources;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra REST Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,21 +26,66 @@ package org.lambda3.indra.service.resources;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.ScoreFunction;
-import org.lambda3.indra.common.client.ScoredTextPair;
+import java.util.List;
+import java.util.Objects;
 
-import java.util.Collection;
+public final class RelatednessRequest {
 
-public final class RelatednessResponse {
-    public String corpus;
-    public String model;
-    public String language;
-    public Collection<ScoredTextPair> pairs;
-    public ScoreFunction scoreFunction;
+    private String corpus;
+    private String model;
+    private String language;
+    private List<TextPair> pairs;
+    private ScoreFunction scoreFunction;
+
+    public RelatednessRequest corpus(String corpusName) {
+        this.corpus = Objects.requireNonNull(corpusName);
+        return this;
+    }
+
+    public RelatednessRequest model(String model) {
+        this.model = Objects.requireNonNull(model);
+        return this;
+    }
+
+    public RelatednessRequest language(String language) {
+        this.language = Objects.requireNonNull(language);
+        return this;
+    }
+
+    public RelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
+        this.scoreFunction = Objects.requireNonNull(scoreFunction);
+        return this;
+    }
+
+    public RelatednessRequest pairs(List<TextPair> pairs) {
+        this.pairs = Objects.requireNonNull(pairs);
+        return this;
+    }
+
+    public String getCorpus() {
+        return corpus;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public List<TextPair> getPairs() {
+        return pairs;
+    }
+
+    public ScoreFunction getScoreFunction() {
+        return scoreFunction;
+    }
+
 
     @Override
     public String toString() {
-        return "RelatednessResponse{" +
+        return "RelatednessRequest{" +
                 "corpus='" + corpus + '\'' +
                 ", model=" + model +
                 ", language=" + language +

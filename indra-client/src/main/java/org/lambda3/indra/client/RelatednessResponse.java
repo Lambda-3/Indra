@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.resources;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra REST Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,22 +26,52 @@ package org.lambda3.indra.service.resources;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.ScoreFunction;
-import org.lambda3.indra.common.client.TextPair;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import java.util.Collection;
 
-public final class RelatednessRequest {
+public final class RelatednessResponse {
+    @JsonProperty private String corpus;
+    @JsonProperty private String model;
+    @JsonProperty private String language;
+    @JsonProperty private Collection<ScoredTextPair> pairs;
+    @JsonProperty private ScoreFunction scoreFunction;
 
-    public String corpus;
-    public String model;
-    public String language;
-    public List<TextPair> pairs;
-    public ScoreFunction scoreFunction;
+    private RelatednessResponse() {
+        // happy serializer
+    }
+
+    public RelatednessResponse(RelatednessRequest request, Collection<ScoredTextPair> pairs) {
+        this.corpus = request.getCorpus();
+        this.model = request.getModel();
+        this.language = request.getLanguage();
+        this.scoreFunction = request.getScoreFunction();
+        this.pairs = pairs;
+    }
+
+    public String getCorpus() {
+        return corpus;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public Collection<ScoredTextPair> getPairs() {
+        return pairs;
+    }
+
+    public ScoreFunction getScoreFunction() {
+        return scoreFunction;
+    }
 
     @Override
     public String toString() {
-        return "RelatednessRequest{" +
+        return "RelatednessResponse{" +
                 "corpus='" + corpus + '\'' +
                 ", model=" + model +
                 ", language=" + language +

@@ -30,7 +30,7 @@
     <modules>
         <module>indra-service</module>
         <module>indra-core</module>
-        <module>indra-common</module>
+        <module>indra-client</module>
     </modules>
 
     <properties>

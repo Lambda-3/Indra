@@ -31,9 +31,9 @@ import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.RelatednessClientFactory;
 import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.service.resources.RelatednessRequest;
-import org.lambda3.indra.service.resources.RelatednessResource;
-import org.lambda3.indra.service.resources.RelatednessResponse;
+import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.client.RelatednessResource;
+import org.lambda3.indra.client.RelatednessResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,24 +52,15 @@ class RelatednessResourceImpl implements RelatednessResource {
     }
 
     private RelatednessResponse process(RelatednessRequest request) {
-
         Params params = buildParams(request);
         RelatednessClient client = relatednessClientFactory.create(params);
-        RelatednessResult result = client.getRelatedness(request.pairs);
-
-        RelatednessResponse response = new RelatednessResponse();
-        response.corpus = request.corpus;
-        response.language = request.language;
-        response.model = request.model;
-        response.scoreFunction = request.scoreFunction;
-        response.pairs = result.getScores();
-
+        RelatednessResult result = client.getRelatedness(request.getPairs());
+        RelatednessResponse response = new RelatednessResponse(request, result.getScores());
         logger.trace("Response: {}", response);
-
         return response;
     }
 
     private static Params buildParams(RelatednessRequest req) {
-        return new Params(req.corpus, req.scoreFunction, req.language, req.model);
+        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel());
     }
 }

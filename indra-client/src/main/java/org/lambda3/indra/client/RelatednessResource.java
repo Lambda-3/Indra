@@ -1,8 +1,8 @@
-package org.lambda3.indra.common.client;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Common Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,42 +26,21 @@ package org.lambda3.indra.common.client;
  * ==========================License-End===============================
  */
 
-public final class TextPair {
-    public String t1;
-    public String t2;
 
-    public TextPair() { /** To make serialization happy */ }
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-    public TextPair(String t1, String t2) {
-        this.t1 = t1;
-        this.t2 = t2;
-    }
+@Path("relatedness")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public interface RelatednessResource {
 
-
-    @Override
-    public String toString() {
-        return "TermPair{" +
-                "t1='" + t1 + '\'' +
-                ", t2='" + t2 + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TextPair)) return false;
-
-        TextPair textPair = (TextPair) o;
-
-        if (t1 != null ? !t1.equals(textPair.t1) : textPair.t1 != null) return false;
-        return !(t2 != null ? !t2.equals(textPair.t2) : textPair.t2 != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = t1 != null ? t1.hashCode() : 0;
-        result = 31 * result + (t2 != null ? t2.hashCode() : 0);
-        return result;
-    }
+    @POST
+    @Valid
+    @Path("/")
+    RelatednessResponse getRelatedness(RelatednessRequest request);
 }

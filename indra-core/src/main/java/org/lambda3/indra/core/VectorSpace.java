@@ -26,7 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.common.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedPair;
 
 import java.util.List;
 import java.util.Map;

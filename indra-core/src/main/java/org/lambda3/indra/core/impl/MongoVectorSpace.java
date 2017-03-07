@@ -32,7 +32,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.lambda3.indra.common.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.utils.VectorsUtils;

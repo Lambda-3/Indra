@@ -27,9 +27,9 @@ package org.lambda3.indra.core.tests;
  */
 
 import org.lambda3.indra.core.*;
-import org.lambda3.indra.common.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.core.Params;
-import org.lambda3.indra.common.client.ScoredTextPair;
+import org.lambda3.indra.client.ScoredTextPair;
 
 import java.util.*;
 import java.util.stream.Collectors;

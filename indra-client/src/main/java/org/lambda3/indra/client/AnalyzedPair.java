@@ -1,8 +1,8 @@
-package org.lambda3.indra.common.client;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Common Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------

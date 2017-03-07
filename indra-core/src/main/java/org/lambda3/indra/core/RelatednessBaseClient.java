@@ -29,8 +29,8 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.common.client.AnalyzedPair;
-import org.lambda3.indra.common.client.ScoredTextPair;
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.ScoredTextPair;
 
 import java.util.ArrayList;
 import java.util.List;

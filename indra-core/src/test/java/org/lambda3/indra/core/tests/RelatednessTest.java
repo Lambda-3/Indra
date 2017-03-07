@@ -26,8 +26,11 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.*;
-import org.lambda3.indra.common.client.*;
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessResult;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
