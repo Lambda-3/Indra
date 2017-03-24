@@ -31,17 +31,13 @@ import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessClientFactory;
-import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.*;
 import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class IndraDriver {
 
@@ -70,6 +66,16 @@ public class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
     }
 
+    public Collection<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
+        return getRelatedness(pairs, currentParams);
+    }
+    
+    public Collection<ScoredTextPair> getRelatedness(List<TextPair> pairs, Params params) {
+        RelatednessClient relatednessClient = relatednessClientFactory.create(params);
+        RelatednessResult result = relatednessClient.getRelatedness(pairs);
+
+        return result.getScores();
+    }
 
     public Map<String, RealVector> getVectors(List<String> terms) {
         return this.getVectors(terms, this.currentParams);
