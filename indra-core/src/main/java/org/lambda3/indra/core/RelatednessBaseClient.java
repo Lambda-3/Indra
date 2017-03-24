@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class RelatednessBaseClient extends RelatednessClient {
-    private static int MAXSDIMENSIONS = 5000000;
     private VectorSpace vectorSpace;
     private Params params;
 
@@ -68,21 +67,16 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
             VectorPair vectorPair = e.getValue();
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
 
+                double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
+                double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
+
                 if (!vectorSpace.isSparse()) {
-                    double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
-                    double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
                     scoredTextPairs.add(new ScoredTextPair(pair,
                             sim(new ArrayRealVector(v1), new ArrayRealVector(v2), false)));
                 }
                 else {
-                    //TODO: Fix me!
-                    // Currently only ESA is sparse.
-                    // This max value comes from the number of wikipedia articles for english, the largest corpus.
-                    OpenMapRealVector r1 = new OpenMapRealVector(MAXSDIMENSIONS);
-                    OpenMapRealVector r2 = new OpenMapRealVector(MAXSDIMENSIONS);
-                    vectorPair.v1.forEach(r1::setEntry);
-                    vectorPair.v2.forEach(r2::setEntry);
-                    scoredTextPairs.add(new ScoredTextPair(pair, sim(r1, r2, true)));
+                    scoredTextPairs.add(new ScoredTextPair(pair,
+                            sim(new OpenMapRealVector(v1), new OpenMapRealVector(v2), true)));
                 }
 
             } else {

@@ -72,4 +72,6 @@ public abstract class RelatednessClient {
     public final RelatednessResult getRelatedness(List<TextPair> pairs) {
         return new RelatednessResult(doCompute(pairs));
     }
+
+    //public
 }
