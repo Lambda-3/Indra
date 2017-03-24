@@ -33,6 +33,7 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.utils.VectorsUtils;
@@ -47,9 +48,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 class MongoVectorSpace implements VectorSpace {
-    private static String termFieldName = "term";
-    private static String vectorFieldName = "vector";
-    private static String termsCollName = "terms";
+    private static final String TERM_FIELD_NAME = "term";
+    private static final String VECTOR_FIELD_NAME = "vector";
+    private static final String TERMS_COLL_NAME = "terms";
 
     private Map<String, Map<Integer, Double>> vectorsCache = new ConcurrentHashMap<>();
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,7 +74,7 @@ class MongoVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<AnalyzedPair, VectorPair> getVectors(List<AnalyzedPair> pairs) {
+    public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs) {
         if (pairs == null) {
             throw new IllegalArgumentException("pairs can't be null");
         }
@@ -98,11 +99,32 @@ class MongoVectorSpace implements VectorSpace {
         return res;
     }
 
-    private MongoCollection<Document> getColl() {
-        return this.mongoClient.getDatabase(dbName).getCollection(termsCollName);
+    @Override
+    public Map<AnalyzedTerm, Map<Integer, Double>> getVectors(List<AnalyzedTerm> terms) {
+        if (terms == null) {
+            throw new IllegalArgumentException("terms can't be null");
+        }
+
+        Set<String> allTerms = new HashSet<>();
+        terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
+
+        collectVectors(allTerms, getVectorSize());
+
+        Map<AnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
+
+        for (AnalyzedTerm term : terms) {
+            Map<Integer, Double> vector = composeVectors(term.getAnalyzedTokens());
+            vectors.put(term, vector);
+        }
+
+        return vectors;
     }
 
-    private void collectVectors(Set<String> terms, int limit) {
+    private MongoCollection<Document> getColl() {
+        return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
+    }
+
+    private void collectVectors(Collection<String> terms, int limit) {
         Set<String> toFetch = terms.stream()
                 .filter(t -> !this.vectorsCache.containsKey(t))
                 .collect(Collectors.toSet());
@@ -112,11 +134,11 @@ class MongoVectorSpace implements VectorSpace {
 
         if (!toFetch.isEmpty()) {
             logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
-            FindIterable<Document> docs = getColl().find(Filters.in(termFieldName, toFetch));
+            FindIterable<Document> docs = getColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
             if (docs != null) {
                 docs.batchSize(toFetch.size());
                 for (Document doc : docs) {
-                    this.vectorsCache.put(doc.getString(termFieldName), unmarshall(doc, limit));
+                    this.vectorsCache.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, limit));
                 }
             }
         }
@@ -142,7 +164,7 @@ class MongoVectorSpace implements VectorSpace {
     }
 
     private Map<Integer, Double> unmarshall(Document doc, int limit) {
-        final Binary binary = doc.get(vectorFieldName, Binary.class);
+        final Binary binary = doc.get(VECTOR_FIELD_NAME, Binary.class);
         final byte[] b = binary.getData();
         final Map<Integer, Double> vector = new HashMap<>();
 
@@ -158,8 +180,7 @@ class MongoVectorSpace implements VectorSpace {
             }
 
             return vector;
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             logger.error("Fail to read vector data.", e);
         }
         return null;
