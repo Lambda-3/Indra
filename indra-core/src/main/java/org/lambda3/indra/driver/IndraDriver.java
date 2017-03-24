@@ -26,31 +26,82 @@ package org.lambda3.indra.driver;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClientFactory;
+import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class IndraDriver {
 
-    private static final Params DEFAULT_PARAMS = null;
+    private static final String DEFAULT_CORPUS_NAME = "wiki-2014";
+    private static final String DEFAULT_LANGUAGE = "EN";
+    private static final String DEFAULT_DISTRIBUTIONAL_MODEL = "W2V";
+    private static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE, DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
+
+    private static final String DEFAULT_MONGO_URI = null;
+
     private MongoVectorSpaceFactory vectorSpaceFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
 
+    public IndraDriver() {
+        this(DEFAULT_PARAMS);
+    }
+
     public IndraDriver(Params params) {
+        this(params, new MongoVectorSpaceFactory(DEFAULT_MONGO_URI));
+    }
+
+    public IndraDriver(Params params, MongoVectorSpaceFactory vectorSpaceFactory) {
         this.currentParams = params;
-    }
-
-    public List<RealVector> getVectors(List<String> terms) {
-        //VectorSpace currentVectorSpace = vectorSpaceFactory.create(params);
-
-        return null;
-    }
-
-    public IndraDriver(MongoVectorSpaceFactory vectorSpaceFactory) {
+        this.vectorSpaceFactory = vectorSpaceFactory;
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
+    }
+
+
+    public Map<String, RealVector> getVectors(List<String> terms) {
+        return this.getVectors(terms, this.currentParams);
+    }
+
+    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
+        VectorSpace vectorSpace = vectorSpaceFactory.create(params);
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, params.useStemming());
+
+        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+
+        for (String term : terms) {
+            try {
+                List<String> analyzedTokens = analyzer.analyze(term);
+                analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Map<AnalyzedTerm, Map<Integer, Double>> inVectors = vectorSpace.getVectors(analyzedTerms);
+        Map<String, RealVector> outVectors = new HashMap();
+
+        for (AnalyzedTerm term : inVectors.keySet()) {
+            double[] dv = inVectors.get(term).values().stream().mapToDouble(d -> d).toArray();
+            if (vectorSpace.isSparse()) {
+                outVectors.put(term.getTerm(), new OpenMapRealVector(dv));
+            } else {
+                outVectors.put(term.getTerm(), new ArrayRealVector(dv));
+            }
+        }
+
+        return outVectors;
     }
 }

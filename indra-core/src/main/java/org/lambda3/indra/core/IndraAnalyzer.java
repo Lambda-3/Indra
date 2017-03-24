@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class IndraAnalyzer {
+public class IndraAnalyzer {
     private static final int MIN_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 100;
 
@@ -57,7 +57,7 @@ class IndraAnalyzer {
     private Tokenizer tokenizer;
     private TokenStream stream;
 
-    IndraAnalyzer(String lang, boolean stemming) {
+    public IndraAnalyzer(String lang, boolean stemming) {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
@@ -66,7 +66,7 @@ class IndraAnalyzer {
         stream = createStream(lang, stemming, tokenizer);
     }
 
-    List<String> analyze(String text) throws IOException {
+    public List<String> analyze(String text) throws IOException {
         List<String> result = new ArrayList<>();
         try (StringReader reader = new StringReader(text)) {
             tokenizer.setReader(reader);

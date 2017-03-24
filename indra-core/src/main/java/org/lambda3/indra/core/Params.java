@@ -32,9 +32,9 @@ import java.util.Objects;
 
 public final class Params {
     public final String corpusName;
+    public final ScoreFunction func;
     public final String language;
     public final String model;
-    public final ScoreFunction func;
 
     public Params(String corpusName, ScoreFunction func, String language, String model) {
         if (corpusName == null || func == null || language == null || model == null) {
