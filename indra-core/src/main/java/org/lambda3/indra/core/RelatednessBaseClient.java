@@ -58,7 +58,7 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
 
     @Override
     protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectors(pairs);
+        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
 
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
 

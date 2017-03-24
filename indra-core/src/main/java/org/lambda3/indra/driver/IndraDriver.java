@@ -1,4 +1,4 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.driver;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.core;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,19 +26,31 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessClientFactory;
+import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 
 import java.util.List;
-import java.util.Map;
 
-public interface VectorSpace {
+public class IndraDriver {
 
-    boolean isSparse();
+    private static final Params DEFAULT_PARAMS = null;
+    private MongoVectorSpaceFactory vectorSpaceFactory;
+    private RelatednessClientFactory relatednessClientFactory;
+    private Params currentParams;
 
-    int getVectorSize();
+    public IndraDriver(Params params) {
+        this.currentParams = params;
+    }
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> terms);
+    public List<RealVector> getVectors(List<String> terms) {
+        //VectorSpace currentVectorSpace = vectorSpaceFactory.create(params);
 
-    Map<AnalyzedTerm, Map<Integer, Double>> getVectors(List<AnalyzedTerm> terms);
+        return null;
+    }
+
+    public IndraDriver(MongoVectorSpaceFactory vectorSpaceFactory) {
+        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
+    }
 }

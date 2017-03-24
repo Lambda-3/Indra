@@ -26,6 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RelatednessClient {
 
@@ -72,6 +74,4 @@ public abstract class RelatednessClient {
     public final RelatednessResult getRelatedness(List<TextPair> pairs) {
         return new RelatednessResult(doCompute(pairs));
     }
-
-    //public
 }
