@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core;
 
 /*-
  * ==========================License-Start=============================
@@ -25,34 +25,7 @@ package org.lambda3.indra.core.tests;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public abstract class IndraDriver {
 
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
-import org.lambda3.indra.driver.IndraDriver;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
-import java.util.Collections;
-
-public class IndraDriverTest {
-
-    @Test
-    public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        String mongoURI = "mongodb://alphard.fim.uni-passau.de:27017";
-
-        IndraDriver driver = new IndraDriver(params, new MongoVectorSpaceFactory(mongoURI));
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair));
-        Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
-        Assert.assertEquals(pair.t1, scoredPair.t1);
-        Assert.assertEquals(pair.t2, scoredPair.t2);
-    }
 }

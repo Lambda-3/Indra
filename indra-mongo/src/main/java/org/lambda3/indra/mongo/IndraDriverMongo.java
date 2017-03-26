@@ -1,8 +1,8 @@
-package org.lambda3.indra.driver;
+package org.lambda3.indra.mongo;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -33,7 +33,6 @@ import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
-import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class IndraDriver {
+public class IndraDriverMongo {
 
     private static final String DEFAULT_CORPUS_NAME = "wiki-2014";
     private static final String DEFAULT_LANGUAGE = "EN";
@@ -52,11 +51,11 @@ public class IndraDriver {
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
 
-    public IndraDriver(String mongoURI) {
+    public IndraDriverMongo(String mongoURI) {
         this(DEFAULT_PARAMS, new MongoVectorSpaceFactory(mongoURI));
     }
 
-    public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory) {
+    public IndraDriverMongo(Params params, VectorSpaceFactory vectorSpaceFactory) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
         //this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);

@@ -1,8 +1,8 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.mongo;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
