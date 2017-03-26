@@ -90,7 +90,9 @@ public abstract class RelatednessClient {
                 }
 
             } else {
-                new RuntimeException("Translation is not available.");
+                logger.error("Translation is not available.");
+                //TODO check here
+                throw new RuntimeException("Translation is not available.");
             }
         }
 
