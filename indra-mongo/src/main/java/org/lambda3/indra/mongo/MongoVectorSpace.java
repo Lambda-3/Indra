@@ -32,11 +32,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
-import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.utils.VectorsUtils;
+import org.lambda3.indra.core.CachedVectorSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +43,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-class MongoVectorSpace implements VectorSpace {
+class MongoVectorSpace extends CachedVectorSpace {
+
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
     private static final String TERMS_COLL_NAME = "terms";
 
-    private Map<String, Map<Integer, Double>> vectorsCache = new ConcurrentHashMap<>();
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private Map<String, Map<Integer, Double>> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
 
@@ -73,58 +70,13 @@ class MongoVectorSpace implements VectorSpace {
         return 1500;
     }
 
-    @Override
-    public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs) {
-        if (pairs == null) {
-            throw new IllegalArgumentException("pairs can't be null");
-        }
-
-        Map<AnalyzedPair, VectorPair> res = new ConcurrentHashMap<>();
-
-        Set<String> allTerms = new HashSet<>();
-        for (AnalyzedPair p : pairs) {
-            allTerms.addAll(p.getAnalyzedT1().getStemmedTargetTokens());
-            allTerms.addAll(p.getAnalyzedT2().getStemmedTargetTokens());
-        }
-
-        collectVectors(allTerms, getVectorSize());
-
-        for (AnalyzedPair p : pairs) {
-            VectorPair vectorPair = new VectorPair();
-            vectorPair.v1 = composeVectors(p.getAnalyzedT1().getStemmedTargetTokens());
-            vectorPair.v2 = composeVectors(p.getAnalyzedT2().getStemmedTargetTokens());
-            res.put(p, vectorPair);
-        }
-
-        return res;
-    }
-
-    @Override
-    public Map<MutableAnalyzedTerm, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms) {
-        if (terms == null) {
-            throw new IllegalArgumentException("terms can't be null");
-        }
-
-        Set<String> allTerms = new HashSet<>();
-        terms.forEach(t -> allTerms.addAll(t.getStemmedTargetTokens()));
-
-        collectVectors(allTerms, getVectorSize());
-
-        Map<MutableAnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
-
-        for (MutableAnalyzedTerm term : terms) {
-            Map<Integer, Double> vector = composeVectors(term.getStemmedTargetTokens());
-            vectors.put(term, vector);
-        }
-
-        return vectors;
-    }
 
     private MongoCollection<Document> getColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
     }
 
-    private void collectVectors(Collection<String> terms, int limit) {
+    @Override
+    protected void collectVectors(Collection<String> terms, int limit) {
         Set<String> toFetch = terms.stream()
                 .filter(t -> !this.vectorsCache.containsKey(t))
                 .collect(Collectors.toSet());
@@ -144,18 +96,8 @@ class MongoVectorSpace implements VectorSpace {
         }
     }
 
-    //TODO: Decouple this to use different methods of vector composition
-    private Map<Integer, Double> composeVectors(List<String> terms) {
-        logger.trace("Composing {} vectors", terms.size());
-        List<Map<Integer, Double>> vectors = getFromCache(new HashSet<>(terms));
-        if (!vectors.isEmpty()) {
-            return VectorsUtils.add(vectors);
-        }
-
-        return null;
-    }
-
-    private List<Map<Integer, Double>> getFromCache(Set<String> terms) {
+    @Override
+    protected List<Map<Integer, Double>> getFromCache(Set<String> terms) {
         List<Map<Integer, Double>> termVectors = new ArrayList<>();
         terms.stream().
                 filter(t -> this.vectorsCache.containsKey(t)).

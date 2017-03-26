@@ -1,8 +1,13 @@
-package org.lambda3.indra.mongo.tests;
+package org.lambda3.indra.mongo;
+
+import org.lambda3.indra.client.MutableAnalyzedTerm;
+import org.lambda3.indra.core.translation.Translator;
+
+import java.util.List;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -25,34 +30,10 @@ package org.lambda3.indra.mongo.tests;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class MongoTranslator implements Translator {
 
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.mongo.MongoIndraDriver;
-import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+    @Override
+    public void translate(List<MutableAnalyzedTerm> terms) {
 
-import java.util.Collections;
-
-public class IndraDriverTest {
-
-    @Test
-    public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        String mongoURI = "mongodb://alphard.fim.uni-passau.de:27017";
-
-        MongoIndraDriver driver = new MongoIndraDriver(params, new MongoVectorSpaceFactory(mongoURI));
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair));
-        Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
-        Assert.assertEquals(pair.t1, scoredPair.t1);
-        Assert.assertEquals(pair.t2, scoredPair.t2);
     }
 }

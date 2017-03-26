@@ -33,6 +33,8 @@ import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,22 +42,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class IndraDriverMongo {
+public class MongoIndraDriver {
 
     private static final String DEFAULT_CORPUS_NAME = "wiki-2014";
     private static final String DEFAULT_LANGUAGE = "EN";
     private static final String DEFAULT_DISTRIBUTIONAL_MODEL = "W2V";
-    private static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE, DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
+    private static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE,
+            DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
 
-    public IndraDriverMongo(String mongoURI) {
+    public MongoIndraDriver(String mongoURI) {
         this(DEFAULT_PARAMS, new MongoVectorSpaceFactory(mongoURI));
     }
 
-    public IndraDriverMongo(Params params, VectorSpaceFactory vectorSpaceFactory) {
+    public MongoIndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
         //this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
