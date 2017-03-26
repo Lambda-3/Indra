@@ -44,7 +44,7 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
         Collection<ScoredTextPair> scored = new ArrayList<>();
         request.getPairs().forEach(p -> {
-            AnalyzedPair analyzedPair = new AnalyzedPair(p, new AnalyzedTerm(p.t1), new AnalyzedTerm(p.t1));
+            AnalyzedPair analyzedPair = new AnalyzedPair(p);
             ScoredTextPair stp = new ScoredTextPair(analyzedPair, rnd.nextDouble());
             scored.add(stp);
         });

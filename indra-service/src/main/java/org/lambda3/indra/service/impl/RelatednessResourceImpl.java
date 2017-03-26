@@ -26,14 +26,11 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessClient;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.RelatednessClientFactory;
-import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.RelatednessResource;
 import org.lambda3.indra.client.RelatednessResponse;
+import org.lambda3.indra.core.*;
+import org.lambda3.indra.core.translation.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +38,8 @@ class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private RelatednessClientFactory relatednessClientFactory;
 
-    RelatednessResourceImpl(VectorSpaceFactory vectorSpaceFactory) {
-        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
+    RelatednessResourceImpl(VectorSpaceFactory vectorSpaceFactory, Translator translator) {
+        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translator);
     }
 
     @Override

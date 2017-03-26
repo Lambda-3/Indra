@@ -29,7 +29,7 @@ package org.lambda3.indra.driver;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
@@ -59,7 +59,7 @@ public class IndraDriver {
     public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
-        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
+        //this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
     }
 
     public RelatednessResult getRelatedness(List<TextPair> pairs) {
@@ -81,21 +81,21 @@ public class IndraDriver {
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
         IndraAnalyzer analyzer = new IndraAnalyzer(params.language, false);
 
-        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+        List<MutableAnalyzedTerm> analyzedTerms = new LinkedList<>();
 
         for (String term : terms) {
             try {
                 List<String> analyzedTokens = analyzer.analyze(term);
-                //analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
+                //analyzedTerms.add(new MutableAnalyzedTerm(term, analyzedTokens));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        Map<AnalyzedTerm, Map<Integer, Double>> inVectors = vectorSpace.getVectors(analyzedTerms);
+        Map<MutableAnalyzedTerm, Map<Integer, Double>> inVectors = vectorSpace.getVectors(analyzedTerms);
         Map<String, RealVector> outVectors = new HashMap();
 
-        for (AnalyzedTerm term : inVectors.keySet()) {
+        for (MutableAnalyzedTerm term : inVectors.keySet()) {
             double[] dv = inVectors.get(term).values().stream().mapToDouble(d -> d).toArray();
             if (vectorSpace.isSparse()) {
                 outVectors.put(term.getTerm(), new OpenMapRealVector(dv));

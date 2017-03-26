@@ -27,7 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableAnalyzedTerm;
 
 import java.util.List;
 import java.util.Map;
@@ -40,5 +40,5 @@ public interface VectorSpace {
 
     Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> terms);
 
-    Map<AnalyzedTerm, Map<Integer, Double>> getVectors(List<AnalyzedTerm> terms);
+    Map<MutableAnalyzedTerm, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms);
 }

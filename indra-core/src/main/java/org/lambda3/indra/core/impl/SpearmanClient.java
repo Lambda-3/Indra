@@ -31,13 +31,14 @@ import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.core.translation.Translator;
 
 public class SpearmanClient extends RelatednessBaseClient {
 
     private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
 
-    public SpearmanClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
+    public SpearmanClient(Params params, VectorSpace vectorSpace, Translator translator) {
+        super(params, vectorSpace, translator);
     }
 
     @Override

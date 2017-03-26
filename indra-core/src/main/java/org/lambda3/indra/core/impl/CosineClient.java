@@ -30,11 +30,12 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.core.translation.Translator;
 
 public class CosineClient extends RelatednessBaseClient {
 
-    public CosineClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
+    public CosineClient(Params params, VectorSpace vectorSpace, Translator translator) {
+        super(params, vectorSpace, translator);
     }
 
     @Override
