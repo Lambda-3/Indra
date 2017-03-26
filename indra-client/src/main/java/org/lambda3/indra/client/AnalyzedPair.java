@@ -26,39 +26,29 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public final class AnalyzedPair {
-    private final Map<String, List<String>> analyzed = new ConcurrentHashMap<>();
     private final TextPair pair;
+    private final AnalyzedTerm t1;
+    private final AnalyzedTerm t2;
 
-    public AnalyzedPair(TextPair pair) {
-        if (pair == null) {
-            throw new IllegalArgumentException("pair can't be null");
+    public AnalyzedPair(TextPair pair, AnalyzedTerm t1, AnalyzedTerm t2) {
+        if (pair == null || t1 == null || t2 == null) {
+            throw new IllegalArgumentException("pair, t1 and t2 can't be null");
         }
         this.pair = pair;
-    }
-
-    public void add(String text, List<String> tokens) {
-        if (text.equals(pair.t1) || text.equals(pair.t2)) {
-            analyzed.put(text, tokens);
-        }
-        else {
-            throw new RuntimeException("{} not found in the underlying TextPair.");
-        }
+        this.t1 = t1;
+        this.t2 = t2;
     }
 
     public TextPair getTextPair() {
         return this.pair;
     }
 
-    public List<String> getT1() {
-        return analyzed.get(pair.t1);
+    public AnalyzedTerm getAnalyzedT1() {
+        return t1;
     }
 
-    public List<String> getT2() {
-        return analyzed.get(pair.t2);
+    public AnalyzedTerm getAnalyzedT2() {
+        return t2;
     }
 }

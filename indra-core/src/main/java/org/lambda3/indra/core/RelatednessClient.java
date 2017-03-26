@@ -26,17 +26,18 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.translation.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public abstract class RelatednessClient {
 
@@ -45,6 +46,8 @@ public abstract class RelatednessClient {
     protected abstract List<ScoredTextPair> compute(List<AnalyzedPair> pairs);
 
     protected abstract Params getParams();
+
+    protected abstract Translator getTranslator();
 
     private AnalyzedPair doAnalyze(IndraAnalyzer analyzer, TextPair p) {
         try {
@@ -55,15 +58,38 @@ public abstract class RelatednessClient {
         return null;
     }
 
-    private List<ScoredTextPair> doCompute(List<TextPair> pairs)  {
+    private List<ScoredTextPair> doCompute(List<TextPair> pairs) {
         logger.debug("Analyzing {} pairs", pairs.size());
-        IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, getParams().useStemming());
-        List<AnalyzedPair> analyzedPairs = new ArrayList<>();
-        pairs.forEach(p -> {
-            AnalyzedPair analyzedPair = doAnalyze(analyzer, p);
-            if (analyzedPair != null)
-                analyzedPairs.add(doAnalyze(analyzer, p));
-        });
+
+        List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
+        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+
+        boolean stemming = !getParams().translate;
+        IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, stemming);
+
+        for (TextPair pair : pairs) {
+            AnalyzedPair analyzedPair = doAnalyze(analyzer, pair);
+            if (analyzedPair != null) {
+                analyzedPairs.add(analyzedPair);
+
+                analyzedTerms.add(analyzedPair.getAnalyzedT1());
+                analyzedTerms.add(analyzedPair.getAnalyzedT2());
+            }
+        }
+
+        if (getParams().translate) {
+            Translator translator = getTranslator();
+            if (translator != null) {
+                translator.translate(analyzedTerms);
+
+                for (AnalyzedTerm term : analyzedTerms) {
+                    term.setStemmedTargetTokens(analyzer.stem(term.getTranslatedTokens()));
+                }
+
+            } else {
+                new RuntimeException("Translation is not available.");
+            }
+        }
 
         logger.debug("Computing relatedness..");
         List<ScoredTextPair> r = compute(analyzedPairs);

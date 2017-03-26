@@ -31,13 +31,15 @@ import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
 import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class IndraDriver {
 
@@ -46,35 +48,29 @@ public class IndraDriver {
     private static final String DEFAULT_DISTRIBUTIONAL_MODEL = "W2V";
     private static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE, DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
 
-    private static final String DEFAULT_MONGO_URI = null;
-
-    private MongoVectorSpaceFactory vectorSpaceFactory;
+    private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
 
-    public IndraDriver() {
-        this(DEFAULT_PARAMS);
+    public IndraDriver(String mongoURI) {
+        this(DEFAULT_PARAMS, new MongoVectorSpaceFactory(mongoURI));
     }
 
-    public IndraDriver(Params params) {
-        this(params, new MongoVectorSpaceFactory(DEFAULT_MONGO_URI));
-    }
-
-    public IndraDriver(Params params, MongoVectorSpaceFactory vectorSpaceFactory) {
+    public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory);
     }
 
-    public Collection<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
+    public RelatednessResult getRelatedness(List<TextPair> pairs) {
         return getRelatedness(pairs, currentParams);
     }
-    
-    public Collection<ScoredTextPair> getRelatedness(List<TextPair> pairs, Params params) {
+
+    public RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
         RelatednessClient relatednessClient = relatednessClientFactory.create(params);
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
 
-        return result.getScores();
+        return result;
     }
 
     public Map<String, RealVector> getVectors(List<String> terms) {
@@ -83,14 +79,14 @@ public class IndraDriver {
 
     public Map<String, RealVector> getVectors(List<String> terms, Params params) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, params.useStemming());
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, false);
 
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
 
         for (String term : terms) {
             try {
                 List<String> analyzedTokens = analyzer.analyze(term);
-                analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
+                //analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
             } catch (IOException e) {
                 e.printStackTrace();
             }

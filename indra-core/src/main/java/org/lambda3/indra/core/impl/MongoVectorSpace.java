@@ -83,16 +83,16 @@ class MongoVectorSpace implements VectorSpace {
 
         Set<String> allTerms = new HashSet<>();
         for (AnalyzedPair p : pairs) {
-            allTerms.addAll(p.getT1());
-            allTerms.addAll(p.getT2());
+            allTerms.addAll(p.getAnalyzedT1().getStemmedTargetTokens());
+            allTerms.addAll(p.getAnalyzedT2().getStemmedTargetTokens());
         }
 
         collectVectors(allTerms, getVectorSize());
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
-            vectorPair.v1 = composeVectors(p.getT1());
-            vectorPair.v2 = composeVectors(p.getT2());
+            vectorPair.v1 = composeVectors(p.getAnalyzedT1().getStemmedTargetTokens());
+            vectorPair.v2 = composeVectors(p.getAnalyzedT2().getStemmedTargetTokens());
             res.put(p, vectorPair);
         }
 
@@ -106,14 +106,14 @@ class MongoVectorSpace implements VectorSpace {
         }
 
         Set<String> allTerms = new HashSet<>();
-        terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
+        terms.forEach(t -> allTerms.addAll(t.getStemmedTargetTokens()));
 
         collectVectors(allTerms, getVectorSize());
 
         Map<AnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
 
         for (AnalyzedTerm term : terms) {
-            Map<Integer, Double> vector = composeVectors(term.getAnalyzedTokens());
+            Map<Integer, Double> vector = composeVectors(term.getStemmedTargetTokens());
             vectors.put(term, vector);
         }
 

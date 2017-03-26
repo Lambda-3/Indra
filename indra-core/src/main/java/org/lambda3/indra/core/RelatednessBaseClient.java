@@ -31,6 +31,7 @@ import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.core.translation.Translator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +40,16 @@ import java.util.Map;
 public abstract class RelatednessBaseClient extends RelatednessClient {
     private VectorSpace vectorSpace;
     private Params params;
+    private Translator translator;
 
+    //TODO Translator translator
     protected RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
         if (params == null || vectorSpace == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }
         this.vectorSpace = vectorSpace;
         this.params = params;
-
+        this.translator = translator;
     }
 
     protected abstract double sim(RealVector r1, RealVector r2, boolean sparse);
@@ -54,6 +57,11 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
     @Override
     protected Params getParams() {
         return params;
+    }
+
+    @Override
+    protected Translator getTranslator() {
+        return this.translator;
     }
 
     @Override
@@ -73,8 +81,7 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
                 if (!vectorSpace.isSparse()) {
                     scoredTextPairs.add(new ScoredTextPair(pair,
                             sim(new ArrayRealVector(v1), new ArrayRealVector(v2), false)));
-                }
-                else {
+                } else {
                     scoredTextPairs.add(new ScoredTextPair(pair,
                             sim(new OpenMapRealVector(v1), new OpenMapRealVector(v2), true)));
                 }
