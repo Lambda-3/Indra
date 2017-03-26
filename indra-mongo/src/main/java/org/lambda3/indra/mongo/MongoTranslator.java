@@ -32,6 +32,12 @@ import java.util.List;
  */
 public class MongoTranslator implements Translator {
 
+    private String mongoURI;
+
+    public MongoTranslator(String mongoURI) {
+        this.mongoURI = mongoURI;
+    }
+
     @Override
     public void translate(List<MutableAnalyzedTerm> terms) {
 
