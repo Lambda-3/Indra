@@ -29,17 +29,18 @@ package org.lambda3.indra.service.impl;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.RelatednessResource;
 import org.lambda3.indra.client.RelatednessResponse;
-import org.lambda3.indra.core.*;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private RelatednessClientFactory relatednessClientFactory;
+    private IndraDriver driver;
 
-    RelatednessResourceImpl(VectorSpaceFactory vectorSpaceFactory, Translator translator) {
-        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translator);
+    RelatednessResourceImpl(IndraDriver driver) {
+        this.driver = driver;
     }
 
     @Override
@@ -50,8 +51,7 @@ class RelatednessResourceImpl implements RelatednessResource {
 
     private RelatednessResponse process(RelatednessRequest request) {
         Params params = buildParams(request);
-        RelatednessClient client = relatednessClientFactory.create(params);
-        RelatednessResult result = client.getRelatedness(request.getPairs());
+        RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
         RelatednessResponse response = new RelatednessResponse(request, result.getScores());
         logger.trace("Response: {}", response);
         return response;
