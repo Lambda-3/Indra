@@ -27,5 +27,4 @@ package org.lambda3.indra.core;
  */
 public abstract class IndraDriver {
 
-
 }
