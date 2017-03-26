@@ -35,8 +35,13 @@ public final class Params {
     public final ScoreFunction func;
     public final String language;
     public final String model;
+    public final boolean translate;
 
     public Params(String corpusName, ScoreFunction func, String language, String model) {
+        this(corpusName, func, language, model, false);
+    }
+
+    public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate) {
         if (corpusName == null || func == null || language == null || model == null) {
             throw new IllegalArgumentException("All arguments are mandatory!");
         }
@@ -45,10 +50,7 @@ public final class Params {
         this.func = func;
         this.language = language;
         this.model = model;
-    }
-
-    public boolean useStemming() {
-        return true; //TODO: Will change or varies with the other params?
+        this.translate = translate;
     }
 
     public String getDBName() {

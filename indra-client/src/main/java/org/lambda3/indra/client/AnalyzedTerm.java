@@ -30,20 +30,40 @@ import java.util.List;
 
 public class AnalyzedTerm {
 
-    private String term;
+    private final String term;
+    private List<String> originalTokens;
+    private List<String> translatedTokens = null;
+    private List<String> stemmedTargetTokens;
 
-    private List<String> analyzedTokens;
-
-    public AnalyzedTerm(String term, List<String> analyzedTokens) {
+    public AnalyzedTerm(String term) {
         this.term = term;
-        this.analyzedTokens = analyzedTokens;
     }
 
     public String getTerm() {
         return term;
     }
 
-    public List<String> getAnalyzedTokens() {
-        return analyzedTokens;
+    public void setOriginalTokens(List<String> originalTokens) {
+        this.originalTokens = originalTokens;
+    }
+
+    public void setTranslatedTokens(List<String> translatedTokens) {
+        this.translatedTokens = translatedTokens;
+    }
+
+    public List<String> getOriginalTokens() {
+        return originalTokens;
+    }
+
+    public List<String> getTranslatedTokens() {
+        return translatedTokens;
+    }
+
+    public void setStemmedTargetTokens(List<String> stemmedTargetTokens) {
+        this.stemmedTargetTokens = stemmedTargetTokens;
+    }
+
+    public List<String> getStemmedTargetTokens() {
+        return stemmedTargetTokens;
     }
 }

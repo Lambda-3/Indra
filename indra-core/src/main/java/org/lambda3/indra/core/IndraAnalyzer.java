@@ -38,13 +38,16 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.TextPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tartarus.snowball.SnowballProgram;
 import org.tartarus.snowball.ext.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -54,6 +57,8 @@ public class IndraAnalyzer {
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
+    private String lang;
+    private boolean stemming;
     private Tokenizer tokenizer;
     private TokenStream stream;
 
@@ -62,6 +67,8 @@ public class IndraAnalyzer {
             throw new IllegalArgumentException("lang is missing");
         }
         logger.debug("Creating analyzer, lang={} (stemming={})", lang, stemming);
+        this.lang = lang;
+        this.stemming = stemming;
         tokenizer = new StandardTokenizer();
         stream = createStream(lang, stemming, tokenizer);
     }
@@ -75,8 +82,7 @@ public class IndraAnalyzer {
             while (stream.incrementToken()) {
                 result.add(cattr.toString());
             }
-        }
-        finally {
+        } finally {
             stream.end();
             stream.close();
         }
@@ -85,10 +91,40 @@ public class IndraAnalyzer {
     }
 
     AnalyzedPair analyze(TextPair pair) throws IOException {
-        AnalyzedPair analyzedPair = new AnalyzedPair(pair);
-        analyzedPair.add(pair.t1, analyze(pair.t1));
-        analyzedPair.add(pair.t2, analyze(pair.t2));
-        return analyzedPair;
+        AnalyzedTerm at1 = new AnalyzedTerm(pair.t1);
+        AnalyzedTerm at2 = new AnalyzedTerm(pair.t2);
+
+        if (this.stemming) {
+            at1.setStemmedTargetTokens(analyze(pair.t1));
+            at2.setStemmedTargetTokens(analyze(pair.t2));
+        } else {
+            at1.setOriginalTokens(analyze(pair.t1));
+            at2.setOriginalTokens(analyze(pair.t2));
+        }
+
+        return new AnalyzedPair(pair, at1, at2);
+    }
+
+    public List<String> stem(List<String> tokens) {
+        //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
+        int numberOfSteps = 3;
+
+        List<String> stemmed = new LinkedList<>();
+
+        SnowballProgram stemmer = getStemmer(this.lang);
+        for (String token : tokens) {
+            String stemmedToken = token;
+
+            for (int i = 0; i < numberOfSteps; i++) {
+                stemmer.setCurrent(stemmedToken);
+                stemmer.stem();
+                stemmedToken = stemmer.getCurrent();
+            }
+
+            stemmed.add(stemmedToken);
+        }
+
+        return stemmed;
     }
 
     private TokenStream createStream(String lang, boolean stemming, Tokenizer tokenizer) {
@@ -97,36 +133,49 @@ public class IndraAnalyzer {
         StopFilter stopFilterStream = getStopFilter(lang, stream);
         stream = stopFilterStream != null ? stopFilterStream : stream;
 
-        if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO"))
+        if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
             stream = new LengthFilter(stream, MIN_WORD_LENGTH, MAX_WORD_LENGTH);
+        }
 
-        TokenStream stemmerStream = stemming ? getStemmer(lang, stream) : null;
-        stream = stemmerStream != null ? stemmerStream : stream;
+        if (stemming) {
+            stream = getStemmerFilter(lang, stream);
+        }
 
         stream = new LowerCaseFilter(stream);
         return new ASCIIFoldingFilter(stream);
     }
 
-    private SnowballFilter getStemmer(String lang, TokenStream stream) {
+    private TokenStream getStemmerFilter(String lang, TokenStream stream) {
+        SnowballProgram stemmer = getStemmer(lang);
+
+        if (stemmer != null) {
+            //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
+            return new SnowballFilter(new SnowballFilter(new SnowballFilter(stream, stemmer), stemmer), stemmer);
+        } else {
+            return stream;
+        }
+    }
+
+    private SnowballProgram getStemmer(String lang) {
         switch (lang.toUpperCase()) {
             case "EN":
-                return new SnowballFilter(stream, new EnglishStemmer());
+                return new EnglishStemmer();
             case "PT":
-                return new SnowballFilter(stream, new PortugueseStemmer());
+                return new PortugueseStemmer();
             case "ES":
-                return new SnowballFilter(stream, new SpanishStemmer());
+                return new SpanishStemmer();
             case "DE":
-                return new SnowballFilter(stream, new GermanStemmer());
+                return new GermanStemmer();
             case "FR":
-                return new SnowballFilter(stream, new FrenchStemmer());
+                return new FrenchStemmer();
             case "SV":
-                return new SnowballFilter(stream, new SwedishStemmer());
+                return new SwedishStemmer();
             case "IT":
-                return new SnowballFilter(stream, new ItalianStemmer());
+                return new ItalianStemmer();
             case "NL":
-                return new SnowballFilter(stream, new DutchStemmer());
+                return new DutchStemmer();
             case "RU":
-                return new SnowballFilter(stream, new RussianStemmer());
+                return new RussianStemmer();
 
             case "AR":
             case "FA":
@@ -158,12 +207,10 @@ public class IndraAnalyzer {
 
                 }
                 return new StopFilter(stream, stopWords);
-            }
-            else{
+            } else {
                 logger.warn("No stop words found for lang={}", lang);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error creating stop filter for lang={}", lang, e);
         }
         return null;

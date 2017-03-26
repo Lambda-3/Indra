@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.translation;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.core.tests;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,39 +26,18 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.*;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.client.AnalyzedTerm;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
-public class RelatednessDummyClient extends RelatednessClient {
+public class Translator {
 
-    private static Random rnd = new Random();
-    private final Params params;
+    /**
+     * Translate each AnalyzedTerm token by token and store into translatedTokens.
+     *
+     * @param terms
+     */
+    public void translate(List<AnalyzedTerm> terms) {
 
-    public RelatednessDummyClient(Params params) {
-        this.params = params;
     }
-
-    @Override
-    protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        return pairs.stream().
-                map(p -> new ScoredTextPair(p, rnd.nextDouble())).
-                collect(Collectors.toList());
-    }
-
-    @Override
-    protected Params getParams() {
-        return params;
-    }
-
-    @Override
-    protected Translator getTranslator() {
-        return null;
-    }
-
 }
