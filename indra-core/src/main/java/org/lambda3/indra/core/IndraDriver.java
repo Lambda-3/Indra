@@ -1,8 +1,5 @@
 package org.lambda3.indra.core;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.OpenMapRealVector;
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
@@ -11,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,11 +68,11 @@ public abstract class IndraDriver {
         return result;
     }
 
-    public Map<String, RealVector> getVectors(List<String> terms) {
+    public Map<String, Map<Integer, Double>> getVectors(List<String> terms) {
         return this.getVectors(terms, this.currentParams);
     }
 
-    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
+    public Map<String, Map<Integer, Double>> getVectors(List<String> terms, Params params) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
         IndraAnalyzer analyzer = new IndraAnalyzer(params.language, false);
 
@@ -91,18 +87,6 @@ public abstract class IndraDriver {
             }
         }
 
-        Map<MutableAnalyzedTerm, Map<Integer, Double>> inVectors = vectorSpace.getVectors(analyzedTerms);
-        Map<String, RealVector> outVectors = new HashMap();
-
-        for (MutableAnalyzedTerm term : inVectors.keySet()) {
-            double[] dv = inVectors.get(term).values().stream().mapToDouble(d -> d).toArray();
-            if (vectorSpace.isSparse()) {
-                outVectors.put(term.getTerm(), new OpenMapRealVector(dv));
-            } else {
-                outVectors.put(term.getTerm(), new ArrayRealVector(dv));
-            }
-        }
-
-        return outVectors;
+        return vectorSpace.getVectors(analyzedTerms);
     }
 }

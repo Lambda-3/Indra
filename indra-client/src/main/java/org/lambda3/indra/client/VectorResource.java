@@ -1,8 +1,8 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.core;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,19 +26,20 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-import java.util.List;
-import java.util.Map;
+@Path("vector")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public interface VectorResource {
 
-public interface VectorSpace {
-
-    boolean isSparse();
-
-    int getVectorSize();
-
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> terms);
-
-    Map<String, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms);
+    @POST
+    @Valid
+    @Path("/")
+    VectorResponse getVector(VectorRequest request);
 }

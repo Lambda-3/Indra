@@ -69,7 +69,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<MutableAnalyzedTerm, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms) {
+    public Map<String, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms) {
         if (terms == null) {
             throw new IllegalArgumentException("terms can't be null");
         }
@@ -79,11 +79,11 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
         collectVectors(allTerms, getVectorSize());
 
-        Map<MutableAnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
+        Map<String, Map<Integer, Double>> vectors = new HashMap<>();
 
         for (MutableAnalyzedTerm term : terms) {
             Map<Integer, Double> vector = composeVectors(term.getStemmedTargetTokens());
-            vectors.put(term, vector);
+            vectors.put(term.getTerm(), vector);
         }
 
         return vectors;

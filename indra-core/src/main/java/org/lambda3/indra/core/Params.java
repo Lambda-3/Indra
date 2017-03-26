@@ -37,6 +37,10 @@ public final class Params {
     public final String model;
     public final boolean translate;
 
+    public Params(String corpusName, String language, String model, boolean translate) {
+        this(corpusName, ScoreFunction.COSINE, language, model, translate);
+    }
+
     public Params(String corpusName, ScoreFunction func, String language, String model) {
         this(corpusName, func, language, model, false);
     }

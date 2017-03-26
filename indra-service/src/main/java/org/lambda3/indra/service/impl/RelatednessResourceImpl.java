@@ -26,16 +26,16 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.RelatednessResource;
-import org.lambda3.indra.client.RelatednessResponse;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RelatednessResourceImpl implements RelatednessResource {
+import java.util.Map;
+
+class RelatednessResourceImpl implements RelatednessResource, VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
@@ -45,7 +45,7 @@ class RelatednessResourceImpl implements RelatednessResource {
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
-        logger.trace("User Request: {}", request);
+        logger.trace("getRelatedness - User Request: {}", request);
         return process(request);
     }
 
@@ -57,7 +57,20 @@ class RelatednessResourceImpl implements RelatednessResource {
         return response;
     }
 
-    private static Params buildParams(RelatednessRequest req) {
-        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel());
+    @Override
+    public VectorResponse getVector(VectorRequest req) {
+        logger.trace("getVector - User Request: {}", req);
+        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate());
+        Map<String, Map<Integer, Double>> results = this.driver.getVectors(req.getTerms(), params);
+
+        VectorResponse response = new VectorResponse(req, results);
+        logger.trace("Response: {}", response);
+        return response;
     }
+
+    private static Params buildParams(RelatednessRequest req) {
+        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate());
+    }
+
+
 }

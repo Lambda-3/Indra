@@ -1,5 +1,9 @@
 package org.lambda3.indra.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
+
 /*-
  * ==========================License-Start=============================
  * Indra Client Module
@@ -12,10 +16,10 @@ package org.lambda3.indra.client;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,47 +29,30 @@ package org.lambda3.indra.client;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class VectorResponse {
 
-import java.util.List;
-import java.util.Objects;
-
-public final class RelatednessRequest {
-
+    @JsonProperty
     private String corpus;
+    @JsonProperty
     private String model;
+    @JsonProperty
     private String language;
-    private List<TextPair> pairs;
-    private ScoreFunction scoreFunction;
+    @JsonProperty
     private boolean translate = false;
+    @JsonProperty
+    private Map<String, Map<Integer, Double>> terms;
 
-    public RelatednessRequest corpus(String corpusName) {
-        this.corpus = Objects.requireNonNull(corpusName);
-        return this;
+    private VectorResponse() {
+        // happy serializer
     }
 
-    public RelatednessRequest model(String model) {
-        this.model = Objects.requireNonNull(model);
-        return this;
-    }
-
-    public RelatednessRequest language(String language) {
-        this.language = Objects.requireNonNull(language);
-        return this;
-    }
-
-    public RelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
-        return this;
-    }
-
-    public RelatednessRequest pairs(List<TextPair> pairs) {
-        this.pairs = Objects.requireNonNull(pairs);
-        return this;
-    }
-
-    public RelatednessRequest translate(boolean translate) {
-        this.translate = translate;
-        return this;
+    //TODO distinguish between sparse and dense vector.
+    public VectorResponse(VectorRequest request, Map<String, Map<Integer, Double>> terms) {
+        this.corpus = request.getCorpus();
+        this.model = request.getModel();
+        this.language = request.getLanguage();
+        this.translate = request.isTranslate();
+        this.terms = terms;
     }
 
     public String getCorpus() {
@@ -80,27 +67,22 @@ public final class RelatednessRequest {
         return language;
     }
 
-    public List<TextPair> getPairs() {
-        return pairs;
-    }
-
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
-    }
-
     public boolean isTranslate() {
         return translate;
     }
 
+    public Map<String, Map<Integer, Double>> getTerms() {
+        return terms;
+    }
+
     @Override
     public String toString() {
-        return "RelatednessRequest{" +
+        return "VectorResponse{" +
                 "corpus='" + corpus + '\'' +
-                ", model=" + model +
-                ", language=" + language +
-                ", pairs=" + pairs +
-                ", scoreFunction=" + scoreFunction +
+                ", model='" + model + '\'' +
+                ", language='" + language + '\'' +
                 ", translate=" + translate +
+                ", terms=" + terms +
                 '}';
     }
 }
