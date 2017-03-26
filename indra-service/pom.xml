@@ -87,7 +87,7 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3</groupId>
-            <artifactId>indra-core</artifactId>
+            <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
 

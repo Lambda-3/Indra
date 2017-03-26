@@ -31,7 +31,7 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.lambda3.indra.core.impl.MongoVectorSpaceFactory;
+import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public final class Server {
     private static final boolean mockMode;
     private static final String mongoURI;
 
-    static{
+    static {
         protocol = "http://";
         host = System.getProperty("indra.http.host", "localhost");
         port = System.getProperty("indra.http.port", "8916");
@@ -70,8 +70,7 @@ public final class Server {
         if (mockMode) {
             logger.warn("MOCK mode.");
             rc.register(new MockedRelatednessResourceImpl());
-        }
-        else {
+        } else {
             MongoVectorSpaceFactory vectorSpaceFactory = new MongoVectorSpaceFactory(mongoURI);
             rc.register(new RelatednessResourceImpl(vectorSpaceFactory, null));
         }
