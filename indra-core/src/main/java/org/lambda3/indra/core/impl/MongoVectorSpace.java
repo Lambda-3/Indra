@@ -33,7 +33,7 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.utils.VectorsUtils;
@@ -100,7 +100,7 @@ class MongoVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<AnalyzedTerm, Map<Integer, Double>> getVectors(List<AnalyzedTerm> terms) {
+    public Map<MutableAnalyzedTerm, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms) {
         if (terms == null) {
             throw new IllegalArgumentException("terms can't be null");
         }
@@ -110,9 +110,9 @@ class MongoVectorSpace implements VectorSpace {
 
         collectVectors(allTerms, getVectorSize());
 
-        Map<AnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
+        Map<MutableAnalyzedTerm, Map<Integer, Double>> vectors = new HashMap<>();
 
-        for (AnalyzedTerm term : terms) {
+        for (MutableAnalyzedTerm term : terms) {
             Map<Integer, Double> vector = composeVectors(term.getStemmedTargetTokens());
             vectors.put(term, vector);
         }

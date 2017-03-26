@@ -28,14 +28,14 @@ package org.lambda3.indra.client;
 
 import java.util.List;
 
-public class AnalyzedTerm {
+public class MutableAnalyzedTerm {
 
     private final String term;
     private List<String> originalTokens;
     private List<String> translatedTokens = null;
     private List<String> stemmedTargetTokens;
 
-    public AnalyzedTerm(String term) {
+    public MutableAnalyzedTerm(String term) {
         this.term = term;
     }
 

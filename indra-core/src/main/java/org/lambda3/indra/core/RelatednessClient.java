@@ -27,7 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.translation.Translator;
@@ -62,7 +62,7 @@ public abstract class RelatednessClient {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+        List<MutableAnalyzedTerm> analyzedTerms = new LinkedList<>();
 
         boolean stemming = !getParams().translate;
         IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, stemming);
@@ -78,12 +78,15 @@ public abstract class RelatednessClient {
         }
 
         if (getParams().translate) {
+            logger.debug("Translating terms..");
+
             Translator translator = getTranslator();
             if (translator != null) {
                 translator.translate(analyzedTerms);
+                IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.targetLang, false);
 
-                for (AnalyzedTerm term : analyzedTerms) {
-                    term.setStemmedTargetTokens(analyzer.stem(term.getTranslatedTokens()));
+                for (MutableAnalyzedTerm term : analyzedTerms) {
+                    term.setStemmedTargetTokens(newLangAnalyzer.stem(term.getTranslatedTokens()));
                 }
 
             } else {

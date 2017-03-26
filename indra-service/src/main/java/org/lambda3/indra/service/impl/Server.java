@@ -73,7 +73,7 @@ public final class Server {
         }
         else {
             MongoVectorSpaceFactory vectorSpaceFactory = new MongoVectorSpaceFactory(mongoURI);
-            rc.register(new RelatednessResourceImpl(vectorSpaceFactory));
+            rc.register(new RelatednessResourceImpl(vectorSpaceFactory, null));
         }
 
         httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);

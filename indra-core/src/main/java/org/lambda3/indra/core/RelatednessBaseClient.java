@@ -42,11 +42,15 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
     private Params params;
     private Translator translator;
 
-    //TODO Translator translator
-    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
+    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace, Translator translator) {
         if (params == null || vectorSpace == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }
+
+        if (params.translate && translator == null) {
+            throw new IllegalArgumentException("Translate-based relatedness demands a translator.");
+        }
+
         this.vectorSpace = vectorSpace;
         this.params = params;
         this.translator = translator;

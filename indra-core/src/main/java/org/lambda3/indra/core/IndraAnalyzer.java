@@ -38,7 +38,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.TextPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +91,9 @@ public class IndraAnalyzer {
     }
 
     AnalyzedPair analyze(TextPair pair) throws IOException {
-        AnalyzedTerm at1 = new AnalyzedTerm(pair.t1);
-        AnalyzedTerm at2 = new AnalyzedTerm(pair.t2);
+        AnalyzedPair analyzedPair = new AnalyzedPair(pair);
+        MutableAnalyzedTerm at1 = analyzedPair.getAnalyzedT1();
+        MutableAnalyzedTerm at2 = analyzedPair.getAnalyzedT2();
 
         if (this.stemming) {
             at1.setStemmedTargetTokens(analyze(pair.t1));
@@ -102,7 +103,7 @@ public class IndraAnalyzer {
             at2.setOriginalTokens(analyze(pair.t2));
         }
 
-        return new AnalyzedPair(pair, at1, at2);
+        return analyzedPair;
     }
 
     public List<String> stem(List<String> tokens) {

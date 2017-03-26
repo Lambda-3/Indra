@@ -28,27 +28,27 @@ package org.lambda3.indra.client;
 
 public final class AnalyzedPair {
     private final TextPair pair;
-    private final AnalyzedTerm t1;
-    private final AnalyzedTerm t2;
+    private final MutableAnalyzedTerm t1;
+    private final MutableAnalyzedTerm t2;
 
-    public AnalyzedPair(TextPair pair, AnalyzedTerm t1, AnalyzedTerm t2) {
-        if (pair == null || t1 == null || t2 == null) {
-            throw new IllegalArgumentException("pair, t1 and t2 can't be null");
+    public AnalyzedPair(TextPair pair) {
+        if (pair == null) {
+            throw new IllegalArgumentException("pair can't be null");
         }
         this.pair = pair;
-        this.t1 = t1;
-        this.t2 = t2;
+        this.t1 = new MutableAnalyzedTerm((pair.t1));
+        this.t2 = new MutableAnalyzedTerm((pair.t2));
     }
 
     public TextPair getTextPair() {
         return this.pair;
     }
 
-    public AnalyzedTerm getAnalyzedT1() {
+    public MutableAnalyzedTerm getAnalyzedT1() {
         return t1;
     }
 
-    public AnalyzedTerm getAnalyzedT2() {
+    public MutableAnalyzedTerm getAnalyzedT2() {
         return t2;
     }
 }

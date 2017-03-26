@@ -31,11 +31,12 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessBaseClient;
 import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.core.translation.Translator;
 
 public class ChebyshevClient extends RelatednessBaseClient {
 
-    public ChebyshevClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
+    public ChebyshevClient(Params params, VectorSpace vectorSpace, Translator translator) {
+        super(params, vectorSpace, translator);
     }
 
     @Override
