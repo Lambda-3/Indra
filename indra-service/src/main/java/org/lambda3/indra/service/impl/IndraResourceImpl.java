@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-class RelatednessResourceImpl implements RelatednessResource, VectorResource {
+class IndraResourceImpl implements RelatednessResource, VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
-    RelatednessResourceImpl(IndraDriver driver) {
+    IndraResourceImpl(IndraDriver driver) {
         this.driver = driver;
     }
 

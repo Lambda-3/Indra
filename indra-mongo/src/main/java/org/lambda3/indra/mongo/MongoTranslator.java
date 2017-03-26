@@ -1,9 +1,13 @@
 package org.lambda3.indra.mongo;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.core.translation.Translator;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*-
  * ==========================License-Start=============================
@@ -32,10 +36,23 @@ import java.util.List;
  */
 public class MongoTranslator implements Translator {
 
-    private String mongoURI;
+    private static final String LEX_COLLECTION = "lex";
+    private static final String TERM_FIELD = "term";
+    private static final String TRANSLATION_FIELD = "tr";
+
+    private static final String DB_NAME_SUFFIX = "";
+
+    private MongoClient mongoClient;
+    private Set<String> availableModels = new HashSet<>();
 
     public MongoTranslator(String mongoURI) {
-        this.mongoURI = mongoURI;
+        if (mongoURI == null || mongoURI.isEmpty()) {
+            throw new IllegalArgumentException("mongoURI can't be null nor empty");
+        }
+        this.mongoClient = new MongoClient(new MongoClientURI(mongoURI));
+        for (String s : mongoClient.listDatabaseNames()) {
+            availableModels.add(s);
+        }
     }
 
     @Override
