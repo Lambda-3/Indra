@@ -26,6 +26,7 @@ package org.lambda3.indra.mongo;
  * ==========================License-End===============================
  */
 
+import com.mongodb.MongoClient;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.Params;
 
@@ -36,7 +37,7 @@ public class MongoIndraDriver extends IndraDriver {
     }
 
     public MongoIndraDriver(Params params, String mongoURI) {
-        super(params, new MongoVectorSpaceFactory(mongoURI), new MongoTranslator(mongoURI));
+        super(params, new MongoVectorSpaceFactory(mongoURI), null);
     }
 
 }
