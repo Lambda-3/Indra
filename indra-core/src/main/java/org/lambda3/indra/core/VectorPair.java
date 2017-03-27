@@ -26,15 +26,16 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import java.util.Map;
+import org.apache.commons.math3.linear.RealVector;
 
 public final class VectorPair {
-    public Map<Integer, Double> v1;
-    public Map<Integer, Double> v2;
+    public RealVector v1;
+    public RealVector v2;
 
-    public VectorPair() { }
+    public VectorPair() {
+    }
 
-    public VectorPair(Map<Integer, Double> v1, Map<Integer, Double> v2) {
+    public VectorPair(RealVector v1, RealVector v2) {
         this.v1 = v1;
         this.v2 = v2;
     }

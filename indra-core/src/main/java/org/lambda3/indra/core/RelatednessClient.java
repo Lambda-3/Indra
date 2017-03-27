@@ -99,6 +99,7 @@ public abstract class RelatednessClient {
         logger.debug("Computing relatedness..");
         List<ScoredTextPair> r = compute(analyzedPairs);
         logger.debug("Done.");
+
         return r;
     }
 

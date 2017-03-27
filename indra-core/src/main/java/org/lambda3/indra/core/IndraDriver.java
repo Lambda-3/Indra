@@ -1,5 +1,7 @@
 package org.lambda3.indra.core;
 
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
@@ -8,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +71,23 @@ public abstract class IndraDriver {
         return result;
     }
 
-    public Map<String, Map<Integer, Double>> getVectors(List<String> terms) {
+    public Map<String, RealVector> getVectors(List<String> terms) {
         return this.getVectors(terms, this.currentParams);
     }
 
-    public Map<String, Map<Integer, Double>> getVectors(List<String> terms, Params params) {
+    public Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
+        Map<String, RealVector> inVectors = getVectors(terms, params);
+
+        Map<String, Map<Integer, Double>> outVectors = new HashMap<>();
+        for (String term : inVectors.keySet()) {
+            RealVector realVector = inVectors.get(term);
+            outVectors.put(term, RealVectorUtil.vectorToMap(realVector));
+        }
+
+        return outVectors;
+    }
+
+    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
         IndraAnalyzer analyzer = new IndraAnalyzer(params.language, false);
 
@@ -81,7 +96,7 @@ public abstract class IndraDriver {
         for (String term : terms) {
             try {
                 List<String> analyzedTokens = analyzer.analyze(term);
-                //analyzedTerms.add(new MutableAnalyzedTerm(term, analyzedTokens));
+                //TODO broken analyzedTerms.add(new MutableAnalyzedTerm(term, analyzedTokens));
             } catch (IOException e) {
                 e.printStackTrace();
             }
