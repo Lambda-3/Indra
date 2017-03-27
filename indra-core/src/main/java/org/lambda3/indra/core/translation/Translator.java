@@ -26,7 +26,7 @@ package org.lambda3.indra.core.translation;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.MutableAnalyzedTerm;
+import org.lambda3.indra.client.MutableTranslatedTerm;
 
 import java.util.List;
 
@@ -35,9 +35,9 @@ public interface Translator {
     public final String targetLang = "EN";
 
     /**
-     * Translate each MutableAnalyzedTerm token by token and store into translatedTokens.
+     * Translate each AnalyzedTerm token by token and store into translatedTokens.
      *
      * @param terms
      */
-    void translate(List<MutableAnalyzedTerm> terms);
+    void translate(List<MutableTranslatedTerm> terms);
 }

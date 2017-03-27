@@ -26,5 +26,5 @@ package org.lambda3.indra.core.composition;
  * ==========================License-End===============================
  */
 public enum VectorComposition {
-    SUM, UNIQUE_SUM
+    SUM, UNIQUE_SUM, AVERAGE
 }

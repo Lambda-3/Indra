@@ -2,14 +2,13 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.translation.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,17 +88,13 @@ public abstract class IndraDriver {
 
     public Map<String, RealVector> getVectors(List<String> terms, Params params) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, false);
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language);
 
-        List<MutableAnalyzedTerm> analyzedTerms = new LinkedList<>();
+        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
 
         for (String term : terms) {
-            try {
-                List<String> analyzedTokens = analyzer.analyze(term);
-                //TODO broken analyzedTerms.add(new MutableAnalyzedTerm(term, analyzedTokens));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            List<String> analyzedTokens = analyzer.stemmedAnalyze(term);
+            //TODO broken analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
         }
 
         return vectorSpace.getVectors(analyzedTerms);

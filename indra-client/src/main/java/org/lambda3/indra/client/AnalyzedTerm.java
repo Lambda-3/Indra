@@ -1,8 +1,8 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.core.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,41 +26,24 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+import java.util.List;
 
-public class Jaccard2Client extends RelatednessBaseClient {
+public class AnalyzedTerm {
 
-    public Jaccard2Client(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
+    protected final String term;
+    protected final List<String> analyzedTokens;
+
+
+    public AnalyzedTerm(String term, List<String> analyzedTokens) {
+        this.term = term;
+        this.analyzedTokens = analyzedTokens;
     }
 
-    @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        if (r1.getDimension() != r2.getDimension()) {
-            return 0;
-        }
+    public String getTerm() {
+        return term;
+    }
 
-        double min = 0.0;
-        double max = 0.0;
-
-        for (int i = 0; i <r1.getDimension(); ++i) {
-            if (r1.getEntry(i) > r2.getEntry(i)) {
-                min +=r2.getEntry(i);
-                max += r1.getEntry(i);
-            } else {
-                min += r1.getEntry(i);
-                max += r2.getEntry(i);
-            }
-        }
-
-        if (max == 0) {
-            return 0;
-        }
-
-        return Math.abs(min / max);
+    public List<String> getAnalyzedTokens() {
+        return analyzedTokens;
     }
 }

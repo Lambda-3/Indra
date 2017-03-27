@@ -59,8 +59,9 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
     @Override
     public MongoVectorSpace create(Params params) throws ModelNoFound {
         if (availableModels.contains(params.getDBName())) {
-            VectorComposer composer = this.vectorComposerFactory.getComposer(params.composition);
-            return new MongoVectorSpace(mongoClient, params.getDBName(), composer);
+            VectorComposer termComposer = this.vectorComposerFactory.getComposer(params.termComposition);
+            VectorComposer translationComposer = this.vectorComposerFactory.getComposer(params.translationComposition);
+            return new MongoVectorSpace(mongoClient, params.getDBName(), termComposer, translationComposer);
         }
 
         throw new ModelNoFound(params.getDBName());

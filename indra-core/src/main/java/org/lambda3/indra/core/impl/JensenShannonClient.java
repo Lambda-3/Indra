@@ -34,8 +34,8 @@ import org.lambda3.indra.core.translation.Translator;
 
 public class JensenShannonClient extends RelatednessBaseClient {
 
-    public JensenShannonClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public JensenShannonClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

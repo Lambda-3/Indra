@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+//TODO broken.
 class IndraResourceImpl implements RelatednessResource, VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
@@ -60,7 +61,7 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
     @Override
     public VectorResponse getVector(VectorRequest req) {
         logger.trace("getVector - User Request: {}", req);
-        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate(), null);
+        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate(), null, null);
         Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(req.getTerms(), params);
 
         VectorResponse response = new VectorResponse(req, results);
@@ -70,7 +71,7 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
 
     private static Params buildParams(RelatednessRequest req) {
         //TODO review here broken.
-        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate(), null);
+        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate(), null, null);
     }
 
 

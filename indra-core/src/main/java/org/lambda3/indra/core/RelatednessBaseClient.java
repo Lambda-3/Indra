@@ -28,69 +28,38 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.client.TextPair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public abstract class RelatednessBaseClient extends RelatednessClient {
-    private VectorSpace vectorSpace;
-    private Params params;
-    private Translator translator;
 
-    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        if (params == null || vectorSpace == null) {
-            throw new IllegalArgumentException("Missing required arguments.");
-        }
-
-        if (params.translate && translator == null) {
-            throw new IllegalArgumentException("Translate-based relatedness demands a translator.");
-        }
-
-        this.vectorSpace = vectorSpace;
-        this.params = params;
-        this.translator = translator;
-    }
-
-    protected abstract double sim(RealVector r1, RealVector r2, boolean sparse);
-
-    @Override
-    protected Params getParams() {
-        return params;
+    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override
-    protected Translator getTranslator() {
-        return this.translator;
-    }
+    protected List<AnalyzedPair> doAnalyze(List<TextPair> pairs) {
+        logger.debug("Analyzing {} pairs", pairs.size());
 
-    @Override
-    protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
+        List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language);
 
-        List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
-
-        for (AnalyzedPair pair : vectorPairs.keySet()) {
-            VectorPair vectorPair = vectorPairs.get(pair);
-
-            if (vectorPair.v1 != null && vectorPair.v2 != null) {
-
-                if (!vectorSpace.isSparse()) {
-                    scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(vectorPair.v1, vectorPair.v2, false)));
-                } else {
-                    scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(vectorPair.v1, vectorPair.v2, true)));
-                }
-
-            } else {
-                scoredTextPairs.add(new ScoredTextPair(pair, 0));
+        for (TextPair pair : pairs) {
+            AnalyzedPair analyzedPair = analyzer.analyze(pair);
+            if (analyzedPair != null) {
+                analyzedPairs.add(analyzedPair);
             }
-
         }
 
-        return scoredTextPairs;
+        return analyzedPairs;
     }
+
+    @Override
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
+        return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs);
+    }
+
 }

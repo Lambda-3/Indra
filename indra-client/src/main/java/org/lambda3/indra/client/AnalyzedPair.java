@@ -26,29 +26,36 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-public final class AnalyzedPair {
-    private final TextPair pair;
-    private final MutableAnalyzedTerm t1;
-    private final MutableAnalyzedTerm t2;
+public class AnalyzedPair {
+    protected final TextPair pair;
+    protected AnalyzedTerm t1;
+    protected AnalyzedTerm t2;
 
     public AnalyzedPair(TextPair pair) {
         if (pair == null) {
             throw new IllegalArgumentException("pair can't be null");
         }
         this.pair = pair;
-        this.t1 = new MutableAnalyzedTerm((pair.t1));
-        this.t2 = new MutableAnalyzedTerm((pair.t2));
+    }
+
+    public void setAnalyzedTerm1(AnalyzedTerm t1) {
+        this.t1 = t1;
+    }
+
+    public void setAnalyzedTerm2(AnalyzedTerm t2) {
+        this.t2 = t2;
     }
 
     public TextPair getTextPair() {
         return this.pair;
     }
 
-    public MutableAnalyzedTerm getAnalyzedT1() {
+    public AnalyzedTerm getAnalyzedT1() {
         return t1;
     }
 
-    public MutableAnalyzedTerm getAnalyzedT2() {
+    public AnalyzedTerm getAnalyzedT2() {
         return t2;
     }
+
 }

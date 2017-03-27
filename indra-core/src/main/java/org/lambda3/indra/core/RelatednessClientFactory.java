@@ -53,27 +53,27 @@ public final class RelatednessClientFactory {
 
         switch (params.func) {
             case COSINE:
-                return clients.computeIfAbsent(params, (p) -> new CosineClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new CosineClient(p, vectorSpace));
             case SPEARMAN:
-                return clients.computeIfAbsent(params, (p) -> new SpearmanClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new SpearmanClient(p, vectorSpace));
             case EUCLIDEAN:
-                return clients.computeIfAbsent(params, (p) -> new EuclideanClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new EuclideanClient(p, vectorSpace));
             case JACCARD:
-                return clients.computeIfAbsent(params, (p) -> new JaccardClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new JaccardClient(p, vectorSpace));
             case PEARSON:
-                return clients.computeIfAbsent(params, (p) -> new PearsonClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new PearsonClient(p, vectorSpace));
             case ALPHASKEW:
-                return clients.computeIfAbsent(params, (p) -> new AlphaSkewClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new AlphaSkewClient(p, vectorSpace));
             case CHEBYSHEV:
-                return clients.computeIfAbsent(params, (p) -> new ChebyshevClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new ChebyshevClient(p, vectorSpace));
             case CITYBLOCK:
-                return clients.computeIfAbsent(params, (p) -> new CityBlockClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new CityBlockClient(p, vectorSpace));
             case DICE:
-                return clients.computeIfAbsent(params, (p) -> new DiceClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new DiceClient(p, vectorSpace));
             case JACCARD2:
-                return clients.computeIfAbsent(params, (p) -> new Jaccard2Client(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new Jaccard2Client(p, vectorSpace));
             case JENSENSHANNON:
-                return clients.computeIfAbsent(params, (p) -> new JensenShannonClient(p, vectorSpace, translator));
+                return clients.computeIfAbsent(params, (p) -> new JensenShannonClient(p, vectorSpace));
             default:
                 throw new IndraError("Unsupported Score Function.");
         }

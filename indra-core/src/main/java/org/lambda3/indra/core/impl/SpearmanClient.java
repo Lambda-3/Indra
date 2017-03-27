@@ -37,8 +37,8 @@ public class SpearmanClient extends RelatednessBaseClient {
 
     private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
 
-    public SpearmanClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public SpearmanClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

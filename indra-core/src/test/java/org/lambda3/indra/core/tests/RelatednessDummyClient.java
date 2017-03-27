@@ -26,13 +26,17 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.*;
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.RelatednessClient;
+import org.lambda3.indra.core.VectorPair;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class RelatednessDummyClient extends RelatednessClient {
@@ -41,24 +45,30 @@ public class RelatednessDummyClient extends RelatednessClient {
     private final Params params;
 
     public RelatednessDummyClient(Params params) {
+        //TODO broken, implement here.
+        super(null, null);
         this.params = params;
     }
 
-    @Override
     protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
         return pairs.stream().
                 map(p -> new ScoredTextPair(p, rnd.nextDouble())).
                 collect(Collectors.toList());
     }
 
-    @Override
-    protected Params getParams() {
-        return params;
-    }
 
     @Override
-    protected Translator getTranslator() {
+    protected List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs) {
         return null;
     }
 
+    @Override
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
+        return null;
+    }
+
+    @Override
+    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return 0;
+    }
 }

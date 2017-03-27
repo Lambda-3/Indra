@@ -31,6 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ public class MongoTranslatorTest {
         tr.put("wife", 8d);
         tr.put("science", 4d);
 
-        Set<String> res = MongoTranslator.getRelavantTranslations(tr);
+        List<String> res = MongoTranslator.getRelavantTranslations(tr);
         Assert.assertEquals(res.size(), 5);
         Assert.assertTrue(res.contains("love"));
         Assert.assertTrue(res.contains("mother"));
