@@ -30,9 +30,13 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.OpenMapRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.core.CachedVectorSpace;
+import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +49,18 @@ import java.util.stream.Collectors;
 
 class MongoVectorSpace extends CachedVectorSpace {
 
+    private static int MAXSDIMENSIONS = 5000000;
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
     private static final String TERMS_COLL_NAME = "terms";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Map<String, Map<Integer, Double>> vectorsCache = new ConcurrentHashMap<>();
+    private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
 
-    MongoVectorSpace(MongoClient client, String dbName) {
+    MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer) {
+        super(composer);
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;
@@ -97,28 +103,34 @@ class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    protected List<Map<Integer, Double>> getFromCache(Set<String> terms) {
-        List<Map<Integer, Double>> termVectors = new ArrayList<>();
+    protected List<RealVector> getFromCache(Collection<String> terms) {
+        List<RealVector> termVectors = new ArrayList<>();
         terms.stream().
                 filter(t -> this.vectorsCache.containsKey(t)).
                 forEach((t) -> termVectors.add(this.vectorsCache.get(t)));
         return termVectors;
     }
 
-    private Map<Integer, Double> unmarshall(Document doc, int limit) {
+    private RealVector unmarshall(Document doc, int limit) {
         final Binary binary = doc.get(VECTOR_FIELD_NAME, Binary.class);
         final byte[] b = binary.getData();
-        final Map<Integer, Double> vector = new HashMap<>();
 
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(b))) {
             int key;
             double score;
             int size = Math.min(dis.readInt(), limit);
 
+            RealVector vector;
+            if (isSparse()) {
+                vector = new OpenMapRealVector(MAXSDIMENSIONS);
+            } else {
+                vector = new ArrayRealVector(size);
+            }
+
             for (int i = 0; i < size; i++) {
                 key = dis.readInt();
                 score = dis.readFloat(); //TODO: models were inserted as float. In the next generation version, insert by double.
-                vector.put(key, score);
+                vector.setEntry(key, score);
             }
 
             return vector;

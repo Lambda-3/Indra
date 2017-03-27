@@ -1,8 +1,9 @@
 package org.lambda3.indra.core;
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.MutableAnalyzedTerm;
-import org.lambda3.indra.core.utils.VectorsUtils;
+import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +39,20 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private VectorComposer composer;
+
     protected abstract void collectVectors(Collection<String> terms, int limit);
 
-    protected abstract List<Map<Integer, Double>> getFromCache(Set<String> terms);
+    protected abstract List<RealVector> getFromCache(Collection<String> terms);
+
+    public CachedVectorSpace(VectorComposer composer) {
+        this.composer = composer;
+    }
+
+    @Override
+    public VectorComposer getVectorComposer() {
+        return this.composer;
+    }
 
     @Override
     public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs) {
@@ -69,7 +81,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<String, Map<Integer, Double>> getVectors(List<MutableAnalyzedTerm> terms) {
+    public Map<String, RealVector> getVectors(List<MutableAnalyzedTerm> terms) {
         if (terms == null) {
             throw new IllegalArgumentException("terms can't be null");
         }
@@ -79,24 +91,21 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
         collectVectors(allTerms, getVectorSize());
 
-        Map<String, Map<Integer, Double>> vectors = new HashMap<>();
+        Map<String, RealVector> vectors = new HashMap<>();
 
         for (MutableAnalyzedTerm term : terms) {
-            Map<Integer, Double> vector = composeVectors(term.getStemmedTargetTokens());
+            RealVector vector = composeVectors(term.getStemmedTargetTokens());
             vectors.put(term.getTerm(), vector);
         }
 
         return vectors;
     }
 
-    //TODO: Decouple this to use different methods of vector composition
-    private Map<Integer, Double> composeVectors(List<String> terms) {
+    private RealVector composeVectors(List<String> terms) {
         logger.trace("Composing {} vectors", terms.size());
-        List<Map<Integer, Double>> vectors = getFromCache(new HashSet<>(terms));
-        if (!vectors.isEmpty()) {
-            return VectorsUtils.add(vectors);
-        }
+        VectorComposer composer = getVectorComposer();
 
-        return null;
+        List<RealVector> vectors = getFromCache(composer.filter(terms));
+        return composer.compose(vectors);
     }
 }

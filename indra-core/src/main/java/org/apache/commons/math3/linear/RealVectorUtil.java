@@ -1,4 +1,8 @@
-package org.lambda3.indra.core.tests;
+package org.apache.commons.math3.linear;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +16,10 @@ package org.lambda3.indra.core.tests;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,31 +30,23 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.composition.VectorComposition;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+/**
+ * There is a bug in the class RealVector.Entry, which restricts its access from out of the package.
+ * Bug track: https://issues.apache.org/jira/browse/MATH-1329
+ * As soon as it is solved, the method can be send to a class in the lambda3 package.
+ */
+public class RealVectorUtil {
 
-import java.util.Collections;
+    public static Map<Integer, Double> vectorToMap(RealVector vector) {
+        Map<Integer, Double> mapVector = new HashMap<>();
+        Iterator<RealVector.Entry> iter = vector.iterator();
 
-public class RelatednessTest {
+        while (iter.hasNext()) {
+            RealVector.Entry entry = iter.next();
+            mapVector.put(entry.getIndex(), entry.getValue());
+        }
 
-    @Test
-    public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        RelatednessDummyClient cli = new RelatednessDummyClient(params);
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = cli.getRelatedness(Collections.singletonList(pair));
-
-        Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
-        Assert.assertEquals(pair.t1, scoredPair.t1);
-        Assert.assertEquals(pair.t2, scoredPair.t2);
+        return mapVector;
     }
+
 }

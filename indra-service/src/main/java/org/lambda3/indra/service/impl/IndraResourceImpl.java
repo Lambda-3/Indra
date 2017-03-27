@@ -60,8 +60,8 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
     @Override
     public VectorResponse getVector(VectorRequest req) {
         logger.trace("getVector - User Request: {}", req);
-        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate());
-        Map<String, Map<Integer, Double>> results = this.driver.getVectors(req.getTerms(), params);
+        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate(), null);
+        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(req.getTerms(), params);
 
         VectorResponse response = new VectorResponse(req, results);
         logger.trace("Response: {}", response);
@@ -69,7 +69,8 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
     }
 
     private static Params buildParams(RelatednessRequest req) {
-        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate());
+        //TODO review here broken.
+        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate(), null);
     }
 
 

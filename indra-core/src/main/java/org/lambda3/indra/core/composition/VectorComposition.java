@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.composition;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.core.tests;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,32 +25,6 @@ package org.lambda3.indra.core.tests;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.composition.VectorComposition;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Collections;
-
-public class RelatednessTest {
-
-    @Test
-    public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        RelatednessDummyClient cli = new RelatednessDummyClient(params);
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = cli.getRelatedness(Collections.singletonList(pair));
-
-        Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
-        Assert.assertEquals(pair.t1, scoredPair.t1);
-        Assert.assertEquals(pair.t2, scoredPair.t2);
-    }
+public enum VectorComposition {
+    SUM, UNIQUE_SUM
 }

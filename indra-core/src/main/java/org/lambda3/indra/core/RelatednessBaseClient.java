@@ -26,8 +26,6 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
@@ -74,27 +72,24 @@ public abstract class RelatednessBaseClient extends RelatednessClient {
 
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
 
-        vectorPairs.entrySet().forEach(e -> {
-            AnalyzedPair pair = e.getKey();
-            VectorPair vectorPair = e.getValue();
-            if (vectorPair.v1 != null && vectorPair.v2 != null) {
+        for (AnalyzedPair pair : vectorPairs.keySet()) {
+            VectorPair vectorPair = vectorPairs.get(pair);
 
-                double[] v1 = vectorPair.v1.values().stream().mapToDouble(d -> d).toArray();
-                double[] v2 = vectorPair.v2.values().stream().mapToDouble(d -> d).toArray();
+            if (vectorPair.v1 != null && vectorPair.v2 != null) {
 
                 if (!vectorSpace.isSparse()) {
                     scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(new ArrayRealVector(v1), new ArrayRealVector(v2), false)));
+                            sim(vectorPair.v1, vectorPair.v2, false)));
                 } else {
                     scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(new OpenMapRealVector(v1), new OpenMapRealVector(v2), true)));
+                            sim(vectorPair.v1, vectorPair.v2, true)));
                 }
 
             } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
 
-        });
+        }
 
         return scoredTextPairs;
     }

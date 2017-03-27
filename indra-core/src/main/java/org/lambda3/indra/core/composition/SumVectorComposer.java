@@ -1,8 +1,15 @@
-package org.lambda3.indra.mongo;
+package org.lambda3.indra.core.composition;
+
+import org.apache.commons.math3.linear.RealVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.List;
 
 /*-
  * ==========================License-Start=============================
- * Indra Mongo Module
+ * Indra Core Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,43 +33,24 @@ package org.lambda3.indra.mongo;
  * ==========================License-End===============================
  */
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.VectorComposerFactory;
-import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.exception.ModelNoFound;
+public class SumVectorComposer implements VectorComposer {
 
-import java.util.HashSet;
-import java.util.Set;
-
-public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVectorSpace> {
-
-    private MongoClient mongoClient;
-    private Set<String> availableModels;
-
-    public MongoVectorSpaceFactory(String mongoURI) {
-        super(new VectorComposerFactory());
-
-        if (mongoURI == null || mongoURI.isEmpty()) {
-            throw new IllegalArgumentException("mongoURI can't be null nor empty");
-        }
-        this.mongoClient = new MongoClient(new MongoClientURI(mongoURI));
-
-        availableModels = new HashSet<>();
-        for (String s : mongoClient.listDatabaseNames()) {
-            availableModels.add(s);
-        }
-    }
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public MongoVectorSpace create(Params params) throws ModelNoFound {
-        if (availableModels.contains(params.getDBName())) {
-            VectorComposer composer = this.vectorComposerFactory.getComposer(params.composition);
-            return new MongoVectorSpace(mongoClient, params.getDBName(), composer);
-        }
+    public RealVector compose(List<RealVector> vectors) {
+        logger.trace("Composing {} vectors", vectors.size());
 
-        throw new ModelNoFound(params.getDBName());
+        if (vectors.isEmpty()) {
+            return null;
+        } else if (vectors.size() == 1) {
+            return vectors.get(0);
+        } else {
+            RealVector sum = vectors.get(0).add(vectors.get(1));
+            for (int i = 2; i < vectors.size(); i++) {
+                sum = sum.add(vectors.get(i));
+            }
+            return sum;
+        }
     }
 }

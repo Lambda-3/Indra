@@ -27,6 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.composition.VectorComposition;
 
 import java.util.Objects;
 
@@ -36,16 +37,19 @@ public final class Params {
     public final String language;
     public final String model;
     public final boolean translate;
+    public final VectorComposition composition;
 
-    public Params(String corpusName, String language, String model, boolean translate) {
-        this(corpusName, ScoreFunction.COSINE, language, model, translate);
+    public Params(String corpusName, String language, String model, boolean translate, VectorComposition composition) {
+        this(corpusName, ScoreFunction.COSINE, language, model, translate, composition);
     }
 
     public Params(String corpusName, ScoreFunction func, String language, String model) {
-        this(corpusName, func, language, model, false);
+        this(corpusName, func, language, model, false, VectorComposition.UNIQUE_SUM);
     }
 
-    public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate) {
+    public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate,
+                  VectorComposition composition) {
+
         if (corpusName == null || func == null || language == null || model == null) {
             throw new IllegalArgumentException("All arguments are mandatory!");
         }
@@ -55,6 +59,7 @@ public final class Params {
         this.language = language;
         this.model = model;
         this.translate = translate;
+        this.composition = composition;
     }
 
     public String getDBName() {
@@ -73,11 +78,13 @@ public final class Params {
         return Objects.equals(corpusName, params.corpusName) &&
                 Objects.equals(language, params.language) &&
                 Objects.equals(model, params.model) &&
-                func == params.func;
+                func == params.func &&
+                translate == params.translate &&
+                composition == params.composition;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(corpusName, language, model, func);
+        return Objects.hash(corpusName, language, model, func, translate, composition);
     }
 }
