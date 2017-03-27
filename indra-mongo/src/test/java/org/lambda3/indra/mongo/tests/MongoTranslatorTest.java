@@ -1,8 +1,8 @@
-package org.lambda3.indra.client;
+package org.lambda3.indra.mongo.tests;
 
 /*-
  * ==========================License-Start=============================
- * Indra Client Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,46 +26,33 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.List;
+import org.lambda3.indra.mongo.MongoTranslator;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class MutableAnalyzedTerm {
+public class MongoTranslatorTest {
 
-    private final String term;
-    private List<String> originalTokens;
-    private Map<String, Set<String>> translatedTokens = null;
-    private List<String> stemmedTargetTokens;
+    @Test
+    public void getRelevantTranslationsTest() {
+        Map<String, Double> tr = new HashMap<>();
+        tr.put("work", 1d);
+        tr.put("love", 10d);
+        tr.put("hate", 0d);
+        tr.put("mother", 6d);
+        tr.put("child", 7d);
+        tr.put("wife", 8d);
+        tr.put("science", 4d);
 
-    public MutableAnalyzedTerm(String term) {
-        this.term = term;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setOriginalTokens(List<String> originalTokens) {
-        this.originalTokens = originalTokens;
-    }
-
-    public void setTranslatedTokens(Map<String, Set<String>> translatedTokens) {
-        this.translatedTokens = translatedTokens;
-    }
-
-    public List<String> getOriginalTokens() {
-        return originalTokens;
-    }
-
-    public List<String> getTranslatedTokens() {
-        return null;
-    }
-
-    public void setStemmedTargetTokens(List<String> stemmedTargetTokens) {
-        this.stemmedTargetTokens = stemmedTargetTokens;
-    }
-
-    public List<String> getStemmedTargetTokens() {
-        return stemmedTargetTokens;
+        Set<String> res = MongoTranslator.getRelavantTranslations(tr);
+        Assert.assertEquals(res.size(), 5);
+        Assert.assertTrue(res.contains("love"));
+        Assert.assertTrue(res.contains("mother"));
+        Assert.assertTrue(res.contains("child"));
+        Assert.assertTrue(res.contains("wife"));
+        Assert.assertTrue(res.contains("science"));
     }
 }

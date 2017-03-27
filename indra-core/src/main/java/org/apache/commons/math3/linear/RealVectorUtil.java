@@ -31,8 +31,11 @@ import java.util.Map;
  */
 
 /**
- * There is a bug in the class RealVector.Entry, which restricts its access from out of the package.
+ * There is a bug in the class RealVector.Entry, which restricts its access. This is way this code was located
+ * into this package.
+ *
  * Bug track: https://issues.apache.org/jira/browse/MATH-1329
+ *
  * As soon as it is solved, the method can be send to a class in the lambda3 package.
  */
 public class RealVectorUtil {

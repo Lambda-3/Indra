@@ -1,8 +1,14 @@
-package org.lambda3.indra.client;
+package org.lambda3.indra.mongo;
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /*-
  * ==========================License-Start=============================
- * Indra Client Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -25,47 +31,14 @@ package org.lambda3.indra.client;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class MongoTranslatorFactory {
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+    private Set<String> availableModels = new HashSet<>();
+    private static final String DB_NAME_SUFFIX = "";
 
-public class MutableAnalyzedTerm {
-
-    private final String term;
-    private List<String> originalTokens;
-    private Map<String, Set<String>> translatedTokens = null;
-    private List<String> stemmedTargetTokens;
-
-    public MutableAnalyzedTerm(String term) {
-        this.term = term;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setOriginalTokens(List<String> originalTokens) {
-        this.originalTokens = originalTokens;
-    }
-
-    public void setTranslatedTokens(Map<String, Set<String>> translatedTokens) {
-        this.translatedTokens = translatedTokens;
-    }
-
-    public List<String> getOriginalTokens() {
-        return originalTokens;
-    }
-
-    public List<String> getTranslatedTokens() {
-        return null;
-    }
-
-    public void setStemmedTargetTokens(List<String> stemmedTargetTokens) {
-        this.stemmedTargetTokens = stemmedTargetTokens;
-    }
-
-    public List<String> getStemmedTargetTokens() {
-        return stemmedTargetTokens;
+    public MongoTranslatorFactory(MongoClient mongoClient) {
+        for (String s : mongoClient.listDatabaseNames()) {
+            availableModels.add(s);
+        }
     }
 }
