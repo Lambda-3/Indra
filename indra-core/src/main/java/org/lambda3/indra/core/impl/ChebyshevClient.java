@@ -35,8 +35,8 @@ import org.lambda3.indra.core.translation.Translator;
 
 public class ChebyshevClient extends RelatednessBaseClient {
 
-    public ChebyshevClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public ChebyshevClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
+import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,32 +65,29 @@ public class MongoTranslator implements Translator {
     }
 
     @Override
-    public void translate(List<MutableAnalyzedTerm> terms) {
+    public void translate(List<MutableTranslatedTerm> terms) {
 
         Set<String> allTokens = new HashSet<>();
-        terms.forEach(t -> allTokens.addAll(t.getOriginalTokens()));
+        terms.forEach(t -> allTokens.addAll(t.getAnalyzedTokens()));
         logger.debug("Translating {} MutableAnalyzedTerms, resulting in {} tokens", terms.size(), allTokens.size());
 
-        Map<String, Set<String>> translations = doTranslate(allTokens);
-        for (MutableAnalyzedTerm term : terms) {
-            Map<String, Set<String>> termTranslations = new HashMap<>();
+        Map<String, List<String>> translations = doTranslate(allTokens);
+        for (MutableTranslatedTerm term : terms) {
 
-            for (String token : term.getOriginalTokens()) {
-                Set<String> tokenTranslations = translations.get(token);
+            for (String token : term.getAnalyzedTokens()) {
+                List<String> tokenTranslations = translations.get(token);
                 if (tokenTranslations != null) {
-                    termTranslations.put(token, tokenTranslations);
+                    term.putTranslatedTokens(token, tokenTranslations);
                 }
             }
-
-            term.setTranslatedTokens(termTranslations);
         }
     }
 
-    private Map<String, Set<String>> doTranslate(Set<String> tokens) {
+    private Map<String, List<String>> doTranslate(Set<String> tokens) {
         MongoCollection<Document> lexColl = getLexCollection();
         FindIterable<Document> lexs = lexColl.find(Filters.in(TERM_FIELD, tokens));
 
-        Map<String, Set<String>> res = new HashMap<>();
+        Map<String, List<String>> res = new HashMap<>();
         for (Document doc : lexs) {
             Document tr = (Document) doc.get(TRANSLATION_FIELD);
 
@@ -102,10 +99,10 @@ public class MongoTranslator implements Translator {
         return res;
     }
 
-    public static Set<String> getRelavantTranslations(Map<String, Double> tr) {
+    public static List<String> getRelavantTranslations(Map<String, Double> tr) {
         tr.remove(NULL_VALUE);
 
-        Set<String> res = new HashSet<>();
+        List<String> res = new LinkedList<>();
 
         if (tr.size() <= 2) {
             tr.keySet().forEach(k -> res.add(k));
@@ -156,14 +153,12 @@ public class MongoTranslator implements Translator {
         String mongoURI = "132.231.141.167:27017";
         MongoTranslator mt = new MongoTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile");
 
-        Set<String> set = Arrays.stream(new String[]{"amor"}).collect(Collectors.toSet());
-        Map<String, Set<String>> results = mt.doTranslate(set);
+        Set<String> set = Arrays.stream(new String[]{"pai"}).collect(Collectors.toSet());
+        Map<String, List<String>> results = mt.doTranslate(set);
         for (String r : results.keySet()) {
             System.out.print(r + ": [");
             System.out.print(String.join(", ", results.get(r)));
             System.out.println("]");
-
         }
-
     }
 }

@@ -37,18 +37,22 @@ public final class Params {
     public final String language;
     public final String model;
     public final boolean translate;
-    public final VectorComposition composition;
+    public final VectorComposition termComposition;
+    public final VectorComposition translationComposition;
 
-    public Params(String corpusName, String language, String model, boolean translate, VectorComposition composition) {
-        this(corpusName, ScoreFunction.COSINE, language, model, translate, composition);
+
+
+    public Params(String corpusName, String language, String model, boolean translate,
+                  VectorComposition termComposition, VectorComposition translationComposition) {
+        this(corpusName, ScoreFunction.COSINE, language, model, translate, termComposition, translationComposition);
     }
 
     public Params(String corpusName, ScoreFunction func, String language, String model) {
-        this(corpusName, func, language, model, false, VectorComposition.UNIQUE_SUM);
+        this(corpusName, func, language, model, false, VectorComposition.UNIQUE_SUM, VectorComposition.AVERAGE);
     }
 
     public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate,
-                  VectorComposition composition) {
+                  VectorComposition termComposition, VectorComposition translationComposition) {
 
         if (corpusName == null || func == null || language == null || model == null) {
             throw new IllegalArgumentException("All arguments are mandatory!");
@@ -59,7 +63,8 @@ public final class Params {
         this.language = language;
         this.model = model;
         this.translate = translate;
-        this.composition = composition;
+        this.termComposition = termComposition;
+        this.translationComposition = translationComposition;
     }
 
     public String getDBName() {
@@ -80,11 +85,12 @@ public final class Params {
                 Objects.equals(model, params.model) &&
                 func == params.func &&
                 translate == params.translate &&
-                composition == params.composition;
+                translationComposition == params.translationComposition &&
+                termComposition == params.termComposition;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(corpusName, language, model, func, translate, composition);
+        return Objects.hash(corpusName, language, model, func, translate, termComposition, translationComposition);
     }
 }

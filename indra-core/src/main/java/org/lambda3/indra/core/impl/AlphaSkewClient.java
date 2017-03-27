@@ -34,8 +34,8 @@ import org.lambda3.indra.core.translation.Translator;
 
 public class AlphaSkewClient extends RelatednessBaseClient {
 
-    public AlphaSkewClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public AlphaSkewClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

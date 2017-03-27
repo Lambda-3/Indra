@@ -37,8 +37,8 @@ public class PearsonClient extends RelatednessBaseClient {
 
     private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
 
-    public PearsonClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public PearsonClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

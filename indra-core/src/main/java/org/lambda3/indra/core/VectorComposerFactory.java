@@ -1,10 +1,7 @@
 package org.lambda3.indra.core;
 
 
-import org.lambda3.indra.core.composition.SumVectorComposer;
-import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.composition.VectorComposition;
+import org.lambda3.indra.core.composition.*;
 import org.lambda3.indra.core.exception.IndraError;
 
 import java.util.HashMap;
@@ -17,11 +14,12 @@ public class VectorComposerFactory {
     public VectorComposerFactory() {
         this.statelessComposers.put(VectorComposition.SUM, new SumVectorComposer());
         this.statelessComposers.put(VectorComposition.UNIQUE_SUM, new UniqueSumVectorComposer());
+        this.statelessComposers.put(VectorComposition.AVERAGE, new AveragedVectorComposer());
     }
 
     public VectorComposer getComposer(VectorComposition name) {
         VectorComposer composer = statelessComposers.get(name);
-        if(composer == null) {
+        if (composer == null) {
             throw new IndraError("Unsupported vector composition.");
         }
 

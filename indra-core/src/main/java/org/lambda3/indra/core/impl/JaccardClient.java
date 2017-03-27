@@ -35,8 +35,8 @@ import org.lambda3.indra.core.translation.Translator;
 
 public class JaccardClient extends RelatednessBaseClient {
 
-    public JaccardClient(Params params, VectorSpace vectorSpace, Translator translator) {
-        super(params, vectorSpace, translator);
+    public JaccardClient(Params params, VectorSpace vectorSpace) {
+        super(params, vectorSpace);
     }
 
     @Override

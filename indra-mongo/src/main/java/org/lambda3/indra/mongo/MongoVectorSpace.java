@@ -59,8 +59,8 @@ class MongoVectorSpace extends CachedVectorSpace {
     private MongoClient mongoClient;
     private final String dbName;
 
-    MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer) {
-        super(composer);
+    MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
+        super(composer, translationComposer);
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;

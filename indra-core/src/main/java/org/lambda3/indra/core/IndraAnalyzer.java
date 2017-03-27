@@ -37,9 +37,7 @@ import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.util.CharArraySet;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tartarus.snowball.SnowballProgram;
@@ -47,6 +45,7 @@ import org.tartarus.snowball.ext.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -58,55 +57,44 @@ public class IndraAnalyzer {
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
     private String lang;
-    private boolean stemming;
+    private boolean toTranslate;
     private Tokenizer tokenizer;
-    private TokenStream stream;
+    private TokenStream stemmedStream;
+    private TokenStream nonStemmedStream;
 
-    public IndraAnalyzer(String lang, boolean stemming) {
+    public IndraAnalyzer(String lang) {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
-        logger.debug("Creating analyzer, lang={} (stemming={})", lang, stemming);
+        logger.debug("Creating analyzer, lang={} (toTranslate={})", lang, toTranslate);
         this.lang = lang;
-        this.stemming = stemming;
+
         tokenizer = new StandardTokenizer();
-        stream = createStream(lang, stemming, tokenizer);
+        this.toTranslate = toTranslate;
+
+        stemmedStream = createStream(lang, true, tokenizer);
+        nonStemmedStream = createStream(lang, false, tokenizer);
     }
 
-    public List<String> analyze(String text) throws IOException {
-        List<String> result = new ArrayList<>();
-        try (StringReader reader = new StringReader(text)) {
-            tokenizer.setReader(reader);
-            CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
-            stream.reset();
-            while (stream.incrementToken()) {
-                result.add(cattr.toString());
-            }
-        } finally {
-            stream.end();
-            stream.close();
-        }
-
-        return result;
-    }
-
-    AnalyzedPair analyze(TextPair pair) throws IOException {
+    public AnalyzedPair analyze(TextPair pair) {
         AnalyzedPair analyzedPair = new AnalyzedPair(pair);
-        MutableAnalyzedTerm at1 = analyzedPair.getAnalyzedT1();
-        MutableAnalyzedTerm at2 = analyzedPair.getAnalyzedT2();
 
-        if (this.stemming) {
-            at1.setStemmedTargetTokens(analyze(pair.t1));
-            at2.setStemmedTargetTokens(analyze(pair.t2));
-        } else {
-            at1.setOriginalTokens(analyze(pair.t1));
-            at2.setOriginalTokens(analyze(pair.t2));
-        }
+        analyzedPair.setAnalyzedTerm1(new AnalyzedTerm(pair.t1, stemmedAnalyze(pair.t1)));
+        analyzedPair.setAnalyzedTerm2(new AnalyzedTerm(pair.t2, stemmedAnalyze(pair.t2)));
 
         return analyzedPair;
     }
 
-    public List<String> stem(List<String> tokens) {
+    public AnalyzedTranslatedPair analyzeForTranslation(TextPair pair) {
+        AnalyzedTranslatedPair analyzedPair = new AnalyzedTranslatedPair(pair);
+
+        analyzedPair.setTranslatedTerm1(new MutableTranslatedTerm(pair.t1, nonStemmedAnalyze(pair.t1)));
+        analyzedPair.setTranslatedTerm2(new MutableTranslatedTerm(pair.t2, nonStemmedAnalyze(pair.t2)));
+
+        return analyzedPair;
+    }
+
+    public List<String> stem(Collection<String> tokens) {
         //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
         int numberOfSteps = 3;
 
@@ -126,6 +114,37 @@ public class IndraAnalyzer {
         }
 
         return stemmed;
+    }
+
+    public List<String> stemmedAnalyze(String text) {
+        return analyze(text, stemmedStream);
+    }
+
+    public List<String> nonStemmedAnalyze(String text) {
+        return analyze(text, nonStemmedStream);
+    }
+
+    private List<String> analyze(String text, TokenStream stream) {
+        List<String> result = new ArrayList<>();
+        try (StringReader reader = new StringReader(text)) {
+            tokenizer.setReader(reader);
+            CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
+            stream.reset();
+            while (stream.incrementToken()) {
+                result.add(cattr.toString());
+            }
+        } catch (IOException e) {
+            logger.error("Error analyzing {}", text, e);
+        } finally {
+            try {
+                stream.end();
+                stream.close();
+            } catch (IOException e) {
+                logger.error("Error closing stream {}", e);
+            }
+        }
+
+        return result;
     }
 
     private TokenStream createStream(String lang, boolean stemming, Tokenizer tokenizer) {

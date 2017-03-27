@@ -28,7 +28,9 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
+import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.AnalyzedTranslatedPair;
+import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.util.List;
@@ -40,9 +42,15 @@ public interface VectorSpace {
 
     int getVectorSize();
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> terms);
+    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs);
 
-    Map<String, RealVector> getVectors(List<MutableAnalyzedTerm> terms);
+    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs);
 
-    VectorComposer getVectorComposer();
+    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms);
+
+    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms);
+
+    VectorComposer getTermComposer();
+
+    VectorComposer getTranslationComposer();
 }

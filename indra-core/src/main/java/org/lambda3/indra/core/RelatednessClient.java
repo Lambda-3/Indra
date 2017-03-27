@@ -26,84 +26,65 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.MutableAnalyzedTerm;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.translation.Translator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RelatednessClient {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected VectorSpace vectorSpace;
+    protected Params params;
 
-    protected abstract List<ScoredTextPair> compute(List<AnalyzedPair> pairs);
-
-    protected abstract Params getParams();
-
-    protected abstract Translator getTranslator();
-
-    private AnalyzedPair doAnalyze(IndraAnalyzer analyzer, TextPair p) {
-        try {
-            return analyzer.analyze(p);
-        } catch (IOException e) {
-            logger.error("Error analyzing {}", p, e);
+    protected RelatednessClient(Params params, VectorSpace vectorSpace) {
+        if (params == null || vectorSpace == null) {
+            throw new IllegalArgumentException("Missing required arguments.");
         }
-        return null;
+        this.vectorSpace = vectorSpace;
+        this.params = params;
     }
 
-    private List<ScoredTextPair> doCompute(List<TextPair> pairs) {
-        logger.debug("Analyzing {} pairs", pairs.size());
+    protected abstract List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs);
 
-        List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        List<MutableAnalyzedTerm> analyzedTerms = new LinkedList<>();
+    protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
 
-        boolean stemming = !getParams().translate;
-        IndraAnalyzer analyzer = new IndraAnalyzer(getParams().language, stemming);
+    protected abstract double sim(RealVector r1, RealVector r2, boolean sparse);
 
-        for (TextPair pair : pairs) {
-            AnalyzedPair analyzedPair = doAnalyze(analyzer, pair);
-            if (analyzedPair != null) {
-                analyzedPairs.add(analyzedPair);
+    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
+        List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
 
-                analyzedTerms.add(analyzedPair.getAnalyzedT1());
-                analyzedTerms.add(analyzedPair.getAnalyzedT2());
-            }
-        }
+        for (AnalyzedPair pair : vectorPairs.keySet()) {
+            VectorPair vectorPair = vectorPairs.get(pair);
 
-        if (getParams().translate) {
-            logger.debug("Translating terms..");
+            if (vectorPair.v1 != null && vectorPair.v2 != null) {
 
-            Translator translator = getTranslator();
-            if (translator != null) {
-                translator.translate(analyzedTerms);
-                IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.targetLang, false);
-
-                for (MutableAnalyzedTerm term : analyzedTerms) {
-                    term.setStemmedTargetTokens(newLangAnalyzer.stem(term.getTranslatedTokens()));
+                if (!vectorSpace.isSparse()) {
+                    scoredTextPairs.add(new ScoredTextPair(pair,
+                            sim(vectorPair.v1, vectorPair.v2, false)));
+                } else {
+                    scoredTextPairs.add(new ScoredTextPair(pair,
+                            sim(vectorPair.v1, vectorPair.v2, true)));
                 }
 
             } else {
-                logger.error("Translation is not available.");
-                //TODO check here
-                throw new RuntimeException("Translation is not available.");
+                scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
+
         }
 
-        logger.debug("Computing relatedness..");
-        List<ScoredTextPair> r = compute(analyzedPairs);
-        logger.debug("Done.");
-
-        return r;
+        return scoredTextPairs;
     }
 
     public final RelatednessResult getRelatedness(List<TextPair> pairs) {
-        return new RelatednessResult(doCompute(pairs));
+        List<? extends AnalyzedPair> analyzedPairs = doAnalyze(pairs);
+        Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs);
+        return new RelatednessResult(compute(vectorsPairs));
     }
 }
