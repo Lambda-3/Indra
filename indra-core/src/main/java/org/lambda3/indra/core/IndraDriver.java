@@ -52,8 +52,8 @@ public abstract class IndraDriver {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private VectorSpaceFactory vectorSpaceFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private VectorSpaceFactory<VectorSpace> vectorSpaceFactory;
+    private IndraTranslatorFactory<IndraTranslator> translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
     private Map<Params, RelatednessClient> clientCache = new HashMap<>();
@@ -102,10 +102,10 @@ public abstract class IndraDriver {
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
 
-            IndraTranslator translator = translatorFactory.create(params.language);
+            IndraTranslator translator = translatorFactory.create(params);
             translator.translate(translatedTerms);
 
-            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(translator.TARGET_LANG);
+            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(translator.getTargetLanguage());
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(term.getTranslatedTokens().get(token)));

@@ -1,7 +1,8 @@
 package org.lambda3.indra.mongo;
 
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,14 +32,41 @@ import java.util.Set;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public class MongoTranslatorFactory {
+public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
 
+    private static final String DEFAULT_DB_NAME_SUFFIX = "-Europarl_DGT_OpenSubtitile";
+    private static final String DEFAULT_TARGET_LANG = "EN";
+
+    private MongoClient mongoClient;
+    private String dbNameSuffix;
     private Set<String> availableModels = new HashSet<>();
-    private static final String DB_NAME_SUFFIX = "";
 
-    public MongoTranslatorFactory(MongoClient mongoClient) {
+    public MongoTranslatorFactory(String mongoURI) {
+        this(mongoURI, DEFAULT_DB_NAME_SUFFIX);
+    }
+
+    public MongoTranslatorFactory(String mongoURI, String dbNameSuffix) {
+        mongoClient = new MongoClient(mongoURI);
+        this.dbNameSuffix = dbNameSuffix;
+
         for (String s : mongoClient.listDatabaseNames()) {
-            availableModels.add(s);
+            if (s.endsWith(dbNameSuffix)) {
+                availableModels.add(s);
+            }
         }
+    }
+
+    @Override
+    protected MongoIndraTranslator doCreate(Params params) {
+        return new MongoIndraTranslator(mongoClient, createDbName(params.language), DEFAULT_TARGET_LANG);
+    }
+
+    @Override
+    protected Object createKey(Params params) {
+        return createDbName(params.language);
+    }
+
+    private String createDbName(String fromLang) {
+        return String.format("%s_%s-%s", fromLang.toLowerCase(), DEFAULT_TARGET_LANG.toLowerCase(), dbNameSuffix);
     }
 }

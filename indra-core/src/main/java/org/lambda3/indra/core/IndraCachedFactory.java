@@ -1,8 +1,13 @@
-package org.lambda3.indra.mongo;
+package org.lambda3.indra.core;
+
+import org.lambda3.indra.core.exception.IndraError;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*-
  * ==========================License-Start=============================
- * Indra Mongo Module
+ * Indra Core Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -25,19 +30,17 @@ package org.lambda3.indra.mongo;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public abstract class IndraCachedFactory<T> {
+    private final Map<Object, T> cache = new ConcurrentHashMap<>();
 
-import com.mongodb.MongoClient;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
+    protected abstract T doCreate(Params params);
 
-public class MongoIndraDriver extends IndraDriver {
+    protected abstract Object createKey(Params params);
 
-    public MongoIndraDriver(String mongoURI) {
-        this(IndraDriver.DEFAULT_PARAMS, mongoURI);
+    public T create(Params params) {
+        Object key = createKey(params);
+        T element = cache.computeIfAbsent(key, (T) -> doCreate(params));
+
+        return element;
     }
-
-    public MongoIndraDriver(Params params, String mongoURI) {
-        super(params, new MongoVectorSpaceFactory(mongoURI), new MongoTranslatorFactory(mongoURI));
-    }
-
 }

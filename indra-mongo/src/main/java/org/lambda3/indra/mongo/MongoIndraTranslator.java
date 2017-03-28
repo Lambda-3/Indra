@@ -49,15 +49,17 @@ public class MongoIndraTranslator implements IndraTranslator {
 
     private MongoClient mongoClient;
     private String dbName;
+    private String targetLanguage;
 
 
-    public MongoIndraTranslator(MongoClient mongoClient, String dbName) {
+    public MongoIndraTranslator(MongoClient mongoClient, String dbName, String targetLanguage) {
         if (mongoClient == null) {
             throw new IllegalArgumentException("mongoClient can't be null");
         }
 
         this.mongoClient = mongoClient;
         this.dbName = dbName;
+        this.targetLanguage = targetLanguage;
     }
 
     private MongoCollection<Document> getLexCollection() {
@@ -81,6 +83,11 @@ public class MongoIndraTranslator implements IndraTranslator {
                 }
             }
         }
+    }
+
+    @Override
+    public String getTargetLanguage() {
+        return targetLanguage;
     }
 
     private Map<String, List<String>> doTranslate(Set<String> tokens) {
@@ -151,7 +158,7 @@ public class MongoIndraTranslator implements IndraTranslator {
 
     public static void main(String[] args) {
         String mongoURI = "132.231.141.167:27017";
-        MongoIndraTranslator mt = new MongoIndraTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile");
+        MongoIndraTranslator mt = new MongoIndraTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile", "en");
 
         Set<String> set = Arrays.stream(new String[]{"pai"}).collect(Collectors.toSet());
         Map<String, List<String>> results = mt.doTranslate(set);

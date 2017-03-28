@@ -32,12 +32,12 @@ import java.util.List;
 
 public interface IndraTranslator {
 
-    public final String TARGET_LANG = "EN";
-
     /**
      * Translate each AnalyzedTerm token by token and store into MutableTranslatedTerm.translatedTokens.
      *
      * @param terms
      */
     void translate(List<MutableTranslatedTerm> terms);
+
+    String getTargetLanguage();
 }

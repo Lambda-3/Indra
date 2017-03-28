@@ -1,5 +1,8 @@
 package org.lambda3.indra.core.translation;
 
+import org.lambda3.indra.core.IndraCachedFactory;
+import org.lambda3.indra.core.Params;
+
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -25,7 +28,6 @@ package org.lambda3.indra.core.translation;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public interface IndraTranslatorFactory {
+public abstract class IndraTranslatorFactory<T extends IndraTranslator> extends IndraCachedFactory<T> {
 
-    IndraTranslator create(String language);
 }

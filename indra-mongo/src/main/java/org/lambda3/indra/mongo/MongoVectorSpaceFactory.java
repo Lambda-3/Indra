@@ -29,7 +29,6 @@ package org.lambda3.indra.mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.VectorComposerFactory;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.exception.ModelNoFound;
@@ -43,8 +42,6 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
     private Set<String> availableModels;
 
     public MongoVectorSpaceFactory(String mongoURI) {
-        super(new VectorComposerFactory());
-
         if (mongoURI == null || mongoURI.isEmpty()) {
             throw new IllegalArgumentException("mongoURI can't be null nor empty");
         }
@@ -57,13 +54,25 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
     }
 
     @Override
-    public MongoVectorSpace create(Params params) throws ModelNoFound {
-        if (availableModels.contains(params.getDBName())) {
+    public MongoVectorSpace doCreate(Params params) throws ModelNoFound {
+        if (availableModels.contains(getDBName(params))) {
             VectorComposer termComposer = this.vectorComposerFactory.getComposer(params.termComposition);
             VectorComposer translationComposer = this.vectorComposerFactory.getComposer(params.translationComposition);
-            return new MongoVectorSpace(mongoClient, params.getDBName(), termComposer, translationComposer);
+            return new MongoVectorSpace(mongoClient, getDBName(params), termComposer, translationComposer);
         }
 
-        throw new ModelNoFound(params.getDBName());
+        throw new ModelNoFound(getDBName(params));
+    }
+
+    @Override
+    public String createKey(Params params) {
+        return getDBName(params);
+    }
+
+    private String getDBName(Params params) {
+        return String.format("%s-%s-%s",
+                params.model.toLowerCase(),
+                params.language.toLowerCase(),
+                params.corpusName.toLowerCase());
     }
 }
