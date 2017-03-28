@@ -47,7 +47,7 @@ public abstract class IndraDriver {
     private static final String DEFAULT_LANGUAGE = "EN";
     private static final String DEFAULT_DISTRIBUTIONAL_MODEL = "W2V";
 
-    protected static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE,
+    public static final Params DEFAULT_PARAMS = new Params(DEFAULT_CORPUS_NAME, ScoreFunction.COSINE,
             DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
 
     private Logger logger = LoggerFactory.getLogger(getClass());
