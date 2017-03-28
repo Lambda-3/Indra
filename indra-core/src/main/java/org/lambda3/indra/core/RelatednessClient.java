@@ -26,7 +26,6 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
@@ -42,20 +41,20 @@ public abstract class RelatednessClient {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected VectorSpace vectorSpace;
     protected Params params;
+    protected RelatednessFunction func;
 
-    protected RelatednessClient(Params params, VectorSpace vectorSpace) {
-        if (params == null || vectorSpace == null) {
+    protected RelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
+        if (params == null || vectorSpace == null || func == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }
         this.vectorSpace = vectorSpace;
         this.params = params;
+        this.func = func;
     }
 
     protected abstract List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs);
 
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
-
-    protected abstract double sim(RealVector r1, RealVector r2, boolean sparse);
 
     protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
@@ -67,10 +66,10 @@ public abstract class RelatednessClient {
 
                 if (!vectorSpace.isSparse()) {
                     scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(vectorPair.v1, vectorPair.v2, false)));
+                            func.sim(vectorPair.v1, vectorPair.v2, false)));
                 } else {
                     scoredTextPairs.add(new ScoredTextPair(pair,
-                            sim(vectorPair.v1, vectorPair.v2, true)));
+                            func.sim(vectorPair.v1, vectorPair.v2, true)));
                 }
 
             } else {

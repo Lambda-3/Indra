@@ -26,7 +26,6 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.TextPair;
 
@@ -34,10 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RelatednessBaseClient extends RelatednessClient {
+public class RelatednessBaseClient extends RelatednessClient {
 
-    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
+    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
+        super(params, vectorSpace, func);
     }
 
     @Override

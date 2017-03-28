@@ -27,33 +27,33 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.RelatednessFunction;
 
-public class AlphaSkewClient extends RelatednessBaseClient {
-
-    public AlphaSkewClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
+public class Jaccard2RelatednessFunction implements RelatednessFunction {
 
     @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
         if (r1.getDimension() != r2.getDimension()) {
             return 0;
         }
 
-        double alpha = 0.99;
-        double divergence = 0.0;
+        double min = 0.0;
+        double max = 0.0;
 
-        for (int i = 0; i < r1.getDimension(); ++i) {
-            if (r1.getEntry(i) > 0.0 && r2.getEntry(i) > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / ((1 - alpha) * r1.getEntry(i) + alpha * r2.getEntry(i)));
+        for (int i = 0; i <r1.getDimension(); ++i) {
+            if (r1.getEntry(i) > r2.getEntry(i)) {
+                min +=r2.getEntry(i);
+                max += r1.getEntry(i);
+            } else {
+                min += r1.getEntry(i);
+                max += r2.getEntry(i);
             }
         }
 
-        double result = (1 - (divergence / Math.sqrt(2 * Math.log(2))));
-        return Math.abs(result);
+        if (max == 0) {
+            return 0;
+        }
+
+        return Math.abs(min / max);
     }
 }

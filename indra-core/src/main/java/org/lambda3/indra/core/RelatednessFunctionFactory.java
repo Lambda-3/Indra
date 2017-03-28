@@ -1,4 +1,8 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core;
+
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.impl.*;
 
 /*-
  * ==========================License-Start=============================
@@ -25,42 +29,35 @@ package org.lambda3.indra.core.impl;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class RelatednessFunctionFactory {
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+    public RelatednessFunction create(ScoreFunction scoreFunction) {
 
-public class Jaccard2Client extends RelatednessBaseClient {
-
-    public Jaccard2Client(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
-
-    @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        if (r1.getDimension() != r2.getDimension()) {
-            return 0;
+        switch (scoreFunction) {
+            case COSINE:
+                return new CosineRelatednessFunction();
+            case SPEARMAN:
+                return new SpearmanRelatednessFunction();
+            case EUCLIDEAN:
+                return new EuclideanRelatednessFunction();
+            case JACCARD:
+                return new JaccardRelatednessFunction();
+            case PEARSON:
+                return new PearsonRelatednessFunction();
+            case ALPHASKEW:
+                return new AlphaSkewRelatednessFunction();
+            case CHEBYSHEV:
+                return new ChebyshevRelatednessFunction();
+            case CITYBLOCK:
+                return new CityBlockRelatednessFunction();
+            case DICE:
+                return new DiceRelatednessFunction();
+            case JACCARD2:
+                return new Jaccard2RelatednessFunction();
+            case JENSENSHANNON:
+                return new JensenShannonRelatednessFunction();
+            default:
+                throw new IndraError("Unsupported Score Function.");
         }
-
-        double min = 0.0;
-        double max = 0.0;
-
-        for (int i = 0; i <r1.getDimension(); ++i) {
-            if (r1.getEntry(i) > r2.getEntry(i)) {
-                min +=r2.getEntry(i);
-                max += r1.getEntry(i);
-            } else {
-                min += r1.getEntry(i);
-                max += r2.getEntry(i);
-            }
-        }
-
-        if (max == 0) {
-            return 0;
-        }
-
-        return Math.abs(min / max);
     }
 }

@@ -26,34 +26,13 @@ package org.lambda3.indra.core.impl;
  * ==========================License-End===============================
  */
 
-
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.RelatednessFunction;
 
-public class ChebyshevClient extends RelatednessBaseClient {
-
-    public ChebyshevClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
+public class CosineRelatednessFunction implements RelatednessFunction {
 
     @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        if (r1.getDimension() != r2.getDimension()) {
-            return 0;
-        }
-
-        double max = 0;
-        double tmp;
-
-        for (int i = 0; i < r1.getDimension(); ++i) {
-            tmp = Math.abs((r1.getEntry(i) - r2.getEntry(i)));
-            max = (tmp > max ? tmp : max);
-        }
-
-        double result = 1 / (1 + (max == Double.NaN ? 0 : max));
-        return Math.abs(result);
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return r1.cosine(r2);
     }
 }

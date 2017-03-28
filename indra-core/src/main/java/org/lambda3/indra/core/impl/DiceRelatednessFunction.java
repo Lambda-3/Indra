@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.impl;
 
 /*-
  * ==========================License-Start=============================
@@ -27,43 +27,33 @@ package org.lambda3.indra.core.tests;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessClient;
-import org.lambda3.indra.core.VectorPair;
+import org.lambda3.indra.core.RelatednessFunction;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
-
-public class RelatednessDummyClient extends RelatednessClient {
-
-    private static Random rnd = new Random();
-    private final Params params;
-
-    public RelatednessDummyClient(Params params) {
-        //TODO broken, implement here.
-        super(null, null, null);
-        this.params = params;
-    }
-
-    protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        return pairs.stream().
-                map(p -> new ScoredTextPair(p, rnd.nextDouble())).
-                collect(Collectors.toList());
-    }
-
+public class DiceRelatednessFunction implements RelatednessFunction {
 
     @Override
-    protected List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs) {
-        return null;
-    }
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        if (r1.getDimension() != r2.getDimension()) {
+            return 0;
+        }
 
-    @Override
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
-        return null;
+        double min = 0.0;
+        double sum = 0.0;
+
+        for (int i = 0; i < r1.getDimension(); ++i) {
+            if (r1.getEntry(i) > r2.getEntry(i)) {
+                min += r2.getEntry(i);
+            } else {
+                min += r1.getEntry(i);
+            }
+            sum += r1.getEntry(i) + r2.getEntry(i);
+        }
+
+        if (sum == 0) {
+            return 0;
+        }
+
+        double result = 2 * min / sum;
+        return Math.abs(result);
     }
 }
