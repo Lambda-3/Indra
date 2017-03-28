@@ -15,14 +15,14 @@ Indra is a distributional semantics engine which facilitates the deployment of r
 
 # Features
 
-* Supports multiple distributional semantic models and distance measures.
-* No strings attached: permissive license for commercial and academic use.
-* Access to the semantic models as a service.
-* High performance vector computation.
-* Easy deploy: Deploy the infrastructure in 3 steps.
-* Intrinsically multi-lingual.
-* Pre-build models from different languages.
-
+* Supports multiple distributional semantic models and distance measures;
+* No strings attached: permissive license for commercial and academic use;
+* Access to the semantic models as a service;
+* High performance vector computation;
+* Easy deploy: Deploy the infrastructure in 3 steps;
+* Intrinsically multi-lingual;
+* Pre-build models from different languages;
+* Provides translated distributional relatedness.
 
 # Supported Models
 
@@ -31,7 +31,62 @@ Indra is a distributional semantics engine which facilitates the deployment of r
 * [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
 * [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/GloVe_(machine_learning))
 
-# JSON over HTTP API (REST like ;)
+# Word Embeddins
+This is the payload consumed by Indra to serve [Word Embeddins](https://en.wikipedia.org/wiki/Word_embedding) of words or phrases.
+
+## Request data model
+
+```json
+{
+	"corpus": "wiki-2014",
+	"model": "W2V",
+	"language": "EN",
+	"terms": ["love", "mother"]
+}
+```
+* corpus: The name of the corpus used to build the models:
+ * wiki-2014 (except JP and KO)
+ * wiki-2016 (only JP and KO)
+
+* model: The distributional model:
+ * W2V
+ * GLOVE
+ * LSA 
+ * ESA
+
+* language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
+ * EN - English
+ * DE - German
+ * ES - Spanish
+ * FR - French
+ * PT - Portuguese
+ * IT - Italian
+ * SV - Swedish
+ * ZH - Chinese
+ * NL - Dutch
+ * RU - Russian
+ * KO - Korean
+ * JP - Japanese
+ * AR - Arabic
+ * FA - Persian
+
+## Response model
+
+This is the response for the request above.
+```json
+{
+  "corpus": "wiki-2014",
+  "model": "W2V",
+  "language": "EN",
+  "terms":
+    {
+      "love" : { 0 : 0.333, 1 : 0.21, 2 : 0.32 },
+      "mother" : { 0 : 0.333, 1 : 0.21, 2 : 0.32 }
+    }
+}
+```
+
+# Semantic Similarity
 
 This is the payload consumed by Indra to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
 
@@ -54,31 +109,9 @@ This is the payload consumed by Indra to compute [Semantic Similarity](https://e
 }
 ```
 
-* model: The distributional model
- * W2V
- * GLOVE
- * LSA 
- * ESA
-
-* language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
- * EN - English
- * DE - German
- * ES - Spanish
- * FR - French
- * PT - Portuguese
- * IT - Italian
- * SV - Swedish
- * ZH - Chinese
- * NL - Dutch
- * RU - Russian
- * KO - Korean
- * JP - Japanese
- * AR - Arabic
- * FA - Persian
-
-* corpus: The name of the corpus used to build the models.
- * wiki-2014 (except JP and KO)
- * wiki-2016 (only JP and KO)
+* corpus: same as previously shown;
+* model: same as previously shown;
+* language: same as previously shown;
 
 * scoreFunction: The function to compute the relatedness between the distributional vectors
  * COSINE
@@ -117,13 +150,31 @@ This is the response for the request above.
 }
 ```
 
+# Translated Word Embeddins and Semantic Similarity
+
+For translated word embeddins and translated semantic similarity, append "/mt" in the endpoint address and submit the same paylod.
+
 # Usage
 
 If you want to give a try on your own infrastructure take a look on [Indra-Composed](https://github.com/Lambda-3/indra-composed).
 
 ## Public Endpoint
 
-We have a public endpoint for demonstration only hence you can try right now with _cURL_ on the command line:
+We have a public endpoint for demonstration only hence you can try right now with _cURL_ on the command line.
+
+For word embbedins:
+
+```
+curl -X POST -H "Content-Type: application/json" -d '{
+	"corpus": "wiki-2014",
+	"model": "W2V",
+	"language": "EN",
+	"terms": ["love", "mother"]
+}' "http://indra.lambda3.org/vectors"
+```
+
+For semantic similarity:
+
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
 	"corpus": "wiki-2014",
