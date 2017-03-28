@@ -31,7 +31,6 @@ import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.composition.VectorComposition;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

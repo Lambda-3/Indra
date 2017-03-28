@@ -12,10 +12,10 @@ package org.lambda3.indra.core.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,20 +27,15 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.exception.IndraError;
-import org.lambda3.indra.core.translation.Translator;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.lambda3.indra.core.RelatednessFunction;
 
-public class JaccardClient extends RelatednessBaseClient {
+public class PearsonRelatednessFunction implements RelatednessFunction {
 
-    public JaccardClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
+    private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
 
     @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        throw new IndraError("Score function Not implemented yet!");
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return pearsonsCorrelation.correlation(r1.toArray(), r2.toArray());
     }
 }

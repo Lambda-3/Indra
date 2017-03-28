@@ -27,19 +27,12 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.RelatednessFunction;
 
-public class CosineClient extends RelatednessBaseClient {
-
-    public CosineClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
+public class EuclideanRelatednessFunction implements RelatednessFunction {
 
     @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        return r1.cosine(r2);
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return r1.getDistance(r2);
     }
 }

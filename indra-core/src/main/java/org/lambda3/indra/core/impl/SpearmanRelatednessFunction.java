@@ -27,42 +27,16 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessBaseClient;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.translation.Translator;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
+import org.lambda3.indra.core.RelatednessFunction;
 
-public class JensenShannonClient extends RelatednessBaseClient {
+public class SpearmanRelatednessFunction implements RelatednessFunction {
 
-    public JensenShannonClient(Params params, VectorSpace vectorSpace) {
-        super(params, vectorSpace);
-    }
+    private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
 
     @Override
-    protected double sim(RealVector r1, RealVector r2, boolean sparse) {
-        if (r1.getDimension() != r2.getDimension()) {
-            return 0;
-        }
-
-        double divergence = 0.0;
-        double avr = 0.0;
-
-        for (int i = 0; i < r1.getDimension(); ++i) {
-            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
-
-            if (r1.getEntry(i) > 0.0 && avr > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / avr);
-            }
-        }
-        for (int i = 0; i < r2.getDimension(); ++i) {
-            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
-
-            if (r2.getEntry(i) > 0.0 && avr > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r2.getEntry(i) / avr);
-            }
-        }
-
-        double result = 1 - (divergence / (2 * Math.sqrt(2 * Math.log(2))));
-        return Math.abs(result);
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return spearmansCorrelation.correlation(r1.toArray(), r2.toArray());
     }
+
 }

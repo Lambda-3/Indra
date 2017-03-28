@@ -56,7 +56,7 @@ public abstract class IndraDriver {
     public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, Translator translator) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
-        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translator);
+        //this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translator);
     }
 
     public RelatednessResult getRelatedness(List<TextPair> pairs) {
