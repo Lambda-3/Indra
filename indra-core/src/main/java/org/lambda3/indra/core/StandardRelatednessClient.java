@@ -28,6 +28,7 @@ package org.lambda3.indra.core;
 
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.function.RelatednessFunction;
 
 import java.util.ArrayList;
 import java.util.List;

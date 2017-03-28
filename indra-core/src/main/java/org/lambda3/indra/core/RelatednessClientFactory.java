@@ -26,6 +26,8 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 

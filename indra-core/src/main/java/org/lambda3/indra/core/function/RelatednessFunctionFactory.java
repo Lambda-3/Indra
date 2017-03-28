@@ -1,4 +1,8 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
+
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.function.*;
 
 /*-
  * ==========================License-Start=============================
@@ -25,14 +29,35 @@ package org.lambda3.indra.core.impl;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class RelatednessFunctionFactory {
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.RelatednessFunction;
+    public RelatednessFunction create(ScoreFunction scoreFunction) {
 
-public class CosineRelatednessFunction implements RelatednessFunction {
-
-    @Override
-    public double sim(RealVector r1, RealVector r2, boolean sparse) {
-        return r1.cosine(r2);
+        switch (scoreFunction) {
+            case COSINE:
+                return new CosineRelatednessFunction();
+            case SPEARMAN:
+                return new SpearmanRelatednessFunction();
+            case EUCLIDEAN:
+                return new EuclideanRelatednessFunction();
+            case JACCARD:
+                return new JaccardRelatednessFunction();
+            case PEARSON:
+                return new PearsonRelatednessFunction();
+            case ALPHASKEW:
+                return new AlphaSkewRelatednessFunction();
+            case CHEBYSHEV:
+                return new ChebyshevRelatednessFunction();
+            case CITYBLOCK:
+                return new CityBlockRelatednessFunction();
+            case DICE:
+                return new DiceRelatednessFunction();
+            case JACCARD2:
+                return new Jaccard2RelatednessFunction();
+            case JENSENSHANNON:
+                return new JensenShannonRelatednessFunction();
+            default:
+                throw new IndraError("Unsupported Score Function.");
+        }
     }
 }

@@ -5,13 +5,13 @@ import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
+import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.composition.VectorComposition;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

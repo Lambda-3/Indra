@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -27,9 +27,8 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.RelatednessFunction;
 
-public class JensenShannonRelatednessFunction implements RelatednessFunction {
+public class Jaccard2RelatednessFunction implements RelatednessFunction {
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
@@ -37,25 +36,23 @@ public class JensenShannonRelatednessFunction implements RelatednessFunction {
             return 0;
         }
 
-        double divergence = 0.0;
-        double avr = 0.0;
+        double min = 0.0;
+        double max = 0.0;
 
-        for (int i = 0; i < r1.getDimension(); ++i) {
-            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
-
-            if (r1.getEntry(i) > 0.0 && avr > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / avr);
-            }
-        }
-        for (int i = 0; i < r2.getDimension(); ++i) {
-            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
-
-            if (r2.getEntry(i) > 0.0 && avr > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r2.getEntry(i) / avr);
+        for (int i = 0; i <r1.getDimension(); ++i) {
+            if (r1.getEntry(i) > r2.getEntry(i)) {
+                min +=r2.getEntry(i);
+                max += r1.getEntry(i);
+            } else {
+                min += r1.getEntry(i);
+                max += r2.getEntry(i);
             }
         }
 
-        double result = 1 - (divergence / (2 * Math.sqrt(2 * Math.log(2))));
-        return Math.abs(result);
+        if (max == 0) {
+            return 0;
+        }
+
+        return Math.abs(min / max);
     }
 }

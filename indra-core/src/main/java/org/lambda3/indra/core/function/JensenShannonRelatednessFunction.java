@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -27,9 +27,8 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.RelatednessFunction;
 
-public class AlphaSkewRelatednessFunction implements RelatednessFunction {
+public class JensenShannonRelatednessFunction implements RelatednessFunction {
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
@@ -37,16 +36,25 @@ public class AlphaSkewRelatednessFunction implements RelatednessFunction {
             return 0;
         }
 
-        double alpha = 0.99;
         double divergence = 0.0;
+        double avr = 0.0;
 
         for (int i = 0; i < r1.getDimension(); ++i) {
-            if (r1.getEntry(i) > 0.0 && r2.getEntry(i) > 0.0) {
-                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / ((1 - alpha) * r1.getEntry(i) + alpha * r2.getEntry(i)));
+            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
+
+            if (r1.getEntry(i) > 0.0 && avr > 0.0) {
+                divergence += r1.getEntry(i) * Math.log(r1.getEntry(i) / avr);
+            }
+        }
+        for (int i = 0; i < r2.getDimension(); ++i) {
+            avr = (r1.getEntry(i) + r2.getEntry(i)) / 2;
+
+            if (r2.getEntry(i) > 0.0 && avr > 0.0) {
+                divergence += r1.getEntry(i) * Math.log(r2.getEntry(i) / avr);
             }
         }
 
-        double result = (1 - (divergence / Math.sqrt(2 * Math.log(2))));
+        double result = 1 - (divergence / (2 * Math.sqrt(2 * Math.log(2))));
         return Math.abs(result);
     }
 }

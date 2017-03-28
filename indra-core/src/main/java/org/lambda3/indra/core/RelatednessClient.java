@@ -29,6 +29,7 @@ package org.lambda3.indra.core;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.function.RelatednessFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

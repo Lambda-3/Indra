@@ -1,6 +1,7 @@
 package org.lambda3.indra.core;
 
 import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.util.*;

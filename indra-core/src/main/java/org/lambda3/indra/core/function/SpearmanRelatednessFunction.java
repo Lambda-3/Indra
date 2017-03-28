@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -27,12 +27,15 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.RelatednessFunction;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
-public class EuclideanRelatednessFunction implements RelatednessFunction {
+public class SpearmanRelatednessFunction implements RelatednessFunction {
+
+    private SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
-        return r1.getDistance(r2);
+        return spearmansCorrelation.correlation(r1.toArray(), r2.toArray());
     }
+
 }

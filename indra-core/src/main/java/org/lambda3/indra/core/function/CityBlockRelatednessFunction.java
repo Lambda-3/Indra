@@ -1,11 +1,4 @@
-package org.lambda3.indra.core;
-
-
-import org.lambda3.indra.core.composition.*;
-import org.lambda3.indra.core.exception.IndraError;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -19,10 +12,10 @@ import java.util.Map;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,22 +26,23 @@ import java.util.Map;
  * ==========================License-End===============================
  */
 
-public class VectorComposerFactory {
+import org.apache.commons.math3.linear.RealVector;
 
-    private Map<VectorComposition, VectorComposer> statelessComposers = new HashMap<>();
+public class CityBlockRelatednessFunction implements RelatednessFunction {
 
-    public VectorComposerFactory() {
-        this.statelessComposers.put(VectorComposition.SUM, new SumVectorComposer());
-        this.statelessComposers.put(VectorComposition.UNIQUE_SUM, new UniqueSumVectorComposer());
-        this.statelessComposers.put(VectorComposition.AVERAGE, new AveragedVectorComposer());
-    }
-
-    public VectorComposer getComposer(VectorComposition name) {
-        VectorComposer composer = statelessComposers.get(name);
-        if (composer == null) {
-            throw new IndraError("Unsupported vector composition.");
+    @Override
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        if (r1.getDimension() != r2.getDimension()) {
+            return 0;
         }
 
-        return composer;
+        double sum = 0.0;
+
+        for (int i = 0; i < r1.getDimension(); ++i) {
+            sum += Math.abs((r1.getEntry(i) - r2.getEntry(i)));
+        }
+
+        double result = 1 / (1 + (sum == Double.NaN ? 0 : sum));
+        return Math.abs(result);
     }
 }
