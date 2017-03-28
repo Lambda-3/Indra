@@ -35,26 +35,17 @@ import java.util.*;
 
 public class MockCachedVectorSpace extends CachedVectorSpace {
 
-    public final RealVector ZERO_VECTOR;
-
-    public final RealVector ONE_VECTOR;
-
-    public final RealVector NEGATIVE_ONE_VECTOR;
-
-    public final RealVector TWO_VECTOR;
-
-    public final RealVector NEGATIVE_TWO_VECTOR;
+    public static final int VECTOR_SIZE = 5;
+    public static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
+    public static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
+    public static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
+    public static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
+    public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
     private Map<String, RealVector> vectors = new HashMap<>();
 
     public MockCachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
         super(termComposer, translationComposer);
-        this.ZERO_VECTOR = new ArrayRealVector(getVectorSize());
-        this.ONE_VECTOR = ZERO_VECTOR.mapAdd(1);
-        this.NEGATIVE_ONE_VECTOR = ONE_VECTOR.mapMultiply(-1);
-        this.TWO_VECTOR = ZERO_VECTOR.mapAdd(2);
-        this.NEGATIVE_TWO_VECTOR = TWO_VECTOR.mapMultiply(-1);
-
         vectors.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
         vectors.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
         vectors.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
@@ -88,7 +79,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
 
     @Override
     public int getVectorSize() {
-        return 5;
+        return VECTOR_SIZE;
     }
 
     @Override

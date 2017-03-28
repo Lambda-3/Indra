@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class IndraAnalyzer {
+    //TODO define which language should be lower cased.
+
     private static final int MIN_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 100;
 
@@ -145,22 +147,21 @@ public class IndraAnalyzer {
         return result;
     }
 
-    private TokenStream createStream(String lang, boolean stemming, Tokenizer tokenizer) {
+    private TokenStream createStream(String lang, boolean full, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
-
-        StopFilter stopFilterStream = getStopFilter(lang, stream);
-        stream = stopFilterStream != null ? stopFilterStream : stream;
+        stream = new LowerCaseFilter(stream);
+        stream = getStopFilter(lang, stream);;
 
         if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
             stream = new LengthFilter(stream, MIN_WORD_LENGTH, MAX_WORD_LENGTH);
         }
 
-        if (stemming) {
+        if (full) {
             stream = getStemmerFilter(lang, stream);
+            stream = new ASCIIFoldingFilter(stream);
         }
 
-        stream = new LowerCaseFilter(stream);
-        return new ASCIIFoldingFilter(stream);
+        return stream;
     }
 
     private TokenStream getStemmerFilter(String lang, TokenStream stream) {
@@ -205,7 +206,7 @@ public class IndraAnalyzer {
         return null;
     }
 
-    private StopFilter getStopFilter(String lang, TokenStream stream) {
+    private TokenStream getStopFilter(String lang, TokenStream stream) {
         try {
             InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
             if (in != null) {
@@ -231,6 +232,6 @@ public class IndraAnalyzer {
         } catch (Exception e) {
             logger.error("Error creating stop filter for lang={}", lang, e);
         }
-        return null;
+        return stream;
     }
 }

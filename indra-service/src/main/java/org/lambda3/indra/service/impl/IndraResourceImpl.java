@@ -35,22 +35,21 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-//TODO broken.
 class IndraResourceImpl implements RelatednessResource, VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
     IndraResourceImpl(IndraDriver driver) {
+        if(driver == null) {
+            throw new IllegalArgumentException("driver can't be null.");
+        }
         this.driver = driver;
     }
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
-        return process(request);
-    }
 
-    private RelatednessResponse process(RelatednessRequest request) {
         Params params = buildParams(request);
         RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
         RelatednessResponse response = new RelatednessResponse(request, result.getScores());
