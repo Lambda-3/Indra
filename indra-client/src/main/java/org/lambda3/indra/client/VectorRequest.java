@@ -34,7 +34,6 @@ public class VectorRequest {
     private String corpus;
     private String model;
     private String language;
-    private boolean translate = false;
     private List<String> terms;
 
 
@@ -58,11 +57,6 @@ public class VectorRequest {
         return this;
     }
 
-    public VectorRequest translate(boolean translate) {
-        this.translate = translate;
-        return this;
-    }
-
     public String getCorpus() {
         return corpus;
     }
@@ -79,17 +73,12 @@ public class VectorRequest {
         return terms;
     }
 
-    public boolean isTranslate() {
-        return translate;
-    }
-
     @Override
     public String toString() {
         return "VectorRequest{" +
                 "corpus='" + corpus + '\'' +
                 ", model='" + model + '\'' +
                 ", language='" + language + '\'' +
-                ", translate=" + translate +
                 ", terms=" + terms +
                 '}';
     }

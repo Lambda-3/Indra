@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentMap;
  * ==========================License-End===============================
  */
 
+//TODO part of multithreading capabilities - to continue...
 public class RelatednessWorker implements Runnable {
 
     private Map<AnalyzedPair, VectorPair> vectorPairs;
@@ -64,7 +65,6 @@ public class RelatednessWorker implements Runnable {
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
 
                 if (!sparse) {
-                    //TODO transform score function in functional interfaces.
                     //output.put(pair.getTextPair(), new ScoredTextPair(pair,
                       //      sim(vectorPair.v1, vectorPair.v2, false)));
                 } else {

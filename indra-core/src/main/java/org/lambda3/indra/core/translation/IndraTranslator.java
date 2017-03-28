@@ -38,6 +38,4 @@ public interface IndraTranslator {
      * @param terms
      */
     void translate(List<MutableTranslatedTerm> terms);
-
-    String getTargetLanguage();
 }

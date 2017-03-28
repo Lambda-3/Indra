@@ -38,8 +38,6 @@ public class VectorResponse {
     @JsonProperty
     private String language;
     @JsonProperty
-    private boolean translate = false;
-    @JsonProperty
     private Map<String, Map<Integer, Double>> terms;
 
     private VectorResponse() {
@@ -51,7 +49,6 @@ public class VectorResponse {
         this.corpus = request.getCorpus();
         this.model = request.getModel();
         this.language = request.getLanguage();
-        this.translate = request.isTranslate();
         this.terms = terms;
     }
 
@@ -67,10 +64,6 @@ public class VectorResponse {
         return language;
     }
 
-    public boolean isTranslate() {
-        return translate;
-    }
-
     public Map<String, Map<Integer, Double>> getTerms() {
         return terms;
     }
@@ -81,7 +74,6 @@ public class VectorResponse {
                 "corpus='" + corpus + '\'' +
                 ", model='" + model + '\'' +
                 ", language='" + language + '\'' +
-                ", translate=" + translate +
                 ", terms=" + terms +
                 '}';
     }

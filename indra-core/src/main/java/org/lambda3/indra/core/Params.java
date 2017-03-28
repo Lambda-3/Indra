@@ -37,19 +37,9 @@ public final class Params {
     public final String language;
     public final String model;
     public final boolean translate;
+    public final String translateTargetLanguage = "EN";
     public final VectorComposition termComposition;
     public final VectorComposition translationComposition;
-
-
-
-    public Params(String corpusName, String language, String model, boolean translate,
-                  VectorComposition termComposition, VectorComposition translationComposition) {
-        this(corpusName, ScoreFunction.COSINE, language, model, translate, termComposition, translationComposition);
-    }
-
-    public Params(String corpusName, ScoreFunction func, String language, String model) {
-        this(corpusName, func, language, model, false, VectorComposition.UNIQUE_SUM, VectorComposition.AVERAGE);
-    }
 
     public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate,
                   VectorComposition termComposition, VectorComposition translationComposition) {

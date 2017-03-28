@@ -51,4 +51,9 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
 
         return new RelatednessResponse(request, scored);
     }
+
+    @Override
+    public RelatednessResponse getTranslatedRelatedness(RelatednessRequest request) {
+        return getRelatedness(request);
+    }
 }

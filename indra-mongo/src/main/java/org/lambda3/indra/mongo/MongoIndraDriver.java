@@ -26,14 +26,16 @@ package org.lambda3.indra.mongo;
  * ==========================License-End===============================
  */
 
-import com.mongodb.MongoClient;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.utils.ParamsUtils;
 
 public class MongoIndraDriver extends IndraDriver {
 
+    public static final Params DEFAULT_PARAMS = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
+
     public MongoIndraDriver(String mongoURI) {
-        this(IndraDriver.DEFAULT_PARAMS, mongoURI);
+        this(DEFAULT_PARAMS, mongoURI);
     }
 
     public MongoIndraDriver(Params params, String mongoURI) {

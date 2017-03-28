@@ -26,13 +26,15 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorPair;
+import org.lambda3.indra.core.composition.AveragedVectorComposer;
+import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
+import org.lambda3.indra.core.impl.CosineRelatednessFunction;
+import org.lambda3.indra.core.utils.ParamsUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -42,28 +44,26 @@ import java.util.stream.Collectors;
 public class RelatednessDummyClient extends RelatednessClient {
 
     private static Random rnd = new Random();
-    private final Params params;
 
-    public RelatednessDummyClient(Params params) {
-        //TODO broken, implement here.
-        super(null, null, null);
-        this.params = params;
+    protected RelatednessDummyClient() {
+        super(ParamsUtils.buildNoTranslateCosineDefaultParams("corpus", "EN", "ESA"),
+                new MockCachedVectorSpace(new UniqueSumVectorComposer(), new AveragedVectorComposer()),
+                new CosineRelatednessFunction());
     }
 
-    protected List<ScoredTextPair> compute(List<AnalyzedPair> pairs) {
-        return pairs.stream().
-                map(p -> new ScoredTextPair(p, rnd.nextDouble())).
+    @Override
+    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
+        return vectorPairs.keySet().stream().map(p -> new ScoredTextPair(p, rnd.nextDouble())).
                 collect(Collectors.toList());
     }
 
-
     @Override
     protected List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs) {
-        return null;
+        return pairs.stream().map(p -> new AnalyzedPair(p)).collect(Collectors.toList());
     }
 
     @Override
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
-        return null;
+        return analyzedPairs.stream().collect(Collectors.toMap(p -> p, p -> new VectorPair()));
     }
 }

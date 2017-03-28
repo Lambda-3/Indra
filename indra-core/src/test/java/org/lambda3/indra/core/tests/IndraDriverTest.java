@@ -11,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +109,16 @@ public class IndraDriverTest {
 
         for(ScoredTextPair pair : res.getScores()) {
             Assert.assertEquals(Math.floor(pair.score), -1d);
+        }
+    }
+
+    @Test
+    public void getZeroRelatedness() {
+        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("blabla", "ttt"),
+                new TextPair("these tokens are not in the vector model", "neither those")));
+
+        for(ScoredTextPair pair : res.getScores()) {
+            Assert.assertEquals(pair.score, 0d);
         }
     }
 }

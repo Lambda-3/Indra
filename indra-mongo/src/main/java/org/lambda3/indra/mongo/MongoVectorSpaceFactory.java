@@ -72,7 +72,7 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
     private String getDBName(Params params) {
         return String.format("%s-%s-%s",
                 params.model.toLowerCase(),
-                params.language.toLowerCase(),
+                params.translate ? params.translateTargetLanguage.toLowerCase() : params.language.toLowerCase(),
                 params.corpusName.toLowerCase());
     }
 }

@@ -43,4 +43,9 @@ public interface RelatednessResource {
     @Valid
     @Path("/")
     RelatednessResponse getRelatedness(RelatednessRequest request);
+
+    @POST
+    @Valid
+    @Path("/mt")
+    RelatednessResponse getTranslatedRelatedness(RelatednessRequest request);
 }
