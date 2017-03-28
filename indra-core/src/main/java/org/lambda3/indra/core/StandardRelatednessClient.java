@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RelatednessBaseClient extends RelatednessClient {
+public class StandardRelatednessClient extends RelatednessClient {
 
-    protected RelatednessBaseClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
+    protected StandardRelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
         super(params, vectorSpace, func);
     }
 

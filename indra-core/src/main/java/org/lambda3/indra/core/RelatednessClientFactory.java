@@ -26,7 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,15 +36,16 @@ public final class RelatednessClientFactory {
     private final Map<Params, RelatednessClient> clients = new ConcurrentHashMap<>();
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
-    private Translator translator;
+    private IndraTranslatorFactory translatorFactory;
 
 
-    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, RelatednessFunctionFactory relatednessFunctionFactory) {
-        if (vectorSpaceFactory == null || relatednessFunctionFactory == null) {
-            throw new IllegalArgumentException("factories are mandatory");
+    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+        if (vectorSpaceFactory == null) {
+            throw new IllegalArgumentException("vectorSpaceFactory are mandatory");
         }
         this.vectorSpaceFactory = vectorSpaceFactory;
-        this.relatednessFunctionFactory = relatednessFunctionFactory;
+        this.translatorFactory = translatorFactory;
+        this.relatednessFunctionFactory = new RelatednessFunctionFactory();
     }
 
     public RelatednessClient create(Params params) {
@@ -53,9 +54,14 @@ public final class RelatednessClientFactory {
 
         RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(params.func);
         if (params.translate) {
-            return new TranslatedRelatednessClient(params, vectorSpace, relatednessFunction, translator);
+            if (translatorFactory == null) {
+                throw new IllegalStateException("Translation-based relatedness not activated.");
+            }
+
+            return new TranslationBasedRelatednessClient(params, vectorSpace, relatednessFunction,
+                    translatorFactory.create(params.language));
         } else {
-            return new RelatednessBaseClient(params, vectorSpace, relatednessFunction);
+            return new StandardRelatednessClient(params, vectorSpace, relatednessFunction);
         }
     }
 

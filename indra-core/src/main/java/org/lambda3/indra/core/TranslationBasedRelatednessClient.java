@@ -1,7 +1,7 @@
 package org.lambda3.indra.core;
 
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.util.*;
 
@@ -31,10 +31,10 @@ import java.util.*;
  * ==========================License-End===============================
  */
 
-public class TranslatedRelatednessClient extends RelatednessClient {
-    private Translator translator;
+public class TranslationBasedRelatednessClient extends RelatednessClient {
+    private IndraTranslator translator;
 
-    public TranslatedRelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func, Translator translator) {
+    public TranslationBasedRelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
         super(params, vectorSpace, func);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
@@ -65,7 +65,7 @@ public class TranslatedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
-            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.targetLang);
+            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.TARGET_LANG);
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
@@ -75,7 +75,7 @@ public class TranslatedRelatednessClient extends RelatednessClient {
             }
 
         } else {
-            logger.error("Translator is not available, but getParams().translate is true.");
+            logger.error("IndraTranslator is not available, but getParams().translate is true.");
         }
 
         return analyzedPairs;

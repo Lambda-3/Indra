@@ -6,7 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.translation.IndraTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public class MongoTranslator implements Translator {
+public class MongoIndraTranslator implements IndraTranslator {
 
     private static final String LEX_COLLECTION = "lex";
     private static final String TERM_FIELD = "term";
@@ -51,7 +51,7 @@ public class MongoTranslator implements Translator {
     private String dbName;
 
 
-    public MongoTranslator(MongoClient mongoClient, String dbName) {
+    public MongoIndraTranslator(MongoClient mongoClient, String dbName) {
         if (mongoClient == null) {
             throw new IllegalArgumentException("mongoClient can't be null");
         }
@@ -151,7 +151,7 @@ public class MongoTranslator implements Translator {
 
     public static void main(String[] args) {
         String mongoURI = "132.231.141.167:27017";
-        MongoTranslator mt = new MongoTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile");
+        MongoIndraTranslator mt = new MongoIndraTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile");
 
         Set<String> set = Arrays.stream(new String[]{"pai"}).collect(Collectors.toSet());
         Map<String, List<String>> results = mt.doTranslate(set);
