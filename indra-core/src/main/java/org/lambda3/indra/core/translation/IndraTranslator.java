@@ -30,12 +30,12 @@ import org.lambda3.indra.client.MutableTranslatedTerm;
 
 import java.util.List;
 
-public interface Translator {
+public interface IndraTranslator {
 
-    public final String targetLang = "EN";
+    public final String TARGET_LANG = "EN";
 
     /**
-     * Translate each AnalyzedTerm token by token and store into translatedTokens.
+     * Translate each AnalyzedTerm token by token and store into MutableTranslatedTerm.translatedTokens.
      *
      * @param terms
      */

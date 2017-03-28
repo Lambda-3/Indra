@@ -3,9 +3,11 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.translation.Translator;
+import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +51,29 @@ public abstract class IndraDriver {
             DEFAULT_LANGUAGE, DEFAULT_DISTRIBUTIONAL_MODEL);
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
     private VectorSpaceFactory vectorSpaceFactory;
+    private IndraTranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
+    private Map<Params, RelatednessClient> clientCache = new HashMap<>();
 
-    public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, Translator translator) {
+    public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
         this.currentParams = params;
         this.vectorSpaceFactory = vectorSpaceFactory;
-        //this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translator);
+        this.translatorFactory = translatorFactory;
+        this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
+    }
+
+    public RelatednessClient getClient(Params params) {
+        RelatednessClient relatednessClient = this.clientCache.get(params);
+
+        if (relatednessClient == null) {
+            relatednessClient = relatednessClientFactory.create(params);
+            this.clientCache.put(params, relatednessClient);
+        }
+
+        return relatednessClient;
     }
 
     public RelatednessResult getRelatedness(List<TextPair> pairs) {
@@ -64,7 +81,7 @@ public abstract class IndraDriver {
     }
 
     public RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
-        RelatednessClient relatednessClient = relatednessClientFactory.create(params);
+        RelatednessClient relatednessClient = getClient(params);
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
 
         return result;
@@ -72,6 +89,40 @@ public abstract class IndraDriver {
 
     public Map<String, RealVector> getVectors(List<String> terms) {
         return this.getVectors(terms, this.currentParams);
+    }
+
+    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
+        VectorSpace vectorSpace = vectorSpaceFactory.create(params);
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language);
+
+        if (params.translate) {
+            List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
+            for (String term : terms) {
+                List<String> analyzedTokens = analyzer.nonStemmedAnalyze(term);
+                translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
+            }
+
+            IndraTranslator translator = translatorFactory.create(params.language);
+            translator.translate(translatedTerms);
+
+            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(translator.TARGET_LANG);
+            for (MutableTranslatedTerm term : translatedTerms) {
+                for (String token : term.getTranslatedTokens().keySet()) {
+                    term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(term.getTranslatedTokens().get(token)));
+                }
+            }
+
+            return vectorSpace.getTranslatedVectors(translatedTerms);
+
+        } else {
+
+            List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+            for (String term : terms) {
+                analyzedTerms.add(new AnalyzedTerm(term, analyzer.stemmedAnalyze(term)));
+            }
+
+            return vectorSpace.getVectors(analyzedTerms);
+        }
     }
 
     public Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
@@ -86,17 +137,5 @@ public abstract class IndraDriver {
         return outVectors;
     }
 
-    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
-        VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language);
 
-        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
-
-        for (String term : terms) {
-            List<String> analyzedTokens = analyzer.stemmedAnalyze(term);
-            //TODO broken analyzedTerms.add(new AnalyzedTerm(term, analyzedTokens));
-        }
-
-        return vectorSpace.getVectors(analyzedTerms);
-    }
 }
