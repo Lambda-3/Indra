@@ -2,6 +2,8 @@ package org.lambda3.indra.core.tests;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.client.ScoredTextPair;
+import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
 import org.lambda3.indra.core.composition.VectorComposition;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
@@ -88,6 +90,24 @@ public class IndraDriverTest {
         List<String> terms = Arrays.asList("mãe", "pai");
         Map<String, RealVector> res = driver.getVectors(terms);
         Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
-        Assert.assertEquals(res.get("paigit"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
+        Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
+    }
+
+    @Test
+    public void getComposedTranslatedVectors() {
+        List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
+        Map<String, RealVector> res = driver.getVectors(terms);
+        Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
+        Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
+    }
+
+    @Test
+    public void getRelatedness() {
+        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("mãe", "pai"),
+                new TextPair("mãe computador", "pai avaliação")));
+
+        for(ScoredTextPair pair : res.getScores()) {
+            Assert.assertEquals(Math.floor(pair.score), -1d);
+        }
     }
 }

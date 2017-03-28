@@ -70,6 +70,11 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
 
         vectors.put("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
         vectors.put("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
+
+        //stemmed
+        vectors.put("machin", vectors.get("machine"));
+        vectors.put("comput", vectors.get("computer"));
+        vectors.put("evalu", vectors.get("evaluation"));
     }
 
     @Override

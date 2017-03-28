@@ -164,7 +164,6 @@ public abstract class CachedVectorSpace implements VectorSpace {
         }
 
         Set<String> allTerms = new HashSet<>();
-        terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
 
         for (MutableTranslatedTerm mtt : terms) {
             for (String token : mtt.getAnalyzedTranslatedTokens().keySet()) {
