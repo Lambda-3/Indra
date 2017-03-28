@@ -57,7 +57,6 @@ public class IndraAnalyzer {
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
     private String lang;
-    private boolean toTranslate;
     private Tokenizer tokenizer;
     private TokenStream stemmedStream;
     private TokenStream nonStemmedStream;
@@ -66,11 +65,10 @@ public class IndraAnalyzer {
         if (lang == null) {
             throw new IllegalArgumentException("lang is missing");
         }
-        logger.debug("Creating analyzer, lang={} (toTranslate={})", lang, toTranslate);
+        logger.debug("Creating analyzer, lang={}", lang);
         this.lang = lang;
 
         tokenizer = new StandardTokenizer();
-        this.toTranslate = toTranslate;
 
         stemmedStream = createStream(lang, true, tokenizer);
         nonStemmedStream = createStream(lang, false, tokenizer);
