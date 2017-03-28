@@ -67,13 +67,6 @@ public final class Params {
         this.translationComposition = translationComposition;
     }
 
-    public String getDBName() {
-        return String.format("%s-%s-%s",
-                model.toLowerCase(),
-                language.toLowerCase(),
-                corpusName.toLowerCase());
-    }
-
 
     @Override
     public boolean equals(Object o) {

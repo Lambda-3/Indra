@@ -65,7 +65,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
-            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.TARGET_LANG);
+            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(translator.getTargetLanguage());
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
