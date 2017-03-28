@@ -33,7 +33,7 @@ import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
-import org.lambda3.indra.core.impl.CosineRelatednessFunction;
+import org.lambda3.indra.core.function.CosineRelatednessFunction;
 import org.lambda3.indra.core.utils.ParamsUtils;
 
 import java.util.List;

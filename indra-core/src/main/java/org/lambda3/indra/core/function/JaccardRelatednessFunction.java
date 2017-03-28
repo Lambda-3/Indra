@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.core.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,15 +27,12 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.lambda3.indra.core.RelatednessFunction;
+import org.lambda3.indra.core.exception.IndraError;
 
-public class PearsonRelatednessFunction implements RelatednessFunction {
-
-    private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+public class JaccardRelatednessFunction implements RelatednessFunction {
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
-        return pearsonsCorrelation.correlation(r1.toArray(), r2.toArray());
+        throw new IndraError("Score function not implemented yet!");
     }
 }

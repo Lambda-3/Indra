@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.impl;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -27,33 +27,11 @@ package org.lambda3.indra.core.impl;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.RelatednessFunction;
 
-public class DiceRelatednessFunction implements RelatednessFunction {
+public class EuclideanRelatednessFunction implements RelatednessFunction {
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
-        if (r1.getDimension() != r2.getDimension()) {
-            return 0;
-        }
-
-        double min = 0.0;
-        double sum = 0.0;
-
-        for (int i = 0; i < r1.getDimension(); ++i) {
-            if (r1.getEntry(i) > r2.getEntry(i)) {
-                min += r2.getEntry(i);
-            } else {
-                min += r1.getEntry(i);
-            }
-            sum += r1.getEntry(i) + r2.getEntry(i);
-        }
-
-        if (sum == 0) {
-            return 0;
-        }
-
-        double result = 2 * min / sum;
-        return Math.abs(result);
+        return r1.getDistance(r2);
     }
 }

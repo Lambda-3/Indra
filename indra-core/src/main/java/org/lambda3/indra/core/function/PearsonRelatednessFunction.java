@@ -1,4 +1,4 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.core.function;
 
 /*-
  * ==========================License-Start=============================
@@ -27,8 +27,14 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
-public interface RelatednessFunction {
+public class PearsonRelatednessFunction implements RelatednessFunction {
 
-    double sim(RealVector r1, RealVector r2, boolean sparse);
+    private PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+
+    @Override
+    public double sim(RealVector r1, RealVector r2, boolean sparse) {
+        return pearsonsCorrelation.correlation(r1.toArray(), r2.toArray());
+    }
 }
