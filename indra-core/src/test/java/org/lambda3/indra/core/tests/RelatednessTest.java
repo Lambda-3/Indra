@@ -26,10 +26,8 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -40,8 +38,7 @@ public class RelatednessTest {
 
     @Test
     public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        RelatednessDummyClient cli = new RelatednessDummyClient(params);
+        RelatednessDummyClient cli = new RelatednessDummyClient();
         TextPair pair = new TextPair("car", "engine");
 
         RelatednessResult res = cli.getRelatedness(Collections.singletonList(pair));

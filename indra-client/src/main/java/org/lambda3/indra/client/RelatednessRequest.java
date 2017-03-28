@@ -36,7 +36,6 @@ public final class RelatednessRequest {
     private String language;
     private List<TextPair> pairs;
     private ScoreFunction scoreFunction;
-    private boolean translate = false;
 
     public RelatednessRequest corpus(String corpusName) {
         this.corpus = Objects.requireNonNull(corpusName);
@@ -63,11 +62,6 @@ public final class RelatednessRequest {
         return this;
     }
 
-    public RelatednessRequest translate(boolean translate) {
-        this.translate = translate;
-        return this;
-    }
-
     public String getCorpus() {
         return corpus;
     }
@@ -88,10 +82,6 @@ public final class RelatednessRequest {
         return scoreFunction;
     }
 
-    public boolean isTranslate() {
-        return translate;
-    }
-
     @Override
     public String toString() {
         return "RelatednessRequest{" +
@@ -100,7 +90,6 @@ public final class RelatednessRequest {
                 ", language=" + language +
                 ", pairs=" + pairs +
                 ", scoreFunction=" + scoreFunction +
-                ", translate=" + translate +
                 '}';
     }
 }

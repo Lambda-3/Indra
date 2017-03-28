@@ -26,23 +26,25 @@ package org.lambda3.indra.mongo.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
+import org.lambda3.indra.core.utils.ParamsUtils;
 import org.lambda3.indra.mongo.MongoIndraDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-public class IndraDriverTest {
+public class MongoIndraDriverIT {
 
     @Test
     public void relatednessSimpleTest() {
-        Params params = new Params("corpus", ScoreFunction.COSINE, "EN", "ESA");
-        String mongoURI = "";
+        Params params = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
+        String mongoURI = "mongodb://132.231.141.167:27017";
 
         MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
         TextPair pair = new TextPair("car", "engine");
@@ -53,5 +55,46 @@ public class IndraDriverTest {
         ScoredTextPair scoredPair = res.getScore(pair);
         Assert.assertEquals(pair.t1, scoredPair.t1);
         Assert.assertEquals(pair.t2, scoredPair.t2);
+        Assert.assertTrue(Math.abs(scoredPair.score) > 0);
+    }
+
+    @Test
+    public void translatedRelatednessTest() {
+        Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
+        String mongoURI = "mongodb://132.231.141.167:27017";
+
+        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
+        RelatednessResult res = driver.getRelatedness(pairs);
+
+        Assert.assertNotNull(res);
+        Assert.assertEquals(pairs.size(), res.getScores().size());
+        for (TextPair pair : pairs) {
+            ScoredTextPair scoredPair = res.getScore(pair);
+            Assert.assertEquals(pair.t1, scoredPair.t1);
+            Assert.assertEquals(pair.t2, scoredPair.t2);
+            System.out.println(scoredPair.score);
+            Assert.assertTrue(Math.abs(scoredPair.score) > 0);
+        }
+    }
+
+    @Test
+    public void translatedZeroRelatednessTest() {
+        Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
+        String mongoURI = "mongodb://132.231.141.167:27017";
+
+        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
+        RelatednessResult res = driver.getRelatedness(pairs);
+
+        Assert.assertNotNull(res);
+        Assert.assertEquals(pairs.size(), res.getScores().size());
+        for (TextPair pair : pairs) {
+            ScoredTextPair scoredPair = res.getScore(pair);
+            Assert.assertEquals(pair.t1, scoredPair.t1);
+            Assert.assertEquals(pair.t2, scoredPair.t2);
+            System.out.println(pair + ": " + scoredPair.score);
+            Assert.assertEquals(scoredPair.score, 0d);
+        }
     }
 }

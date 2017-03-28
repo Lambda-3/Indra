@@ -30,6 +30,7 @@ import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
+import org.lambda3.indra.core.utils.ParamsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
     private IndraDriver driver;
 
     IndraResourceImpl(IndraDriver driver) {
-        if(driver == null) {
+        if (driver == null) {
             throw new IllegalArgumentException("driver can't be null.");
         }
         this.driver = driver;
@@ -49,29 +50,42 @@ class IndraResourceImpl implements RelatednessResource, VectorResource {
     @Override
     public RelatednessResponse getRelatedness(RelatednessRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
+        return process(request, false);
+    }
 
-        Params params = buildParams(request);
+
+    @Override
+    public RelatednessResponse getTranslatedRelatedness(RelatednessRequest request) {
+        logger.trace("getTranslatedRelatedness - User Request: {}", request);
+        return process(request, true);
+    }
+
+    private RelatednessResponse process(RelatednessRequest request, boolean translate) {
+        Params params = ParamsUtils.buildParams(request, translate);
         RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
         RelatednessResponse response = new RelatednessResponse(request, result.getScores());
         logger.trace("Response: {}", response);
+
         return response;
     }
 
     @Override
-    public VectorResponse getVector(VectorRequest req) {
-        logger.trace("getVector - User Request: {}", req);
-        Params params = new Params(req.getCorpus(), req.getLanguage(), req.getModel(), req.isTranslate(), null, null);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(req.getTerms(), params);
+    public VectorResponse getVector(VectorRequest request) {
+        return process(request, false);
+    }
 
-        VectorResponse response = new VectorResponse(req, results);
+    @Override
+    public VectorResponse getTranslatedVector(VectorRequest request) {
+        return process(request, true);
+    }
+
+    public VectorResponse process(VectorRequest request, boolean translate) {
+        logger.trace("getVector - User Request: {}", request);
+        Params params = ParamsUtils.buildParams(request, translate);
+        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), params);
+
+        VectorResponse response = new VectorResponse(request, results);
         logger.trace("Response: {}", response);
         return response;
     }
-
-    private static Params buildParams(RelatednessRequest req) {
-        //TODO review here broken.
-        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(), req.isTranslate(), null, null);
-    }
-
-
 }

@@ -118,18 +118,22 @@ public abstract class CachedVectorSpace implements VectorSpace {
             MutableTranslatedTerm tt1 = p.getTranslatedT1();
             for (String token : tt1.getAnalyzedTranslatedTokens().keySet()) {
                 RealVector tokenVector = composeVectors(tt1.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
-                t1Vectors.add(tokenVector);
+                if (tokenVector != null) {
+                    t1Vectors.add(tokenVector);
+                }
             }
 
             List<RealVector> t2Vectors = new LinkedList<>();
             MutableTranslatedTerm tt2 = p.getTranslatedT2();
             for (String token : tt2.getAnalyzedTranslatedTokens().keySet()) {
                 RealVector tokenVector = composeVectors(tt2.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
-                t2Vectors.add(tokenVector);
+                if (tokenVector != null) {
+                    t2Vectors.add(tokenVector);
+                }
             }
 
-            vectorPair.v1 = getTermComposer().compose(t1Vectors);
-            vectorPair.v2 = getTermComposer().compose(t2Vectors);
+            vectorPair.v1 = t1Vectors.isEmpty() ? null : getTermComposer().compose(t1Vectors);
+            vectorPair.v2 = t2Vectors.isEmpty() ? null : getTermComposer().compose(t2Vectors);
             res.put(p, vectorPair);
         }
 
@@ -179,10 +183,12 @@ public abstract class CachedVectorSpace implements VectorSpace {
             List<RealVector> tokenVectors = new LinkedList<>();
             for (String token : mtt.getAnalyzedTranslatedTokens().keySet()) {
                 RealVector tokenVector = composeVectors(mtt.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
-                tokenVectors.add(tokenVector);
+                if (tokenVector != null) {
+                    tokenVectors.add(tokenVector);
+                }
             }
 
-            RealVector vector = getTermComposer().compose(tokenVectors);
+            RealVector vector = tokenVectors.isEmpty() ? null : getTermComposer().compose(tokenVectors);
             vectors.put(mtt.getTerm(), vector);
         }
 

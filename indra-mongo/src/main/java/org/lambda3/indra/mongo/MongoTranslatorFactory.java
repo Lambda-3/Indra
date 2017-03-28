@@ -1,6 +1,7 @@
 package org.lambda3.indra.mongo;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
@@ -34,8 +35,7 @@ import java.util.Set;
  */
 public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
 
-    private static final String DEFAULT_DB_NAME_SUFFIX = "-Europarl_DGT_OpenSubtitile";
-    private static final String DEFAULT_TARGET_LANG = "EN";
+    private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
 
     private MongoClient mongoClient;
     private String dbNameSuffix;
@@ -46,7 +46,7 @@ public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTra
     }
 
     public MongoTranslatorFactory(String mongoURI, String dbNameSuffix) {
-        mongoClient = new MongoClient(mongoURI);
+        mongoClient = new MongoClient(new MongoClientURI(mongoURI));
         this.dbNameSuffix = dbNameSuffix;
 
         for (String s : mongoClient.listDatabaseNames()) {
@@ -58,15 +58,20 @@ public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTra
 
     @Override
     protected MongoIndraTranslator doCreate(Params params) {
-        return new MongoIndraTranslator(mongoClient, createDbName(params.language), DEFAULT_TARGET_LANG);
+        String dbName = getDbName(params.language, params.translateTargetLanguage);
+        if (availableModels.contains(dbName)) {
+            return new MongoIndraTranslator(mongoClient, dbName);
+        } else {
+            throw new RuntimeException(String.format("DB %s is not available.", dbName));
+        }
     }
 
     @Override
     protected Object createKey(Params params) {
-        return createDbName(params.language);
+        return getDbName(params.language, params.translateTargetLanguage);
     }
 
-    private String createDbName(String fromLang) {
-        return String.format("%s_%s-%s", fromLang.toLowerCase(), DEFAULT_TARGET_LANG.toLowerCase(), dbNameSuffix);
+    private String getDbName(String fromLang, String toLang) {
+        return String.format("%s_%s-%s", fromLang.toLowerCase(), toLang.toLowerCase(), dbNameSuffix);
     }
 }

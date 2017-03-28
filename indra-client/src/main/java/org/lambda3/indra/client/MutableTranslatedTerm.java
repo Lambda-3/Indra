@@ -26,6 +26,7 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,10 @@ public class MutableTranslatedTerm extends AnalyzedTerm {
     }
 
     public void putTranslatedTokens(String orginalToken, List<String> translations) {
-        this.translatedTokens.put(orginalToken, translations);
+        this.translatedTokens.put(orginalToken, (translations != null ? translations : Collections.EMPTY_LIST));
     }
 
     public void putAnalyzedTranslatedTokens(String orginalToken, List<String> analyzedTranslations) {
-        this.analyzedTranslatedTokens.put(orginalToken, analyzedTranslations);
+        this.analyzedTranslatedTokens.put(orginalToken, (analyzedTranslations != null ? analyzedTranslations : Collections.EMPTY_LIST));
     }
 }

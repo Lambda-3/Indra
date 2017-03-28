@@ -42,4 +42,9 @@ public interface VectorResource {
     @Valid
     @Path("/")
     VectorResponse getVector(VectorRequest request);
+
+    @POST
+    @Valid
+    @Path("/mt")
+    VectorResponse getTranslatedVector(VectorRequest request);
 }

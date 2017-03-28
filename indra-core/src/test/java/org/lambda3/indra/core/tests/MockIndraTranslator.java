@@ -50,9 +50,4 @@ public class MockIndraTranslator implements IndraTranslator {
             }
         }
     }
-
-    @Override
-    public String getTargetLanguage() {
-        return "en";
-    }
 }
