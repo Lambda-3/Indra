@@ -72,7 +72,9 @@ public final class Server {
             rc.register(new MockedRelatednessResourceImpl());
         } else {
             MongoIndraDriver driver = new MongoIndraDriver(mongoURI);
-            rc.register(new IndraResourceImpl(driver));
+            rc.register(new RelatednessResourceImpl(driver));
+            rc.register(new VectorResourceImpl(driver));
+
         }
 
         httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);

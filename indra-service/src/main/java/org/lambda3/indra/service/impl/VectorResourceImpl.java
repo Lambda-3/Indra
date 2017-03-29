@@ -1,5 +1,16 @@
 package org.lambda3.indra.service.impl;
 
+import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.client.VectorResource;
+import org.lambda3.indra.client.VectorResponse;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.utils.ParamsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
 /*-
  * ==========================License-Start=============================
  * Indra Web Service Module
@@ -12,10 +23,10 @@ package org.lambda3.indra.service.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,48 +36,15 @@ package org.lambda3.indra.service.impl;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-
-import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.utils.ParamsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
-class IndraResourceImpl implements RelatednessResource, VectorResource {
+public class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
-    IndraResourceImpl(IndraDriver driver) {
+    VectorResourceImpl(IndraDriver driver) {
         if (driver == null) {
             throw new IllegalArgumentException("driver can't be null.");
         }
         this.driver = driver;
-    }
-
-    @Override
-    public RelatednessResponse getRelatedness(RelatednessRequest request) {
-        logger.trace("getRelatedness - User Request: {}", request);
-        return process(request, false);
-    }
-
-
-    @Override
-    public RelatednessResponse getTranslatedRelatedness(RelatednessRequest request) {
-        logger.trace("getTranslatedRelatedness - User Request: {}", request);
-        return process(request, true);
-    }
-
-    private RelatednessResponse process(RelatednessRequest request, boolean translate) {
-        Params params = ParamsUtils.buildParams(request, translate);
-        RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
-        RelatednessResponse response = new RelatednessResponse(request, result.getScores());
-        logger.trace("Response: {}", response);
-
-        return response;
     }
 
     @Override

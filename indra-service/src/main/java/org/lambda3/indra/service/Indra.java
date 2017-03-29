@@ -27,6 +27,8 @@ package org.lambda3.indra.service;
  */
 
 import org.lambda3.indra.service.impl.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
@@ -39,6 +41,14 @@ public final class Indra {
     }
 
     public static void main(String[] args) throws Exception {
+        Logger logger = LoggerFactory.getLogger(Indra.class.getClass());
+        if (args != null && args.length == 1) {
+            System.setProperty("indra.mongoURI", args[0]);
+            logger.trace("indra.mongoURI set to {}.", System.getProperty("indra.mongoURI"));
+        } else {
+            logger.trace("'indra.mongoURI' will use the default value. To change it, start the service as 'Indra <desired mongo URI>'");
+        }
+
         Server server = new Server();
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::stop));

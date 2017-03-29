@@ -47,11 +47,10 @@ public abstract class IndraDriver {
     private IndraTranslatorFactory<IndraTranslator> translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
-    private Map<Params, RelatednessClient> clientCache = new HashMap<>();
 
     public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
         if (params == null || vectorSpaceFactory == null) {
-            new IllegalArgumentException("neither params nor vectorSpaceFactory can't be null.");
+            new IllegalArgumentException("neither params nor vectorSpaceFactory can be null.");
         }
 
         this.currentParams = params;
@@ -60,24 +59,13 @@ public abstract class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public RelatednessClient getClient(Params params) {
-        RelatednessClient relatednessClient = this.clientCache.get(params);
-
-        if (relatednessClient == null) {
-            relatednessClient = relatednessClientFactory.create(params);
-            this.clientCache.put(params, relatednessClient);
-        }
-
-        return relatednessClient;
-    }
-
     public RelatednessResult getRelatedness(List<TextPair> pairs) {
         return getRelatedness(pairs, currentParams);
     }
 
     public RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
         logger.trace("getting relatedness for {} pairs (params={})", pairs.size(), params);
-        RelatednessClient relatednessClient = getClient(params);
+        RelatednessClient relatednessClient = relatednessClientFactory.create(params);
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
         logger.trace("done");
         return result;
