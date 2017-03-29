@@ -31,8 +31,8 @@ Indra is a distributional semantics engine which facilitates the deployment of r
 * [Word2Vec (W2V)](https://en.wikipedia.org/wiki/Word2vec)
 * [Global Vectors (GloVe)](https://en.wikipedia.org/wiki/GloVe_(machine_learning))
 
-# Word Embeddins
-This is the payload consumed by Indra to serve [Word Embeddins](https://en.wikipedia.org/wiki/Word_embedding) of words or phrases.
+# Word Embeddings
+This is the payload consumed by Indra to serve [Word Embeddings](https://en.wikipedia.org/wiki/Word_embedding) of words or phrases.
 
 ## Request data model
 
@@ -44,17 +44,17 @@ This is the payload consumed by Indra to serve [Word Embeddins](https://en.wikip
 	"terms": ["love", "mother"]
 }
 ```
-* corpus: The name of the corpus used to build the models:
+### corpus: The name of the corpus used to build the models:
  * wiki-2014 (except JP and KO)
  * wiki-2016 (only JP and KO)
 
-* model: The distributional model:
+### model: The distributional model:
  * W2V
  * GLOVE
  * LSA 
  * ESA
 
-* language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
+### language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
  * EN - English
  * DE - German
  * ES - Spanish
@@ -80,8 +80,8 @@ This is the response for the request above.
   "language": "EN",
   "terms":
     {
-      "love" : { 0 : 0.333, 1 : 0.21, 2 : 0.32 },
-      "mother" : { 0 : 0.333, 1 : 0.21, 2 : 0.32 }
+      "love" : { "0" : 0.333, "1" : 0.21, "2" : 0.3532 },
+      "mother" : { "0" : 0.6356, "1" : 0.756, "2" : 0.9867 }
     }
 }
 ```
@@ -109,11 +109,13 @@ This is the payload consumed by Indra to compute [Semantic Similarity](https://e
 }
 ```
 
-* corpus: same as previously shown;
-* model: same as previously shown;
-* language: same as previously shown;
+### corpus: same as previously shown;
 
-* scoreFunction: The function to compute the relatedness between the distributional vectors
+### model: same as previously shown;
+
+### language: same as previously shown;
+
+### scoreFunction: The function to compute the relatedness between the distributional vectors
  * COSINE
  * ALPHASKEW
  * CHEBYSHEV
@@ -150,9 +152,9 @@ This is the response for the request above.
 }
 ```
 
-# Translated Word Embeddins and Semantic Similarity
+# Translated Word Embeddings and Semantic Similarity
 
-For translated word embeddins and translated semantic similarity, append "/mt" in the endpoint address and submit the same paylod.
+For translated word embeddings and translated semantic similarity, append "/mt" in the endpoint address and submit the same paylod.
 
 # Usage
 
@@ -162,7 +164,7 @@ If you want to give a try on your own infrastructure take a look on [Indra-Compo
 
 We have a public endpoint for demonstration only hence you can try right now with _cURL_ on the command line.
 
-For word embbedins:
+### For word embbedings:
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
@@ -173,7 +175,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 }' "http://indra.lambda3.org/vectors"
 ```
 
-For semantic similarity:
+### For semantic similarity:
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
