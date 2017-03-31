@@ -44,7 +44,8 @@ public final class Params {
     public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate,
                   VectorComposition termComposition, VectorComposition translationComposition) {
 
-        if (corpusName == null || func == null || language == null || model == null) {
+        if (corpusName == null || func == null || language == null || model == null || termComposition == null
+                || translationComposition == null) {
             throw new IllegalArgumentException("All arguments are mandatory!");
         }
 

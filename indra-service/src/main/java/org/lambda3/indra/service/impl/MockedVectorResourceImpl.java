@@ -1,4 +1,4 @@
-package org.lambda3.indra.service;
+package org.lambda3.indra.service.impl;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.service;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,24 +26,35 @@ package org.lambda3.indra.service;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.service.impl.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
+import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
+import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.client.VectorResource;
+import org.lambda3.indra.client.VectorResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Main Entry Point
+ * MockedVectorResourceImpl implementation that returns random vectors.
+ * For testing puporses.
  */
-public final class Indra {
-    static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+public class MockedVectorResourceImpl implements VectorResource {
+
+    private static final int NUM_DIMENSIONS = 300;
+    private static final UnitSphereRandomVectorGenerator rvg = new UnitSphereRandomVectorGenerator(NUM_DIMENSIONS);
+
+    @Override
+    public VectorResponse getVector(VectorRequest request) {
+        Map<String, Map<Integer, Double>> terms = new HashMap<>();
+        request.getTerms().forEach(t -> terms.put(t, RealVectorUtil.vectorToMap(new ArrayRealVector(rvg.nextVector()))));
+
+        return new VectorResponse(request, terms);
     }
 
-    public static void main(String[] args) throws Exception {
-        Logger logger = LoggerFactory.getLogger(Indra.class.getClass());
-        Server server = new Server();
-        server.start();
-        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+    @Override
+    public VectorResponse getTranslatedVector(VectorRequest request) {
+        return getVector(request);
     }
 }

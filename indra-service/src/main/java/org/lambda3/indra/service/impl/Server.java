@@ -70,6 +70,7 @@ public final class Server {
         if (mockMode) {
             logger.warn("MOCK mode.");
             rc.register(new MockedRelatednessResourceImpl());
+            rc.register(new MockedVectorResourceImpl());
         } else {
             MongoIndraDriver driver = new MongoIndraDriver(mongoURI);
             rc.register(new RelatednessResourceImpl(driver));
