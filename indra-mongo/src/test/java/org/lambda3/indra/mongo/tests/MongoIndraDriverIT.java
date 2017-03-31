@@ -33,6 +33,7 @@ import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.utils.ParamsUtils;
 import org.lambda3.indra.mongo.MongoIndraDriver;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -40,11 +41,19 @@ import java.util.Collections;
 import java.util.List;
 
 public class MongoIndraDriverIT {
+    private String mongoURI;
+
+    @BeforeTest
+    public void configure() {
+        mongoURI = System.getProperty("indra.mongoURI");
+        if(mongoURI == null) {
+            Assert.fail("System.getProperty(\"indra.mongoURI\") is null. Provide a mongoURI to execute the integration test.");
+        }
+    }
 
     @Test
     public void relatednessSimpleTest() {
         Params params = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
-        String mongoURI = "mongodb://132.231.141.167:27017";
 
         MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
         TextPair pair = new TextPair("car", "engine");
@@ -61,7 +70,6 @@ public class MongoIndraDriverIT {
     @Test
     public void translatedRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
-        String mongoURI = "mongodb://132.231.141.167:27017";
 
         MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
         List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
@@ -81,7 +89,6 @@ public class MongoIndraDriverIT {
     @Test
     public void translatedZeroRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
-        String mongoURI = "mongodb://132.231.141.167:27017";
 
         MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
         List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
