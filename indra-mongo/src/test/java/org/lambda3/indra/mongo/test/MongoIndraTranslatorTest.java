@@ -1,8 +1,8 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.mongo.test;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Mongo Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.core.tests;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,50 +26,33 @@ package org.lambda3.indra.core.tests;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.utils.VectorsUtils;
+import org.lambda3.indra.mongo.MongoIndraTranslator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UtilsTest {
+public class MongoIndraTranslatorTest {
 
     @Test
-    public void addVectorsTest() {
-        Map<Integer, Double> v1 = new HashMap<Integer, Double>() {{
-            put(1, 0.1);
-            put(2, 0.1);
-            put(3, 0.1);
-            put(6, 0.1);
-            put(10, 0.1);
-        }};
+    public void getRelevantTranslationsTest() {
+        Map<String, Double> tr = new HashMap<>();
+        tr.put("work", 1d);
+        tr.put("love", 10d);
+        tr.put("hate", 0d);
+        tr.put("mother", 6d);
+        tr.put("child", 7d);
+        tr.put("wife", 8d);
+        tr.put("science", 4d);
 
-        Map<Integer, Double> v2 = new HashMap<Integer, Double>() {{
-            put(1, 0.1);
-            put(2, 0.1);
-            put(3, 0.1);
-            put(6, 0.1);
-            put(12, 0.1);
-        }};
-
-        Map<Integer, Double> expected = new HashMap<Integer, Double>() {{
-            put(1, 0.2);
-            put(2, 0.2);
-            put(3, 0.2);
-            put(6, 0.2);
-            put(10, 0.1);
-            put(12, 0.1);
-        }};
-
-        List<Map<Integer, Double>> vectors = new ArrayList<Map<Integer, Double>>() {{
-            add(v1);
-            add(v2);
-        }};
-
-        Assert.assertEquals(expected, VectorsUtils.add(vectors));
+        List<String> res = MongoIndraTranslator.getRelavantTranslations(tr);
+        Assert.assertEquals(res.size(), 5);
+        Assert.assertTrue(res.contains("love"));
+        Assert.assertTrue(res.contains("mother"));
+        Assert.assertTrue(res.contains("child"));
+        Assert.assertTrue(res.contains("wife"));
+        Assert.assertTrue(res.contains("science"));
     }
-
 }

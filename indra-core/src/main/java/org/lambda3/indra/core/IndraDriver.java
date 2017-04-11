@@ -111,13 +111,27 @@ public abstract class IndraDriver {
         }
     }
 
+    public Map<String, double[]> getVectorsAsArray(List<String> terms, Params params) {
+        Map<String, RealVector> inVectors = getVectors(terms, params);
+
+        Map<String, double[]> outVectors = new HashMap<>();
+        for (String term : inVectors.keySet()) {
+            RealVector realVector = inVectors.get(term);
+
+            outVectors.put(term, realVector != null ? realVector.toArray() : null);
+        }
+
+        return outVectors;
+    }
+
     public Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
         Map<String, RealVector> inVectors = getVectors(terms, params);
 
         Map<String, Map<Integer, Double>> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
             RealVector realVector = inVectors.get(term);
-            outVectors.put(term, RealVectorUtil.vectorToMap(realVector));
+
+            outVectors.put(term, realVector != null ? RealVectorUtil.vectorToMap(realVector) : null);
         }
 
         return outVectors;

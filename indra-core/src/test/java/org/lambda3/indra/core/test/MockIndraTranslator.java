@@ -1,8 +1,16 @@
-package org.lambda3.indra.mongo.tests;
+package org.lambda3.indra.core.test;
+
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.core.translation.IndraTranslator;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*-
  * ==========================License-Start=============================
- * Indra Mongo Module
+ * Indra Core Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -25,34 +33,21 @@ package org.lambda3.indra.mongo.tests;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class MockIndraTranslator implements IndraTranslator {
+    private Map<String, List<String>> translations = new HashMap<>();
 
-import org.lambda3.indra.mongo.MongoIndraTranslator;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class MongoIndraTranslatorTest {
-
-    @Test
-    public void getRelevantTranslationsTest() {
-        Map<String, Double> tr = new HashMap<>();
-        tr.put("work", 1d);
-        tr.put("love", 10d);
-        tr.put("hate", 0d);
-        tr.put("mother", 6d);
-        tr.put("child", 7d);
-        tr.put("wife", 8d);
-        tr.put("science", 4d);
-
-        List<String> res = MongoIndraTranslator.getRelavantTranslations(tr);
-        Assert.assertEquals(res.size(), 5);
-        Assert.assertTrue(res.contains("love"));
-        Assert.assertTrue(res.contains("mother"));
-        Assert.assertTrue(res.contains("child"));
-        Assert.assertTrue(res.contains("wife"));
-        Assert.assertTrue(res.contains("science"));
+    public MockIndraTranslator() {
+        translations.put("mãe", Arrays.asList("mother", "mom", "matriarch"));
+        translations.put("computador", Arrays.asList("machine", "computer"));
+        translations.put("pai", Arrays.asList("father", "dad", "patriarch"));
+        translations.put("avaliação", Arrays.asList("test", "evaluation"));
+    }
+    @Override
+    public void translate(List<MutableTranslatedTerm> terms) {
+        for(MutableTranslatedTerm term : terms) {
+            for(String token : term.getAnalyzedTokens()) {
+                term.putTranslatedTokens(token, translations.get(token));
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
@@ -9,7 +9,6 @@ import org.lambda3.indra.core.composition.SumVectorComposer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

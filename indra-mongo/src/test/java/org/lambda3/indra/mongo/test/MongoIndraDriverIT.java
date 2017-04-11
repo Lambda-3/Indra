@@ -1,4 +1,4 @@
-package org.lambda3.indra.mongo.tests;
+package org.lambda3.indra.mongo.test;
 
 /*-
  * ==========================License-Start=============================

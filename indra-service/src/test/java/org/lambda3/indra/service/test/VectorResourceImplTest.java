@@ -1,16 +1,24 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.service.test;
 
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.core.translation.IndraTranslator;
+
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.composition.VectorComposition;
+import org.lambda3.indra.core.test.IndraDriverTest;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Web Service Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -33,21 +41,25 @@ import java.util.Map;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public class MockIndraTranslator implements IndraTranslator {
-    private Map<String, List<String>> translations = new HashMap<>();
+public class VectorResourceImplTest {
 
-    public MockIndraTranslator() {
-        translations.put("mãe", Arrays.asList("mother", "mom", "matriarch"));
-        translations.put("computador", Arrays.asList("machine", "computer"));
-        translations.put("pai", Arrays.asList("father", "dad", "patriarch"));
-        translations.put("avaliação", Arrays.asList("test", "evaluation"));
+    private IndraDriver driver;
+
+    public VectorResourceImplTest() {
+        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, VectorComposition.SUM, VectorComposition.AVERAGE);
+        VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactor();
+        IndraTranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
+        this.driver = new IndraDriver(params, vectorSpaceFactory, translatorFactory) {
+        };
     }
-    @Override
-    public void translate(List<MutableTranslatedTerm> terms) {
-        for(MutableTranslatedTerm term : terms) {
-            for(String token : term.getAnalyzedTokens()) {
-                term.putTranslatedTokens(token, translations.get(token));
-            }
-        }
+
+    @Test
+    public void nonExistingTerms() {
+        final String NON_EXISTENT_TERM = "yyyyyyyywywywywy";
+        List<String> terms = Arrays.asList(NON_EXISTENT_TERM, "amor");
+        Map<String, RealVector> results = driver.getVectors(terms);
+        Assert.assertEquals(results.size(), terms.size());
+        Assert.assertNull(results.get(NON_EXISTENT_TERM));
     }
+
 }
