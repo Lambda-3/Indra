@@ -52,7 +52,7 @@ public class IndraDriverTest {
         };
     }
 
-    public VectorSpaceFactory createVectorSpaceFactor() {
+    public static VectorSpaceFactory createVectorSpaceFactor() {
         VectorSpaceFactory factory = new VectorSpaceFactory() {
             @Override
             protected VectorSpace doCreate(Params params) {
@@ -70,7 +70,7 @@ public class IndraDriverTest {
         return factory;
     }
 
-    public IndraTranslatorFactory createIndraTranslatorFactory() {
+    public static IndraTranslatorFactory createIndraTranslatorFactory() {
         IndraTranslatorFactory factory = new IndraTranslatorFactory() {
             @Override
             protected Object doCreate(Params params) {
