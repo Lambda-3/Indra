@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.test;
 
 /*-
  * ==========================License-Start=============================

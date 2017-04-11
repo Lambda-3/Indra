@@ -7,7 +7,7 @@ import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposition;
-import org.lambda3.indra.core.tests.IndraDriverTest;
+import org.lambda3.indra.core.test.IndraDriverTest;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
