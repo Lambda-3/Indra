@@ -1,4 +1,12 @@
-package org.lambda3.indra.core.tests;
+package org.lambda3.indra.core.test;
+
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.core.translation.IndraTranslator;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +20,10 @@ package org.lambda3.indra.core.tests;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,28 +33,21 @@ package org.lambda3.indra.core.tests;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+public class MockIndraTranslator implements IndraTranslator {
+    private Map<String, List<String>> translations = new HashMap<>();
 
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.RelatednessResult;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.util.Collections;
-
-public class RelatednessTest {
-
-    @Test
-    public void relatednessSimpleTest() {
-        RelatednessDummyClient cli = new RelatednessDummyClient();
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = cli.getRelatedness(Collections.singletonList(pair));
-
-        Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
-        Assert.assertEquals(pair.t1, scoredPair.t1);
-        Assert.assertEquals(pair.t2, scoredPair.t2);
+    public MockIndraTranslator() {
+        translations.put("mãe", Arrays.asList("mother", "mom", "matriarch"));
+        translations.put("computador", Arrays.asList("machine", "computer"));
+        translations.put("pai", Arrays.asList("father", "dad", "patriarch"));
+        translations.put("avaliação", Arrays.asList("test", "evaluation"));
+    }
+    @Override
+    public void translate(List<MutableTranslatedTerm> terms) {
+        for(MutableTranslatedTerm term : terms) {
+            for(String token : term.getAnalyzedTokens()) {
+                term.putTranslatedTokens(token, translations.get(token));
+            }
+        }
     }
 }
