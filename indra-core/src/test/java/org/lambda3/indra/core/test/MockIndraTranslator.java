@@ -1,13 +1,5 @@
 package org.lambda3.indra.core.test;
 
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.core.translation.IndraTranslator;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -20,10 +12,10 @@ import java.util.Map;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,6 +25,15 @@ import java.util.Map;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.core.translation.IndraTranslator;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MockIndraTranslator implements IndraTranslator {
     private Map<String, List<String>> translations = new HashMap<>();
 

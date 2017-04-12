@@ -1,16 +1,5 @@
 package org.lambda3.indra.service.impl;
 
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-
 /*-
  * ==========================License-Start=============================
  * Indra Web Service Module
@@ -23,10 +12,10 @@ import java.util.Map;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,6 +25,18 @@ import java.util.Map;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.client.VectorResource;
+import org.lambda3.indra.client.VectorResponse;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.utils.ParamsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
 public class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
