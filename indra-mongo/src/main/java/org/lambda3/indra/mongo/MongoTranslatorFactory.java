@@ -1,13 +1,5 @@
 package org.lambda3.indra.mongo;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
-
-import java.util.HashSet;
-import java.util.Set;
-
 /*-
  * ==========================License-Start=============================
  * Indra Mongo Module
@@ -20,10 +12,10 @@ import java.util.Set;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,6 +25,15 @@ import java.util.Set;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
 
     private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";

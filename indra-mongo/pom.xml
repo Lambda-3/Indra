@@ -12,6 +12,8 @@
         <version>2.0.0-rc4</version>
     </parent>
 
+    <name>Indra Mongo Module</name>
+
     <build>
         <plugins>
             <plugin>
