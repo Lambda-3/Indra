@@ -33,6 +33,7 @@ import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.exception.ModelNoFound;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,5 +75,10 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
                 params.model.toLowerCase(),
                 params.translate ? params.translateTargetLanguage.toLowerCase() : params.language.toLowerCase(),
                 params.corpusName.toLowerCase());
+    }
+
+    @Override
+    public Collection<String> getAvailableModels() {
+        return availableModels;
     }
 }

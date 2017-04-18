@@ -31,6 +31,7 @@ import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,5 +75,10 @@ public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTra
 
     private String getDbName(String fromLang, String toLang) {
         return String.format("%s_%s-%s", fromLang.toLowerCase(), toLang.toLowerCase(), dbNameSuffix);
+    }
+
+    @Override
+    public Collection<String> getAvailableModels() {
+        return availableModels;
     }
 }

@@ -32,6 +32,8 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.mongo.MongoIndraDriver;
+import org.lambda3.indra.mongo.MongoTranslatorFactory;
+import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +74,13 @@ public final class Server {
             rc.register(new MockedRelatednessResourceImpl());
             rc.register(new MockedVectorResourceImpl());
         } else {
-            MongoIndraDriver driver = new MongoIndraDriver(mongoURI);
+            MongoVectorSpaceFactory spaceFactory = new MongoVectorSpaceFactory(mongoURI);
+            MongoTranslatorFactory translatorFactory = new MongoTranslatorFactory(mongoURI);
+            MongoIndraDriver driver = new MongoIndraDriver(spaceFactory, translatorFactory);
+
             rc.register(new RelatednessResourceImpl(driver));
             rc.register(new VectorResourceImpl(driver));
+            rc.register(new InfoResourceImpl(spaceFactory, translatorFactory));
 
         }
 
