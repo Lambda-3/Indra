@@ -34,12 +34,11 @@ public class MongoIndraDriver extends IndraDriver {
 
     public static final Params DEFAULT_PARAMS = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
 
-    public MongoIndraDriver(String mongoURI) {
-        this(DEFAULT_PARAMS, mongoURI);
-    }
-
     public MongoIndraDriver(Params params, String mongoURI) {
         super(params, new MongoVectorSpaceFactory(mongoURI), new MongoTranslatorFactory(mongoURI));
     }
 
+    public MongoIndraDriver(MongoVectorSpaceFactory spaceFactory, MongoTranslatorFactory translatorFactory) {
+        super(DEFAULT_PARAMS, spaceFactory, translatorFactory);
+    }
 }

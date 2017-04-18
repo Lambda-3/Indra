@@ -38,6 +38,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,11 @@ public class IndraDriverTest {
     public static VectorSpaceFactory createVectorSpaceFactor() {
         VectorSpaceFactory factory = new VectorSpaceFactory() {
             @Override
+            public Collection<String> getAvailableModels() {
+                return null;
+            }
+
+            @Override
             protected VectorSpace doCreate(Params params) {
                 VectorComposerFactory composerFactory = new VectorComposerFactory();
                 return new MockCachedVectorSpace(composerFactory.getComposer(params.termComposition),
@@ -73,6 +79,11 @@ public class IndraDriverTest {
 
     public static IndraTranslatorFactory createIndraTranslatorFactory() {
         IndraTranslatorFactory factory = new IndraTranslatorFactory() {
+            @Override
+            public Collection<String> getAvailableModels() {
+                return null;
+            }
+
             @Override
             protected Object doCreate(Params params) {
                 return new MockIndraTranslator();
