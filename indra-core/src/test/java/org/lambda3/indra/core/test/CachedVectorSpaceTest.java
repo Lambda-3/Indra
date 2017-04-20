@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
 
 public class CachedVectorSpaceTest {
 
-    IndraAnalyzer analyzer = new IndraAnalyzer("EN");
     MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace(new SumVectorComposer(), new AveragedVectorComposer());
+    IndraAnalyzer analyzer = new IndraAnalyzer("EN", vectorSpace.getPreprocessingParams());
 
     @Test
     public void getSimpleVectorPairsTest() {
@@ -95,7 +95,7 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT");
+        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", vectorSpace.getPreprocessingParams());
         AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyzeForTranslation(new TextPair("mãe", "pai"));
         AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyzeForTranslation(new TextPair("computador", "avaliação"));
 
@@ -121,7 +121,7 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getComposedTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT");
+        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", vectorSpace.getPreprocessingParams());
         AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyzeForTranslation(new TextPair("mãe computador", "pai avaliação"));
 
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
