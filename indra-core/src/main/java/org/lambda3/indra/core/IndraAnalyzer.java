@@ -56,24 +56,26 @@ public class IndraAnalyzer {
     private static final int MIN_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 100;
 
+    private static final Preprocessing NO_STEMMER_KEEP_ACCENT = new Preprocessing(false, false);
+
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
     private String lang;
     private Tokenizer tokenizer;
-    private TokenStream stemmedStream;
-    private TokenStream nonStemmedStream;
+    private TokenStream fullProcessingStream;
+    private TokenStream partialProcessingStream;
 
-    public IndraAnalyzer(String lang) {
-        if (lang == null) {
-            throw new IllegalArgumentException("lang is missing");
+    public IndraAnalyzer(String lang, Preprocessing preprocessing) {
+        if (lang == null || preprocessing == null) {
+            throw new IllegalArgumentException("all parameters are mandatory.");
         }
-        logger.debug("Creating analyzer, lang={}", lang);
+        logger.debug("Creating analyzer, lang={}, preprocessing={}", lang, preprocessing);
         this.lang = lang;
 
         tokenizer = new StandardTokenizer();
 
-        stemmedStream = createStream(lang, true, tokenizer);
-        nonStemmedStream = createStream(lang, false, tokenizer);
+        fullProcessingStream = createStream(lang, preprocessing, tokenizer);
+        partialProcessingStream = createStream(lang, NO_STEMMER_KEEP_ACCENT, tokenizer);
     }
 
     public AnalyzedPair analyze(TextPair pair) {
@@ -117,11 +119,11 @@ public class IndraAnalyzer {
     }
 
     public List<String> stemmedAnalyze(String text) {
-        return analyze(text, stemmedStream);
+        return analyze(text, fullProcessingStream);
     }
 
     public List<String> nonStemmedAnalyze(String text) {
-        return analyze(text, nonStemmedStream);
+        return analyze(text, partialProcessingStream);
     }
 
     private List<String> analyze(String text, TokenStream stream) {
@@ -147,17 +149,20 @@ public class IndraAnalyzer {
         return result;
     }
 
-    private TokenStream createStream(String lang, boolean full, Tokenizer tokenizer) {
+    private TokenStream createStream(String lang, Preprocessing preprocessing, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
         stream = new LowerCaseFilter(stream);
-        stream = getStopFilter(lang, stream);;
+        stream = getStopFilter(lang, stream);
 
         if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
             stream = new LengthFilter(stream, MIN_WORD_LENGTH, MAX_WORD_LENGTH);
         }
 
-        if (full) {
+        if (preprocessing.applyStemmer) {
             stream = getStemmerFilter(lang, stream);
+        }
+
+        if (preprocessing.removeAccents) {
             stream = new ASCIIFoldingFilter(stream);
         }
 

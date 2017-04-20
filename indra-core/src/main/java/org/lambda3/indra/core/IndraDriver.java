@@ -78,7 +78,7 @@ public abstract class IndraDriver {
     public Map<String, RealVector> getVectors(List<String> terms, Params params) {
         logger.trace("getting vectors for {} terms (params={})", terms.size(), params);
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language);
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getPreprocessingParams());
 
         if (params.translate) {
             logger.trace("applying translation");
@@ -91,7 +91,7 @@ public abstract class IndraDriver {
             IndraTranslator translator = translatorFactory.create(params);
             translator.translate(translatedTerms);
 
-            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(params.translateTargetLanguage);
+            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(params.translateTargetLanguage, vectorSpace.getPreprocessingParams());
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(term.getTranslatedTokens().get(token)));

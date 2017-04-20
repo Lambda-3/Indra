@@ -29,6 +29,7 @@ package org.lambda3.indra.mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.OpenMapRealVector;
@@ -36,6 +37,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.core.CachedVectorSpace;
+import org.lambda3.indra.core.Preprocessing;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,21 +51,63 @@ import java.util.stream.Collectors;
 
 class MongoVectorSpace extends CachedVectorSpace {
 
-    private static int MAXSDIMENSIONS = 5000000;
+    private static final int MAX_DIMENSIONS = 5000000;
+
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
+    private static final String PARAM_FIELD_NAME = "param";
+    private static final String VALUE_FIELD_NAME = "value";
+
     private static final String TERMS_COLL_NAME = "terms";
+    private static final String METADATA_COLL_NAME = "metadata";
+
+    private static final String APPLY_STEMMER_PARAM_FIELD_NAME = "apply-stemmer";
+    private static final String REMOVE_ACCENTS_PARAM_FIELD_NAME = "remove-accents";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
+    private Preprocessing preprocessing;
 
     MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
         super(composer, translationComposer);
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;
+        configure();
+    }
+
+    private void configure() {
+        MongoDatabase db = this.mongoClient.getDatabase(dbName);
+        boolean containsMetadataCollection = false;
+        for (String collName : db.listCollectionNames()) {
+            if (collName.equalsIgnoreCase(METADATA_COLL_NAME)) {
+                containsMetadataCollection = true;
+                break;
+            }
+        }
+
+        boolean applyStemmer = true;
+        boolean removeAccents = true;
+
+        if (containsMetadataCollection) {
+            MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
+
+            FindIterable<Document> docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, APPLY_STEMMER_PARAM_FIELD_NAME));
+            for (Document doc : docs) {
+                applyStemmer = (boolean) doc.get(VALUE_FIELD_NAME);
+                break;
+            }
+
+            docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, REMOVE_ACCENTS_PARAM_FIELD_NAME));
+            for (Document doc : docs) {
+                removeAccents = (boolean) doc.get(VALUE_FIELD_NAME);
+                break;
+            }
+        }
+
+        this.preprocessing = new Preprocessing(applyStemmer, removeAccents);
     }
 
     @Override
@@ -76,8 +120,13 @@ class MongoVectorSpace extends CachedVectorSpace {
         return 1500;
     }
 
+    @Override
+    public Preprocessing getPreprocessingParams() {
+        return preprocessing;
+    }
 
-    private MongoCollection<Document> getColl() {
+
+    private MongoCollection<Document> getTermsColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
     }
 
@@ -92,7 +141,7 @@ class MongoVectorSpace extends CachedVectorSpace {
 
         if (!toFetch.isEmpty()) {
             logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
-            FindIterable<Document> docs = getColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
+            FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
             if (docs != null) {
                 docs.batchSize(toFetch.size());
                 for (Document doc : docs) {
@@ -101,6 +150,7 @@ class MongoVectorSpace extends CachedVectorSpace {
             }
         }
     }
+
 
     @Override
     protected List<RealVector> getFromCache(Collection<String> terms) {
@@ -122,7 +172,7 @@ class MongoVectorSpace extends CachedVectorSpace {
 
             RealVector vector;
             if (isSparse()) {
-                vector = new OpenMapRealVector(MAXSDIMENSIONS);
+                vector = new OpenMapRealVector(MAX_DIMENSIONS);
             } else {
                 vector = new ArrayRealVector(size);
             }

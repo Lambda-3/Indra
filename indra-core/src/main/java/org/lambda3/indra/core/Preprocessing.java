@@ -26,33 +26,40 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.core.composition.VectorComposer;
+public class Preprocessing {
 
-import java.util.List;
-import java.util.Map;
+    public final boolean applyStemmer;
+    public final boolean removeAccents;
 
-public interface VectorSpace {
+    public Preprocessing(boolean applyStemmer, boolean removeAccents) {
+        this.applyStemmer = applyStemmer;
+        this.removeAccents = removeAccents;
+    }
 
-    boolean isSparse();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    int getVectorSize();
+        Preprocessing that = (Preprocessing) o;
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs);
+        if (applyStemmer != that.applyStemmer) return false;
+        return removeAccents == that.removeAccents;
 
-    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs);
+    }
 
-    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms);
+    @Override
+    public int hashCode() {
+        int result = (applyStemmer ? 1 : 0);
+        result = 31 * result + (removeAccents ? 1 : 0);
+        return result;
+    }
 
-    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms);
-
-    VectorComposer getTermComposer();
-
-    VectorComposer getTranslationComposer();
-
-    Preprocessing getPreprocessingParams();
+    @Override
+    public String toString() {
+        return "Preprocessing{" +
+                "applyStemmer=" + applyStemmer +
+                ", removeAccents=" + removeAccents +
+                '}';
+    }
 }
