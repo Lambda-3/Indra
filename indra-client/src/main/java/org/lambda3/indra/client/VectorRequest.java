@@ -29,57 +29,17 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public class VectorRequest {
+public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
 
-    private String corpus;
-    private String model;
-    private String language;
     private List<String> terms;
-
-
-    public VectorRequest corpus(String corpusName) {
-        this.corpus = Objects.requireNonNull(corpusName);
-        return this;
-    }
-
-    public VectorRequest model(String model) {
-        this.model = Objects.requireNonNull(model);
-        return this;
-    }
-
-    public VectorRequest language(String language) {
-        this.language = Objects.requireNonNull(language);
-        return this;
-    }
 
     public VectorRequest pairs(List<String> terms) {
         this.terms = Objects.requireNonNull(terms);
         return this;
     }
 
-    public String getCorpus() {
-        return corpus;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
     public List<String> getTerms() {
         return terms;
     }
 
-    @Override
-    public String toString() {
-        return "VectorRequest{" +
-                "corpus='" + corpus + '\'' +
-                ", model='" + model + '\'' +
-                ", language='" + language + '\'' +
-                ", terms=" + terms +
-                '}';
-    }
 }

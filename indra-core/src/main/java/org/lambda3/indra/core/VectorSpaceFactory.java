@@ -37,6 +37,21 @@ public abstract class VectorSpaceFactory<T extends VectorSpace> extends IndraCac
         this.vectorComposerFactory = new VectorComposerFactory();
     }
 
+    @Override
+    public T create(Params params) {
+        T model = super.create(params);
+        ModelMetadata metadata = model.getMetadata();
+        if (params.applyStopWords != null) {
+            metadata.applyStopWords(params.applyStopWords);
+        }
+
+        if (params.minWordLength != null) {
+            metadata.minWordLength(params.minWordLength);
+        }
+
+        return model;
+    }
+
     public abstract Collection<String> getAvailableModels();
 
 }

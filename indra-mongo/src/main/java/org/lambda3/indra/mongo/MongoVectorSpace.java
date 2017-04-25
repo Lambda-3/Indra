@@ -71,7 +71,7 @@ class MongoVectorSpace extends CachedVectorSpace {
     private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
-    private ModelMetadata metadata = ModelMetadata.createDefault();
+    private ModelMetadata metadata;
 
     MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
         super(composer, translationComposer);
@@ -92,7 +92,7 @@ class MongoVectorSpace extends CachedVectorSpace {
         }
 
 
-        boolean removeAccents = true;
+        this.metadata = ModelMetadata.createDefault();
 
         if (containsMetadataCollection) {
             MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);

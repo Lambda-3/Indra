@@ -46,7 +46,8 @@ public class VectorResourceImplTest {
     private IndraDriver driver;
 
     public VectorResourceImplTest() {
-        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, VectorComposition.SUM, VectorComposition.AVERAGE);
+        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, null,
+                VectorComposition.SUM, VectorComposition.AVERAGE);
         VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactor();
         IndraTranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
         this.driver = new IndraDriver(params, vectorSpaceFactory, translatorFactory) {

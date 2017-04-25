@@ -26,6 +26,7 @@ package org.lambda3.indra.mongo.test;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.Params;
@@ -46,9 +47,14 @@ public class MongoIndraDriverIT {
     @BeforeTest
     public void configure() {
         mongoURI = System.getProperty("indra.mongoURI");
-        if(mongoURI == null) {
+        if (mongoURI == null) {
             Assert.fail("System.getProperty(\"indra.mongoURI\") is null. Provide a mongoURI to execute the integration test.");
         }
+    }
+
+    public static Params buildDefaulParams(Boolean applyStopWords, Integer minWordLength) {
+        return new Params("wiki-2014", ScoreFunction.COSINE, "EN", "W2V", false, applyStopWords, minWordLength,
+                ParamsUtils.DEFAULT_TERM_COMPOSTION, ParamsUtils.DEFAULT_TRANSLATION_COMPOSTION);
     }
 
     @Test
@@ -82,7 +88,7 @@ public class MongoIndraDriverIT {
             Assert.assertEquals(pair.t1, scoredPair.t1);
             Assert.assertEquals(pair.t2, scoredPair.t2);
             System.out.println(scoredPair.score);
-            Assert.assertTrue(Math.abs(scoredPair.score) > 0);
+            Assert.assertTrue(Math.abs(scoredPair.score) > 0d);
         }
     }
 
@@ -103,5 +109,34 @@ public class MongoIndraDriverIT {
             System.out.println(pair + ": " + scoredPair.score);
             Assert.assertEquals(scoredPair.score, 0d);
         }
+    }
+
+    @Test
+    public void testMinWordLengthParam() {
+        Params params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 3);
+
+        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        List<TextPair> pairs = Arrays.asList(new TextPair("love", "romance"));
+        RelatednessResult res = driver.getRelatedness(pairs);
+        Assert.assertEquals(res.getScores().size(), 1);
+        for (ScoredTextPair stp : res.getScores()) {
+            Assert.assertTrue(Math.abs(stp.score) > 0d);
+        }
+
+        params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 5);
+
+        driver = new MongoIndraDriver(params, mongoURI);
+        pairs = Arrays.asList(new TextPair("love", "romance"));
+        res = driver.getRelatedness(pairs);
+        Assert.assertEquals(res.getScores().size(), 1);
+        for (ScoredTextPair stp : res.getScores()) {
+            Assert.assertEquals(Math.abs(stp.score), 0d);
+        }
+
+    }
+
+    @Test
+    public void testApplyStopWordsParam() {
+        //TODO when a model generated without cutting stopwords.
     }
 }
