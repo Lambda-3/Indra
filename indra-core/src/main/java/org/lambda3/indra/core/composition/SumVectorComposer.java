@@ -1,12 +1,5 @@
 package org.lambda3.indra.core.composition;
 
-import org.apache.commons.math3.linear.RealVector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.List;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -32,6 +25,12 @@ import java.util.List;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.apache.commons.math3.linear.RealVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class SumVectorComposer implements VectorComposer {
 

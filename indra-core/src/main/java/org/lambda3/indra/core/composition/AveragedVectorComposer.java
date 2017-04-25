@@ -1,9 +1,5 @@
 package org.lambda3.indra.core.composition;
 
-import org.apache.commons.math3.linear.RealVector;
-
-import java.util.List;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -29,7 +25,12 @@ import java.util.List;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public class AveragedVectorComposer extends SumVectorComposer {
+
+import org.apache.commons.math3.linear.RealVector;
+
+import java.util.List;
+
+public final class AveragedVectorComposer extends SumVectorComposer {
 
     @Override
     public RealVector compose(List<RealVector> vectors) {

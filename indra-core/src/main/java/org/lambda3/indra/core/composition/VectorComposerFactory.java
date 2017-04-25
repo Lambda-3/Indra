@@ -1,12 +1,5 @@
 package org.lambda3.indra.core.composition;
 
-
-import org.lambda3.indra.core.composition.*;
-import org.lambda3.indra.core.exception.IndraError;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -32,6 +25,11 @@ import java.util.Map;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.lambda3.indra.core.exception.IndraError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VectorComposerFactory {
 
