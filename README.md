@@ -34,7 +34,7 @@ Indra is a distributional semantics engine which facilitates the deployment of r
 # Word Embeddings
 This is the payload consumed by Indra to serve [Word Embeddings](https://en.wikipedia.org/wiki/Word_embedding) of words or phrases.
 
-## Request data model
+## Request data model `(POST /vectors)`
 
 ```json
 {
@@ -44,31 +44,40 @@ This is the payload consumed by Indra to serve [Word Embeddings](https://en.wiki
 	"terms": ["love", "mother"]
 }
 ```
-### corpus: The name of the corpus used to build the models:
- * wiki-2014 (except JP and KO)
- * wiki-2016 (only JP and KO)
+### Field _corpus_
+ 
+The name of the corpus used to build the models:
+ 
+* wiki-2014 (except JP and KO)
+* wiki-2016 (only JP and KO)
 
-### model: The distributional model:
- * W2V
- * GLOVE
- * LSA 
- * ESA
+### Field _model_ 
 
-### language: Two-letter-code [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
- * EN - English
- * DE - German
- * ES - Spanish
- * FR - French
- * PT - Portuguese
- * IT - Italian
- * SV - Swedish
- * ZH - Chinese
- * NL - Dutch
- * RU - Russian
- * KO - Korean
- * JP - Japanese
- * AR - Arabic
- * FA - Persian
+The distributional model:
+
+* W2V
+* GLOVE
+* LSA 
+* ESA
+
+### Field _language_ 
+
+Two-letter-code [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes):
+
+* EN - English
+* DE - German
+* ES - Spanish
+* FR - French
+* PT - Portuguese
+* IT - Italian
+* SV - Swedish
+* ZH - Chinese
+* NL - Dutch
+* RU - Russian
+* KO - Korean
+* JP - Japanese
+* AR - Arabic
+* FA - Persian
 
 ## Response model
 
@@ -90,7 +99,7 @@ This is the response for the request above.
 
 This is the payload consumed by Indra to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
 
-## Request data model
+## Request data model `(POST /relatedness)`
 
 ```json
 {
@@ -109,24 +118,23 @@ This is the payload consumed by Indra to compute [Semantic Similarity](https://e
 }
 ```
 
-### corpus: same as previously shown;
+Fields _corpus_, _model_ and _language_ has the same definition previously shown.
 
-### model: same as previously shown;
+### Field _scoreFunction_
 
-### language: same as previously shown;
+The function to compute the relatedness between the distributional vectors:
 
-### scoreFunction: The function to compute the relatedness between the distributional vectors
- * COSINE
- * ALPHASKEW
- * CHEBYSHEV
- * CITYBLOCK
- * SPEARMAN
- * PEARSON
- * DICE
- * EUCLIDEAN
- * JACCARD
- * JACCARD2
- * JENSENSHANNON
+* COSINE
+* ALPHASKEW
+* CHEBYSHEV
+* CITYBLOCK
+* SPEARMAN
+* PEARSON
+* DICE
+* EUCLIDEAN
+* JACCARD
+* JACCARD2
+* JENSENSHANNON
 
 ## Response model
 
@@ -154,7 +162,10 @@ This is the response for the request above.
 
 # Translated Word Embeddings and Semantic Similarity
 
-For translated word embeddings and translated semantic similarity, append "/mt" in the endpoint address and submit the same paylod.
+For __translated word embeddings__ and __translated semantic similarity__ just append "/mt" in the endpoint address and submit the same paylod.
+
+* `POST /relatedness/mt`
+* `POST /vectors/mt`
 
 # Usage
 
@@ -164,7 +175,7 @@ If you want to give a try on your own infrastructure take a look on [Indra-Compo
 
 We have a public endpoint for demonstration only hence you can try right now with _cURL_ on the command line.
 
-### For word embbedings:
+### For word embeddings:
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
