@@ -36,6 +36,8 @@ public class RelatednessFunctionFactory {
         switch (scoreFunction) {
             case COSINE:
                 return new CosineRelatednessFunction();
+            case ABSOLUTE_COSINE:
+                return new AbsoluteCosineRelatednessFunction();
             case SPEARMAN:
                 return new SpearmanRelatednessFunction();
             case EUCLIDEAN:

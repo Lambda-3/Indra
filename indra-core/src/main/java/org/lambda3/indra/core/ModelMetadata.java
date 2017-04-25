@@ -26,14 +26,68 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-public class Preprocessing {
+public class ModelMetadata {
 
-    public final boolean applyStemmer;
-    public final boolean removeAccents;
+    public static final int DEFAULT_MIN_WORD_LENGTH = 3;
+    public static final int DEFAULT_MAX_WORD_LENGTH = 100;
 
-    public Preprocessing(boolean applyStemmer, boolean removeAccents) {
+    private boolean applyStemmer = true;
+    private boolean removeAccents = true;
+    private boolean applyStopWords = true;
+    private int minWordLength = DEFAULT_MIN_WORD_LENGTH;
+    private int maxWordLength = DEFAULT_MAX_WORD_LENGTH;
+
+    private ModelMetadata() {
+
+    }
+
+    public static ModelMetadata createDefault() {
+        return new ModelMetadata();
+    }
+
+    public ModelMetadata applyStemmer(boolean applyStemmer) {
         this.applyStemmer = applyStemmer;
+        return this;
+    }
+
+    public ModelMetadata removeAccents(boolean removeAccents) {
         this.removeAccents = removeAccents;
+        return this;
+    }
+
+    public ModelMetadata applyStopWords(boolean applyStopWords) {
+        this.applyStopWords = applyStopWords;
+        return this;
+    }
+
+    public ModelMetadata minWordLength(int minWordLength) {
+        this.minWordLength = minWordLength;
+        return this;
+    }
+
+    public ModelMetadata maxWordLength(int maxWordLength) {
+        this.maxWordLength = maxWordLength;
+        return this;
+    }
+
+    public boolean isApplyStemmer() {
+        return applyStemmer;
+    }
+
+    public boolean isRemoveAccents() {
+        return removeAccents;
+    }
+
+    public boolean isApplyStopWords() {
+        return applyStopWords;
+    }
+
+    public int getMinWordLength() {
+        return minWordLength;
+    }
+
+    public int getMaxWordLength() {
+        return maxWordLength;
     }
 
     @Override
@@ -41,10 +95,13 @@ public class Preprocessing {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Preprocessing that = (Preprocessing) o;
+        ModelMetadata that = (ModelMetadata) o;
 
         if (applyStemmer != that.applyStemmer) return false;
-        return removeAccents == that.removeAccents;
+        if (removeAccents != that.removeAccents) return false;
+        if (applyStopWords != that.applyStopWords) return false;
+        if (minWordLength != that.minWordLength) return false;
+        return maxWordLength == that.maxWordLength;
 
     }
 
@@ -52,14 +109,20 @@ public class Preprocessing {
     public int hashCode() {
         int result = (applyStemmer ? 1 : 0);
         result = 31 * result + (removeAccents ? 1 : 0);
+        result = 31 * result + (applyStopWords ? 1 : 0);
+        result = 31 * result + minWordLength;
+        result = 31 * result + maxWordLength;
         return result;
     }
 
     @Override
     public String toString() {
-        return "Preprocessing{" +
+        return "ModelMetadata{" +
                 "applyStemmer=" + applyStemmer +
                 ", removeAccents=" + removeAccents +
+                ", applyStopWords=" + applyStopWords +
+                ", minWordLength=" + minWordLength +
+                ", maxWordLength=" + maxWordLength +
                 '}';
     }
 }

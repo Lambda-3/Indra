@@ -54,5 +54,5 @@ public interface VectorSpace {
 
     VectorComposer getTranslationComposer();
 
-    Preprocessing getPreprocessingParams();
+    ModelMetadata getMetadata();
 }
