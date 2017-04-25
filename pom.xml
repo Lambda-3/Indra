@@ -11,12 +11,18 @@
 
     <name>Indra</name>
     <description>A Web Service which allows easy access to different Distributional Semantics Models.</description>
-    <url>https://github.com/Lambda-3/indra</url>
+    <url>https://github.com/Lambda-3/Indra</url>
 
     <organization>
         <name>Lambda^3</name>
         <url>http://lambda3.org</url>
     </organization>
+
+    <scm>
+        <connection>scm:git:git@github.com:Lambda-3/Indra.git</connection>
+        <url>scm:git:git@github.com:Lambda-3/Indra.git</url>
+        <developerConnection>scm:git:git@github.com:Lamda-3/Indra.git</developerConnection>
+    </scm>
 
     <licenses>
         <license>
@@ -115,6 +121,28 @@
     </profiles>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                    <shortRevisionLength>5</shortRevisionLength>
+                </configuration>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
