@@ -27,12 +27,12 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public final class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
@@ -44,11 +44,15 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIn
     private Set<String> availableModels = new HashSet<>();
 
     public MongoTranslatorFactory(String mongoURI) {
-        this(mongoURI, DEFAULT_DB_NAME_SUFFIX);
+        this(new MongoClient(mongoURI), DEFAULT_DB_NAME_SUFFIX);
     }
 
-    public MongoTranslatorFactory(String mongoURI, String dbNameSuffix) {
-        mongoClient = new MongoClient(new MongoClientURI(mongoURI));
+    public MongoTranslatorFactory(MongoClient client) {
+        this(client, DEFAULT_DB_NAME_SUFFIX);
+    }
+
+    private MongoTranslatorFactory(MongoClient client, String dbNameSuffix) {
+        this.mongoClient = Objects.requireNonNull(client);
         this.dbNameSuffix = dbNameSuffix;
 
         for (String s : mongoClient.listDatabaseNames()) {

@@ -26,6 +26,8 @@ package org.lambda3.indra.mongo.test;
  * ==========================License-End===============================
  */
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
@@ -33,6 +35,8 @@ import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.utils.ParamsUtils;
 import org.lambda3.indra.mongo.MongoIndraDriver;
+import org.lambda3.indra.mongo.MongoTranslatorFactory;
+import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -42,14 +46,20 @@ import java.util.Collections;
 import java.util.List;
 
 public final class MongoIndraDriverIT {
-    private String mongoURI;
+    private MongoVectorSpaceFactory vectorSpaceFactory;
+    private MongoTranslatorFactory translatorFactory;
 
     @BeforeTest
     public void configure() {
-        mongoURI = System.getProperty("indra.mongoURI");
+        final String mongoURI = System.getProperty("indra.mongoURI");
         if (mongoURI == null) {
             Assert.fail("System.getProperty(\"indra.mongoURI\") is null. Provide a mongoURI to execute the integration test.");
         }
+
+        MongoClientOptions builder = MongoClientOptions.builder().serverSelectionTimeout(5000).build();
+        MongoClient mongoClient = new MongoClient(mongoURI, builder);
+        vectorSpaceFactory = new MongoVectorSpaceFactory(mongoClient);
+        translatorFactory = new MongoTranslatorFactory(mongoClient);
     }
 
     public static Params buildDefaulParams(Boolean applyStopWords, Integer minWordLength) {
@@ -61,7 +71,7 @@ public final class MongoIndraDriverIT {
     public void relatednessSimpleTest() {
         Params params = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
         TextPair pair = new TextPair("car", "engine");
 
         RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair));
@@ -77,7 +87,7 @@ public final class MongoIndraDriverIT {
     public void translatedRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
         List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
         RelatednessResult res = driver.getRelatedness(pairs);
 
@@ -96,7 +106,7 @@ public final class MongoIndraDriverIT {
     public void translatedZeroRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
         List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
         RelatednessResult res = driver.getRelatedness(pairs);
 
@@ -115,7 +125,7 @@ public final class MongoIndraDriverIT {
     public void testMinWordLengthParam() {
         Params params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 3);
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, mongoURI);
+        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
         List<TextPair> pairs = Arrays.asList(new TextPair("love", "romance"));
         RelatednessResult res = driver.getRelatedness(pairs);
         Assert.assertEquals(res.getScores().size(), 1);
@@ -125,7 +135,7 @@ public final class MongoIndraDriverIT {
 
         params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 5);
 
-        driver = new MongoIndraDriver(params, mongoURI);
+        driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
         pairs = Arrays.asList(new TextPair("love", "romance"));
         res = driver.getRelatedness(pairs);
         Assert.assertEquals(res.getScores().size(), 1);
@@ -135,7 +145,7 @@ public final class MongoIndraDriverIT {
 
     }
 
-    @Test
+    @Test(enabled = false)
     public void testApplyStopWordsParam() {
         //TODO when a model generated without cutting stopwords.
     }

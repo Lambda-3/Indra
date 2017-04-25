@@ -11,10 +11,7 @@ import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*-
  * ==========================License-Start=============================
@@ -50,13 +47,9 @@ public abstract class IndraDriver {
     private Params currentParams;
 
     public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
-        if (params == null || vectorSpaceFactory == null) {
-            new IllegalArgumentException("neither params nor vectorSpaceFactory can be null.");
-        }
-
-        this.currentParams = params;
-        this.vectorSpaceFactory = vectorSpaceFactory;
-        this.translatorFactory = translatorFactory;
+        this.currentParams = Objects.requireNonNull(params);
+        this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
+        this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 

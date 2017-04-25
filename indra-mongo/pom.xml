@@ -31,7 +31,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <indra.mongoURI>mongodb://localhost:27017</indra.mongoURI>
+                        <indra.mongoURI>localhost:27017</indra.mongoURI>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

@@ -27,7 +27,6 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposer;
@@ -35,6 +34,7 @@ import org.lambda3.indra.core.exception.ModelNoFound;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVectorSpace> {
@@ -43,11 +43,11 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
     private Set<String> availableModels;
 
     public MongoVectorSpaceFactory(String mongoURI) {
-        if (mongoURI == null || mongoURI.isEmpty()) {
-            throw new IllegalArgumentException("mongoURI can't be null nor empty");
-        }
-        this.mongoClient = new MongoClient(new MongoClientURI(mongoURI));
+        this(new MongoClient(mongoURI));
+    }
 
+    public MongoVectorSpaceFactory(MongoClient mongoClient) {
+        this.mongoClient = Objects.requireNonNull(mongoClient);
         availableModels = new HashSet<>();
         for (String s : mongoClient.listDatabaseNames()) {
             availableModels.add(s);
