@@ -1,0 +1,18 @@
+<configuration debug="true" scan="true" scanPeriod="2 seconds">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{50}) - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="org.mongodb" level="WARN" additivity="true"/>
+    <logger name="org.glassfish" level="WARN" additivity="true"/>
+    <logger name="org.glassfish.jersey.filter.LoggingFilter" level="WARN" additivity="true"/>
+    <logger name="org.lambda3" level="INFO" additivity="true"/>
+
+</configuration>

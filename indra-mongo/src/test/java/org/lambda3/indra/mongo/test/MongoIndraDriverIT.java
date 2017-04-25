@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MongoIndraDriverIT {
+public final class MongoIndraDriverIT {
     private String mongoURI;
 
     @BeforeTest
