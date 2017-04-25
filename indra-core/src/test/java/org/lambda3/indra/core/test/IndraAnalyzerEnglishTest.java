@@ -26,6 +26,7 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.ModelMetadata;
 import org.testng.Assert;
@@ -35,21 +36,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IndraAnalyzerEnglishTest {
+
+    private static final String LANG = "EN";
+
     @Test
-    public void simpleNonStemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
+    public void nonStemmedAnalyzeTest() {
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
         String loveString = "love";
-        List<String> res = analyzer.nonStemmedAnalyze(loveString);
+        List<String> res = analyzer.analyze(loveString);
 
         Assert.assertEquals(res.size(), 1);
         Assert.assertEquals(res.get(0), loveString);
-    }
 
-    @Test
-    public void upperCaseNonStemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
-        String loveString = "LOVE";
-        List<String> res = analyzer.nonStemmedAnalyze(loveString);
+        loveString = "LOVE";
+        res = analyzer.analyze(loveString);
 
         Assert.assertEquals(res.size(), 1);
         Assert.assertEquals(res.get(0), loveString.toLowerCase());
@@ -57,39 +58,46 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void stemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(true);
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+
         String term = "hapiness";
-        List<String> res = analyzer.stemmedAnalyze(term);
+        List<String> res = analyzer.analyze(term);
         Assert.assertEquals(res.size(), 1);
 
-        List<String> stems = analyzer.stem(Arrays.asList(term));
+        List<String> stems = IndraAnalyzer.stem(Arrays.asList(term), LANG);
         Assert.assertEquals(stems.size(), 1);
         Assert.assertEquals(res.get(0), stems.get(0));
     }
 
     @Test
     public void expressionAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false).minWordLength(3);
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
         String term = "GIANT by thine OWN nature";
-        List<String> res = analyzer.nonStemmedAnalyze(term);
-        //'by' is ignored by the LengthFilter (min=3) and 'own' is ignored by the StopFilter (stopword).
+        List<String> res = analyzer.analyze(term);
+
         Assert.assertEquals(res.size(), 3);
         Assert.assertEquals(String.join(" ", res), term.toLowerCase().replace(" by", "").replace(" own", ""));
     }
 
     @Test
     public void analyzeMultiplesRequestsTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         List<String> terms = Arrays.asList("love", "hapiness", "information", "management", "language",
                 "strawberries", "refactorization");
 
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+
         for (String term : terms) {
-            List<String> res = analyzer.nonStemmedAnalyze(term);
+            List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);
         }
 
+        metadata = ModelMetadata.createDefault().applyStemmer(false);
+        analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
         for (String term : terms) {
-            List<String> res = analyzer.stemmedAnalyze(term);
+            List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);
         }
     }

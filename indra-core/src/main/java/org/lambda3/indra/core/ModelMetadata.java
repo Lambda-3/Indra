@@ -41,8 +41,21 @@ public class ModelMetadata {
 
     }
 
+    private ModelMetadata(ModelMetadata other) {
+        this.applyStemmer = other.applyStemmer;
+        this.removeAccents = other.removeAccents;
+        this.applyStopWords = other.applyStopWords;
+        this.minWordLength = other.minWordLength;
+        this.maxWordLength = other.maxWordLength;
+    }
+
     public static ModelMetadata createDefault() {
         return new ModelMetadata();
+    }
+
+    public static ModelMetadata createTranslationVersion(ModelMetadata metadata) {
+        ModelMetadata newOne = new ModelMetadata(metadata);
+        return newOne.applyStemmer(false).removeAccents(false);
     }
 
     public ModelMetadata applyStemmer(boolean applyStemmer) {

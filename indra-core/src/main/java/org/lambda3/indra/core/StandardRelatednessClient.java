@@ -45,7 +45,7 @@ public class StandardRelatednessClient extends RelatednessClient {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(params.language, vectorSpace.getMetadata(), AnalyzedPair.class);
 
         for (TextPair pair : pairs) {
             AnalyzedPair analyzedPair = analyzer.analyze(pair);

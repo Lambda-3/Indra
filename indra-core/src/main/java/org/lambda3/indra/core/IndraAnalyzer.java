@@ -50,93 +50,64 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class IndraAnalyzer {
+public class IndraAnalyzer<T extends AnalyzedPair> {
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
-    public static final ModelMetadata DEFAULT_NO_STEMMER_KEEP_ACCENT = ModelMetadata.createDefault().applyStemmer(false).removeAccents(false);
-
     private String lang;
+    private Class<? extends AnalyzedPair> classOfT;
     private Tokenizer tokenizer;
-    private TokenStream fullProcessingStream;
-    private TokenStream partialProcessingStream;
+    private TokenStream tokenStream;
 
-    public IndraAnalyzer(String lang, ModelMetadata preprocessing) {
+
+    public IndraAnalyzer(String lang, ModelMetadata preprocessing, Class<? extends AnalyzedPair> classOfT) {
         if (lang == null || preprocessing == null) {
             throw new IllegalArgumentException("all parameters are mandatory.");
         }
+
         logger.debug("Creating analyzer, lang={}, preprocessing={}", lang, preprocessing);
         this.lang = lang;
-
+        this.classOfT = classOfT;
         tokenizer = new StandardTokenizer();
-
-        fullProcessingStream = createStream(lang, preprocessing, tokenizer);
-        partialProcessingStream = createStream(lang, DEFAULT_NO_STEMMER_KEEP_ACCENT, tokenizer);
+        tokenStream = createStream(lang, preprocessing, tokenizer);
     }
 
-    public AnalyzedPair analyze(TextPair pair) {
-        AnalyzedPair analyzedPair = new AnalyzedPair(pair);
+    public T analyze(TextPair pair) {
+        T ai;
 
-        analyzedPair.setAnalyzedTerm1(new AnalyzedTerm(pair.t1, stemmedAnalyze(pair.t1)));
-        analyzedPair.setAnalyzedTerm2(new AnalyzedTerm(pair.t2, stemmedAnalyze(pair.t2)));
+        if (classOfT.equals(AnalyzedTranslatedPair.class)) {
+            AnalyzedTranslatedPair analyzedPair = new AnalyzedTranslatedPair(pair);
 
-        return analyzedPair;
-    }
+            analyzedPair.setTranslatedTerm1(new MutableTranslatedTerm(pair.t1, analyze(pair.t1)));
+            analyzedPair.setTranslatedTerm2(new MutableTranslatedTerm(pair.t2, analyze(pair.t2)));
+            ai = (T) analyzedPair;
 
-    public AnalyzedTranslatedPair analyzeForTranslation(TextPair pair) {
-        AnalyzedTranslatedPair analyzedPair = new AnalyzedTranslatedPair(pair);
+        } else {
+            AnalyzedPair analyzedPair = new AnalyzedPair(pair);
 
-        analyzedPair.setTranslatedTerm1(new MutableTranslatedTerm(pair.t1, nonStemmedAnalyze(pair.t1)));
-        analyzedPair.setTranslatedTerm2(new MutableTranslatedTerm(pair.t2, nonStemmedAnalyze(pair.t2)));
-
-        return analyzedPair;
-    }
-
-    public List<String> stem(Collection<String> tokens) {
-        //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
-        int numberOfSteps = 3;
-
-        List<String> stemmed = new LinkedList<>();
-
-        SnowballProgram stemmer = getStemmer(this.lang);
-        for (String token : tokens) {
-            String stemmedToken = token;
-
-            for (int i = 0; i < numberOfSteps; i++) {
-                stemmer.setCurrent(stemmedToken);
-                stemmer.stem();
-                stemmedToken = stemmer.getCurrent();
-            }
-
-            stemmed.add(stemmedToken);
+            analyzedPair.setAnalyzedTerm1(new AnalyzedTerm(pair.t1, analyze(pair.t1)));
+            analyzedPair.setAnalyzedTerm2(new AnalyzedTerm(pair.t2, analyze(pair.t2)));
+            ai = (T) analyzedPair;
         }
 
-        return stemmed;
+        return ai;
     }
 
-    public List<String> stemmedAnalyze(String text) {
-        return analyze(text, fullProcessingStream);
-    }
-
-    public List<String> nonStemmedAnalyze(String text) {
-        return analyze(text, partialProcessingStream);
-    }
-
-    private List<String> analyze(String text, TokenStream stream) {
+    public List<String> analyze(String text) {
         List<String> result = new ArrayList<>();
         try (StringReader reader = new StringReader(text)) {
             tokenizer.setReader(reader);
-            CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
-            stream.reset();
-            while (stream.incrementToken()) {
+            CharTermAttribute cattr = tokenStream.addAttribute(CharTermAttribute.class);
+            tokenStream.reset();
+            while (tokenStream.incrementToken()) {
                 result.add(cattr.toString());
             }
         } catch (IOException e) {
             logger.error("Error analyzing {}", text, e);
         } finally {
             try {
-                stream.end();
-                stream.close();
+                tokenStream.end();
+                tokenStream.close();
             } catch (IOException e) {
                 logger.error("Error closing stream {}", e);
             }
@@ -148,10 +119,13 @@ public class IndraAnalyzer {
     private TokenStream createStream(String lang, ModelMetadata metadata, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
         stream = new LowerCaseFilter(stream);
-        stream = getStopFilter(lang, stream);
 
         if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
             stream = new LengthFilter(stream, metadata.getMinWordLength(), metadata.getMaxWordLength());
+        }
+
+        if (metadata.isApplyStopWords()) {
+            stream = getStopFilter(lang, stream);
         }
 
         if (metadata.isApplyStemmer()) {
@@ -176,7 +150,7 @@ public class IndraAnalyzer {
         }
     }
 
-    private SnowballProgram getStemmer(String lang) {
+    private static SnowballProgram getStemmer(String lang) {
         switch (lang.toUpperCase()) {
             case "EN":
                 return new EnglishStemmer();
@@ -205,6 +179,28 @@ public class IndraAnalyzer {
                 return null;
         }
         return null;
+    }
+
+    public static List<String> stem(Collection<String> tokens, String lang) {
+        //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
+        int numberOfSteps = 3;
+
+        List<String> stemmed = new LinkedList<>();
+
+        SnowballProgram stemmer = getStemmer(lang);
+        for (String token : tokens) {
+            String stemmedToken = token;
+
+            for (int i = 0; i < numberOfSteps; i++) {
+                stemmer.setCurrent(stemmedToken);
+                stemmer.stem();
+                stemmedToken = stemmer.getCurrent();
+            }
+
+            stemmed.add(stemmedToken);
+        }
+
+        return stemmed;
     }
 
     private TokenStream getStopFilter(String lang, TokenStream stream) {

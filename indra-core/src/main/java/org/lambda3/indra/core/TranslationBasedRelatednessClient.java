@@ -1,10 +1,16 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTranslatedPair;
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /*-
  * ==========================License-Start=============================
@@ -50,10 +56,10 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedTranslatedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
+        IndraAnalyzer<AnalyzedTranslatedPair> analyzer = new IndraAnalyzer<>(params.language, vectorSpace.getMetadata(), AnalyzedTranslatedPair.class);
 
         for (TextPair pair : pairs) {
-            AnalyzedTranslatedPair analyzedPair = analyzer.analyzeForTranslation(pair);
+            AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair);
             if (analyzedPair != null) {
                 analyzedPairs.add(analyzedPair);
             }
@@ -66,12 +72,11 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
-            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(params.translateTargetLanguage, vectorSpace.getMetadata());
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
                 for (String token : transTokens.keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, newLangAnalyzer.stem(transTokens.get(token)));
+                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token), params.translateTargetLanguage));
                 }
             }
 

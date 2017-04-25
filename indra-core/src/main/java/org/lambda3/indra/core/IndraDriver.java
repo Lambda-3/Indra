@@ -2,6 +2,7 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
+import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.client.TextPair;
@@ -78,33 +79,40 @@ public abstract class IndraDriver {
     public Map<String, RealVector> getVectors(List<String> terms, Params params) {
         logger.trace("getting vectors for {} terms (params={})", terms.size(), params);
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
+        ModelMetadata modelMetadata = vectorSpace.getMetadata();
 
         if (params.translate) {
+            ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
+            IndraAnalyzer<AnalyzedPair> nativeLangAnalyzer = new IndraAnalyzer<>(params.language, translationModelMetadata, AnalyzedPair.class);
+
             logger.trace("applying translation");
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
             for (String term : terms) {
-                List<String> analyzedTokens = analyzer.nonStemmedAnalyze(term);
+                List<String> analyzedTokens = nativeLangAnalyzer.analyze(term);
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
 
             IndraTranslator translator = translatorFactory.create(params);
             translator.translate(translatedTerms);
 
-            IndraAnalyzer targetAnalyzer = new IndraAnalyzer(params.translateTargetLanguage, vectorSpace.getMetadata());
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(term.getTranslatedTokens().get(token)));
+                    List<String> translatedTokens = term.getTranslatedTokens().get(token);
+                    if (modelMetadata.isApplyStemmer()) {
+                        translatedTokens = IndraAnalyzer.stem(translatedTokens, params.translateTargetLanguage);
+                    }
+
+                    term.putAnalyzedTranslatedTokens(token, translatedTokens);
                 }
             }
             logger.trace("done");
             return vectorSpace.getTranslatedVectors(translatedTerms);
 
         } else {
-
+            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(params.language, modelMetadata, AnalyzedPair.class);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
             for (String term : terms) {
-                analyzedTerms.add(new AnalyzedTerm(term, analyzer.stemmedAnalyze(term)));
+                analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
             }
             logger.trace("done");
             return vectorSpace.getVectors(analyzedTerms);
