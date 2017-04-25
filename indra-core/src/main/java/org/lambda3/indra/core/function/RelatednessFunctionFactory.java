@@ -1,9 +1,5 @@
 package org.lambda3.indra.core.function;
 
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.core.exception.IndraError;
-import org.lambda3.indra.core.function.*;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -29,7 +25,11 @@ import org.lambda3.indra.core.function.*;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public class RelatednessFunctionFactory {
+
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.core.exception.IndraError;
+
+public final class RelatednessFunctionFactory {
 
     public RelatednessFunction create(ScoreFunction scoreFunction) {
 
