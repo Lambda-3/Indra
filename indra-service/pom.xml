@@ -111,6 +111,7 @@
                 <version>0.4.13</version>
                 <configuration>
                     <dockerDirectory>${project.build.directory}/docker-resources</dockerDirectory>
+                    <skipDocker>true</skipDocker>
                     <pushImage>false</pushImage>
                     <imageName>lambdacube/indra:${project.version}-${buildNumber}</imageName>
                     <resources>
