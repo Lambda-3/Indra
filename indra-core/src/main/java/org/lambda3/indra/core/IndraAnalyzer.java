@@ -54,22 +54,20 @@ public class IndraAnalyzer<T extends AnalyzedPair> {
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
-    private String lang;
     private Class<? extends AnalyzedPair> classOfT;
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
 
 
-    public IndraAnalyzer(String lang, ModelMetadata preprocessing, Class<? extends AnalyzedPair> classOfT) {
-        if (lang == null || preprocessing == null) {
+    public IndraAnalyzer(String lang, ModelMetadata metadata, Class<T> classOfT) {
+        if (lang == null || metadata == null || classOfT == null) {
             throw new IllegalArgumentException("all parameters are mandatory.");
         }
 
-        logger.debug("Creating analyzer, lang={}, preprocessing={}", lang, preprocessing);
-        this.lang = lang;
+        logger.debug("Creating analyzer, lang={}, preprocessing={}", lang, metadata);
         this.classOfT = classOfT;
         tokenizer = new StandardTokenizer();
-        tokenStream = createStream(lang, preprocessing, tokenizer);
+        tokenStream = createStream(lang, metadata, tokenizer);
     }
 
     public T analyze(TextPair pair) {
