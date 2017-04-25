@@ -29,28 +29,10 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public final class RelatednessRequest {
+public final class RelatednessRequest extends AbstractBasicRequest<RelatednessRequest> {
 
-    private String corpus;
-    private String model;
-    private String language;
     private List<TextPair> pairs;
     private ScoreFunction scoreFunction;
-
-    public RelatednessRequest corpus(String corpusName) {
-        this.corpus = Objects.requireNonNull(corpusName);
-        return this;
-    }
-
-    public RelatednessRequest model(String model) {
-        this.model = Objects.requireNonNull(model);
-        return this;
-    }
-
-    public RelatednessRequest language(String language) {
-        this.language = Objects.requireNonNull(language);
-        return this;
-    }
 
     public RelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);
@@ -62,18 +44,6 @@ public final class RelatednessRequest {
         return this;
     }
 
-    public String getCorpus() {
-        return corpus;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
     public List<TextPair> getPairs() {
         return pairs;
     }
@@ -82,14 +52,4 @@ public final class RelatednessRequest {
         return scoreFunction;
     }
 
-    @Override
-    public String toString() {
-        return "RelatednessRequest{" +
-                "corpus='" + corpus + '\'' +
-                ", model=" + model +
-                ", language=" + language +
-                ", pairs=" + pairs +
-                ", scoreFunction=" + scoreFunction +
-                '}';
-    }
 }

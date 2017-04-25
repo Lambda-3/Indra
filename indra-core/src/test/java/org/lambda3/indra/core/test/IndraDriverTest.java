@@ -47,7 +47,9 @@ public class IndraDriverTest {
     private IndraDriver driver;
 
     public IndraDriverTest() {
-        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, VectorComposition.SUM, VectorComposition.AVERAGE);
+        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, null,
+                VectorComposition.SUM, VectorComposition.AVERAGE);
+
         VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
         IndraTranslatorFactory translatorFactory = createIndraTranslatorFactory();
         this.driver = new IndraDriver(params, vectorSpaceFactory, translatorFactory) {
@@ -119,7 +121,7 @@ public class IndraDriverTest {
         RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("mãe", "pai"),
                 new TextPair("mãe computador", "pai avaliação")));
 
-        for(ScoredTextPair pair : res.getScores()) {
+        for (ScoredTextPair pair : res.getScores()) {
             Assert.assertEquals(Math.floor(pair.score), -1d);
         }
     }
@@ -129,7 +131,7 @@ public class IndraDriverTest {
         RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("blabla", "ttt"),
                 new TextPair("these tokens are not in the vector model", "neither those")));
 
-        for(ScoredTextPair pair : res.getScores()) {
+        for (ScoredTextPair pair : res.getScores()) {
             Assert.assertEquals(pair.score, 0d);
         }
     }

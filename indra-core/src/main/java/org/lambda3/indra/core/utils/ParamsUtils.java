@@ -33,26 +33,27 @@ import org.lambda3.indra.core.composition.VectorComposition;
  */
 public class ParamsUtils {
 
+    public static final Boolean DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS = null;
+    public static final Integer DONT_OVERRIDE_DEFAULT_MIN_WORD_LENGTH = null;
+
     public static final VectorComposition DEFAULT_TERM_COMPOSTION = VectorComposition.UNIQUE_SUM;
     public static final VectorComposition DEFAULT_TRANSLATION_COMPOSTION = VectorComposition.AVERAGE;
 
     public static Params buildParams(RelatednessRequest req, boolean translate) {
-        return new Params(req.getCorpus(), req.getScoreFunction(), req.getLanguage(), req.getModel(),
-                translate, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
+        return new Params(req, translate, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
     }
 
     public static Params buildParams(VectorRequest req, boolean translate) {
-        return new Params(req.getCorpus(), ScoreFunction.COSINE, req.getLanguage(), req.getModel(),
-                translate, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
+        return new Params(req, translate, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
     }
 
     public static Params buildNoTranslateCosineDefaultParams(String corpus, String lang, String model) {
-        return new Params(corpus, ScoreFunction.COSINE, lang, model, false,
-                DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
+        return new Params(corpus, ScoreFunction.COSINE, lang, model, false, DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS,
+                DONT_OVERRIDE_DEFAULT_MIN_WORD_LENGTH, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
     }
 
     public static Params buildTranslateCosineDefaultParams(String corpus, String lang, String model) {
-        return new Params(corpus, ScoreFunction.COSINE, lang, model, true,
-                DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
+        return new Params(corpus, ScoreFunction.COSINE, lang, model, true, DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS,
+                DONT_OVERRIDE_DEFAULT_MIN_WORD_LENGTH, DEFAULT_TERM_COMPOSTION, DEFAULT_TRANSLATION_COMPOSTION);
     }
 }
