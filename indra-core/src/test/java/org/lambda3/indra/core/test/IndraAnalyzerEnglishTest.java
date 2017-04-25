@@ -27,7 +27,7 @@ package org.lambda3.indra.core.test;
  */
 
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.core.Preprocessing;
+import org.lambda3.indra.core.ModelMetadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ import java.util.List;
 public class IndraAnalyzerEnglishTest {
     @Test
     public void simpleNonStemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", new Preprocessing(true, true));
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         String loveString = "love";
         List<String> res = analyzer.nonStemmedAnalyze(loveString);
 
@@ -47,7 +47,7 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void upperCaseNonStemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", new Preprocessing(true, true));
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         String loveString = "LOVE";
         List<String> res = analyzer.nonStemmedAnalyze(loveString);
 
@@ -57,7 +57,7 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void stemmedAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", new Preprocessing(true, true));
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         String term = "hapiness";
         List<String> res = analyzer.stemmedAnalyze(term);
         Assert.assertEquals(res.size(), 1);
@@ -69,7 +69,7 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void expressionAnalyzeTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", new Preprocessing(true, true));
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         String term = "GIANT by thine OWN nature";
         List<String> res = analyzer.nonStemmedAnalyze(term);
         //'by' is ignored by the LengthFilter (min=3) and 'own' is ignored by the StopFilter (stopword).
@@ -79,16 +79,16 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void analyzeMultiplesRequestsTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", new Preprocessing(true, true));
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createDefault());
         List<String> terms = Arrays.asList("love", "hapiness", "information", "management", "language",
                 "strawberries", "refactorization");
 
-        for(String term : terms) {
+        for (String term : terms) {
             List<String> res = analyzer.nonStemmedAnalyze(term);
             Assert.assertEquals(res.size(), 1);
         }
 
-        for(String term : terms) {
+        for (String term : terms) {
             List<String> res = analyzer.stemmedAnalyze(term);
             Assert.assertEquals(res.size(), 1);
         }

@@ -51,21 +51,17 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class IndraAnalyzer {
-    //TODO define which language should be lower cased.
-
-    private static final int MIN_WORD_LENGTH = 3;
-    private static final int MAX_WORD_LENGTH = 100;
-
-    private static final Preprocessing NO_STEMMER_KEEP_ACCENT = new Preprocessing(false, false);
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
+
+    public static final ModelMetadata DEFAULT_NO_STEMMER_KEEP_ACCENT = ModelMetadata.createDefault().applyStemmer(false).removeAccents(false);
 
     private String lang;
     private Tokenizer tokenizer;
     private TokenStream fullProcessingStream;
     private TokenStream partialProcessingStream;
 
-    public IndraAnalyzer(String lang, Preprocessing preprocessing) {
+    public IndraAnalyzer(String lang, ModelMetadata preprocessing) {
         if (lang == null || preprocessing == null) {
             throw new IllegalArgumentException("all parameters are mandatory.");
         }
@@ -75,7 +71,7 @@ public class IndraAnalyzer {
         tokenizer = new StandardTokenizer();
 
         fullProcessingStream = createStream(lang, preprocessing, tokenizer);
-        partialProcessingStream = createStream(lang, NO_STEMMER_KEEP_ACCENT, tokenizer);
+        partialProcessingStream = createStream(lang, DEFAULT_NO_STEMMER_KEEP_ACCENT, tokenizer);
     }
 
     public AnalyzedPair analyze(TextPair pair) {
@@ -149,20 +145,20 @@ public class IndraAnalyzer {
         return result;
     }
 
-    private TokenStream createStream(String lang, Preprocessing preprocessing, Tokenizer tokenizer) {
+    private TokenStream createStream(String lang, ModelMetadata metadata, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
         stream = new LowerCaseFilter(stream);
         stream = getStopFilter(lang, stream);
 
         if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
-            stream = new LengthFilter(stream, MIN_WORD_LENGTH, MAX_WORD_LENGTH);
+            stream = new LengthFilter(stream, metadata.getMinWordLength(), metadata.getMaxWordLength());
         }
 
-        if (preprocessing.applyStemmer) {
+        if (metadata.isApplyStemmer()) {
             stream = getStemmerFilter(lang, stream);
         }
 
-        if (preprocessing.removeAccents) {
+        if (metadata.isRemoveAccents()) {
             stream = new ASCIIFoldingFilter(stream);
         }
 

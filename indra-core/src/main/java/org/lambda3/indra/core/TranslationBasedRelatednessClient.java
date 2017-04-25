@@ -50,7 +50,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedTranslatedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getPreprocessingParams());
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyzeForTranslation(pair);
@@ -66,7 +66,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
-            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(params.translateTargetLanguage, vectorSpace.getPreprocessingParams());
+            IndraAnalyzer newLangAnalyzer = new IndraAnalyzer(params.translateTargetLanguage, vectorSpace.getMetadata());
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();

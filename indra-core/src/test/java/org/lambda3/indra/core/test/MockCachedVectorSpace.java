@@ -29,7 +29,8 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.Preprocessing;
+import org.lambda3.indra.core.IndraAnalyzer;
+import org.lambda3.indra.core.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.util.*;
@@ -89,8 +90,8 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Preprocessing getPreprocessingParams() {
-        return new Preprocessing(false, false);
+    public ModelMetadata getMetadata() {
+        return IndraAnalyzer.DEFAULT_NO_STEMMER_KEEP_ACCENT;
     }
 
     @Override

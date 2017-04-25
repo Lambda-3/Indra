@@ -37,7 +37,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.Preprocessing;
+import org.lambda3.indra.core.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +63,15 @@ class MongoVectorSpace extends CachedVectorSpace {
 
     private static final String APPLY_STEMMER_PARAM_FIELD_NAME = "apply-stemmer";
     private static final String REMOVE_ACCENTS_PARAM_FIELD_NAME = "remove-accents";
+    private static final String APPLY_STOP_WORDS_PARAM_FIELD_NAME = "apply-stop-words";
+    private static final String MIN_WORD_LENGTH_PARAM_FIELD_NAME = "min-word-length";
+    private static final String MAX_WORD_LENGTH_PARAM_FIELD_NAME = "max-word-length";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
-    private Preprocessing preprocessing;
+    private ModelMetadata metadata = ModelMetadata.createDefault();
 
     MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
         super(composer, translationComposer);
@@ -88,26 +91,50 @@ class MongoVectorSpace extends CachedVectorSpace {
             }
         }
 
-        boolean applyStemmer = true;
+
         boolean removeAccents = true;
 
         if (containsMetadataCollection) {
             MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
-
-            FindIterable<Document> docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, APPLY_STEMMER_PARAM_FIELD_NAME));
-            for (Document doc : docs) {
-                applyStemmer = (boolean) doc.get(VALUE_FIELD_NAME);
-                break;
+            Object value = getField(metadataColl, APPLY_STEMMER_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.applyStemmer((Boolean) value);
             }
 
-            docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, REMOVE_ACCENTS_PARAM_FIELD_NAME));
-            for (Document doc : docs) {
-                removeAccents = (boolean) doc.get(VALUE_FIELD_NAME);
-                break;
+            value = getField(metadataColl, APPLY_STEMMER_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.applyStemmer((Boolean) value);
+            }
+
+            value = getField(metadataColl, REMOVE_ACCENTS_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.removeAccents((Boolean) value);
+            }
+
+            value = getField(metadataColl, APPLY_STOP_WORDS_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.applyStopWords((Boolean) value);
+            }
+
+            value = getField(metadataColl, MIN_WORD_LENGTH_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.minWordLength((Integer) value);
+            }
+
+            value = getField(metadataColl, MAX_WORD_LENGTH_PARAM_FIELD_NAME);
+            if (value != null) {
+                this.metadata.maxWordLength((Integer) value);
             }
         }
+    }
 
-        this.preprocessing = new Preprocessing(applyStemmer, removeAccents);
+    public Object getField(MongoCollection<Document> metadataColl, String field) {
+        FindIterable<Document> docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, field));
+        for (Document doc : docs) {
+            return doc.get(VALUE_FIELD_NAME);
+        }
+
+        return null;
     }
 
     @Override
@@ -121,8 +148,8 @@ class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Preprocessing getPreprocessingParams() {
-        return preprocessing;
+    public ModelMetadata getMetadata() {
+        return metadata;
     }
 
 

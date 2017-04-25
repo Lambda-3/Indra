@@ -33,6 +33,7 @@ public enum ScoreFunction {
     SPEARMAN,
     PEARSON,
     COSINE,
+    ABSOLUTE_COSINE,
     DICE,
     EUCLIDEAN,
     JACCARD,
