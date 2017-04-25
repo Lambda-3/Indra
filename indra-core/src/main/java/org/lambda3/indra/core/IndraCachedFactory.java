@@ -1,7 +1,5 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.core.exception.IndraError;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+
 public abstract class IndraCachedFactory<T> {
     private final Map<Object, T> cache = new ConcurrentHashMap<>();
 
