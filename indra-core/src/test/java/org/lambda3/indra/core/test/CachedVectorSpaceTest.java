@@ -29,6 +29,7 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraAnalyzer;
+import org.lambda3.indra.core.ModelMetadata;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.SumVectorComposer;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 public class CachedVectorSpaceTest {
 
     MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace(new SumVectorComposer(), new AveragedVectorComposer());
-    IndraAnalyzer analyzer = new IndraAnalyzer("EN", vectorSpace.getMetadata());
+    IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>("EN", vectorSpace.getMetadata(), AnalyzedPair.class);
 
     @Test
     public void getSimpleVectorPairsTest() {
@@ -82,8 +83,10 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getComposedVectorTest() {
+        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>("EN",
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedPair.class);
         List<String> terms = Arrays.asList("love plane good south hot", "hate car bad north cold");
-        List<AnalyzedTerm> analyzedTerms = terms.stream().map(t -> new AnalyzedTerm(t, analyzer.nonStemmedAnalyze(t))).
+        List<AnalyzedTerm> analyzedTerms = terms.stream().map(t -> new AnalyzedTerm(t, analyzer.analyze(t))).
                 collect(Collectors.toList());
 
         Map<String, RealVector> vectorPairs = vectorSpace.getVectors(analyzedTerms);
@@ -95,9 +98,10 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", vectorSpace.getMetadata());
-        AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyzeForTranslation(new TextPair("mãe", "pai"));
-        AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyzeForTranslation(new TextPair("computador", "avaliação"));
+        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
+        AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyze(new TextPair("mãe", "pai"));
+        AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyze(new TextPair("computador", "avaliação"));
 
         analyzedPair1.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
         analyzedPair1.getTranslatedT2().putAnalyzedTranslatedTokens("pai", Arrays.asList("father", "dad", "patriarch"));
@@ -121,8 +125,9 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getComposedTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", vectorSpace.getMetadata());
-        AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyzeForTranslation(new TextPair("mãe computador", "pai avaliação"));
+        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
+        AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyze(new TextPair("mãe computador", "pai avaliação"));
 
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("computador", Arrays.asList("machine", "computer"));
@@ -146,9 +151,11 @@ public class CachedVectorSpaceTest {
 
     @Test
     public void getComposedTranslatedVectorsTest() {
+        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
-        List<MutableTranslatedTerm> analyzedTerms = terms.stream().map(t -> new MutableTranslatedTerm(t, analyzer.nonStemmedAnalyze(t))).
-                collect(Collectors.toList());
+        List<MutableTranslatedTerm> analyzedTerms = terms.stream().map(t -> new MutableTranslatedTerm(t,
+                ptAnalyzer.analyze(t))).collect(Collectors.toList());
 
         analyzedTerms.get(0).putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
         analyzedTerms.get(0).putAnalyzedTranslatedTokens("computador", Arrays.asList("machine", "computer"));
