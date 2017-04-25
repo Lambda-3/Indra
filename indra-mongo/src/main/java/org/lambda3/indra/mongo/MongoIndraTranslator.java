@@ -37,9 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class MongoIndraTranslator implements IndraTranslator {
+public final class MongoIndraTranslator extends IndraTranslator {
 
     private static final String LEX_COLLECTION = "lex";
     private static final String TERM_FIELD = "term";
@@ -52,7 +51,7 @@ public class MongoIndraTranslator implements IndraTranslator {
     private String dbName;
 
 
-    public MongoIndraTranslator(MongoClient mongoClient, String dbName) {
+    MongoIndraTranslator(MongoClient mongoClient, String dbName) {
         if (mongoClient == null) {
             throw new IllegalArgumentException("mongoClient can't be null");
         }
@@ -93,73 +92,12 @@ public class MongoIndraTranslator implements IndraTranslator {
             Document tr = (Document) doc.get(TRANSLATION_FIELD);
 
             if (tr != null) {
-                res.put(doc.getString(TERM_FIELD), getRelavantTranslations((Map) tr));
+                tr.remove(NULL_VALUE);
+                res.put(doc.getString(TERM_FIELD), getRelevantTranslations((Map) tr));
             }
         }
 
         return res;
     }
 
-    public static List<String> getRelavantTranslations(Map<String, Double> tr) {
-        tr.remove(NULL_VALUE);
-
-        List<String> res = new LinkedList<>();
-
-        if (tr.size() <= 2) {
-            tr.keySet().forEach(k -> res.add(k));
-        } else {
-
-            LinkedHashMap<String, Double> tempWords = new LinkedHashMap<>();
-            tr.keySet().forEach(k -> tempWords.put(k, tr.get(k)));
-
-            LinkedHashMap<String, Double> sortedWords = sortByValue(tempWords);
-
-            double maxDiff = Double.MIN_VALUE * -1;
-            Double lastScore = sortedWords.entrySet().iterator().next().getValue();
-
-            for (String word : sortedWords.keySet()) {
-                Double score = sortedWords.get(word);
-                double diff = lastScore - score;
-                if (diff > maxDiff) {
-                    maxDiff = diff;
-                }
-
-                lastScore = score;
-            }
-
-            lastScore = sortedWords.entrySet().iterator().next().getValue();
-            for (String word : sortedWords.keySet()) {
-                Double score = sortedWords.get(word);
-                double diff = lastScore - score;
-                if (diff >= maxDiff) {
-                    break;
-                }
-
-                res.add(word);
-                lastScore = score;
-            }
-        }
-
-        return res;
-    }
-
-    public static LinkedHashMap sortByValue(Map<String, Double> map) {
-        LinkedHashMap<String, Double> sortedMap = map.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-        return sortedMap;
-    }
-
-    public static void main(String[] args) {
-        String mongoURI = "132.231.141.167:27017";
-        MongoIndraTranslator mt = new MongoIndraTranslator(new MongoClient(mongoURI), "pt_en-Europarl_DGT_OpenSubtitile");
-
-        Set<String> set = Arrays.stream(new String[]{"pai"}).collect(Collectors.toSet());
-        Map<String, List<String>> results = mt.doTranslate(set);
-        for (String r : results.keySet()) {
-            System.out.print(r + ": [");
-            System.out.print(String.join(", ", results.get(r)));
-            System.out.println("]");
-        }
-    }
 }

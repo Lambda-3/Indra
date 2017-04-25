@@ -28,14 +28,64 @@ package org.lambda3.indra.core.translation;
 
 import org.lambda3.indra.client.MutableTranslatedTerm;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public interface IndraTranslator {
+public abstract class IndraTranslator {
 
     /**
      * Translate each AnalyzedTerm token by token and store into MutableTranslatedTerm.translatedTokens.
      *
      * @param terms
      */
-    void translate(List<MutableTranslatedTerm> terms);
+    public abstract void translate(List<MutableTranslatedTerm> terms);
+
+    public static List<String> getRelevantTranslations(Map<String, Double> tr) {
+        List<String> res = new LinkedList<>();
+
+        if (tr.size() <= 2) {
+            tr.keySet().forEach(res::add);
+        } else {
+
+            LinkedHashMap<String, Double> tempWords = new LinkedHashMap<>();
+            tr.keySet().forEach(k -> tempWords.put(k, tr.get(k)));
+
+            LinkedHashMap<String, Double> sortedWords = sortByValue(tempWords);
+
+            double maxDiff = Double.MIN_VALUE * -1;
+            Double lastScore = sortedWords.entrySet().iterator().next().getValue();
+
+            for (String word : sortedWords.keySet()) {
+                Double score = sortedWords.get(word);
+                double diff = lastScore - score;
+                if (diff > maxDiff) {
+                    maxDiff = diff;
+                }
+
+                lastScore = score;
+            }
+
+            lastScore = sortedWords.entrySet().iterator().next().getValue();
+            for (String word : sortedWords.keySet()) {
+                Double score = sortedWords.get(word);
+                double diff = lastScore - score;
+                if (diff >= maxDiff) {
+                    break;
+                }
+
+                res.add(word);
+                lastScore = score;
+            }
+        }
+
+        return res;
+    }
+
+    private static LinkedHashMap<String, Double> sortByValue(Map<String, Double> map) {
+        return map.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+    }
 }

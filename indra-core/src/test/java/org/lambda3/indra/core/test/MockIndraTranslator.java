@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MockIndraTranslator implements IndraTranslator {
+public final class MockIndraTranslator extends IndraTranslator {
     private Map<String, List<String>> translations = new HashMap<>();
 
     public MockIndraTranslator() {

@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
+public final class MongoTranslatorFactory extends IndraTranslatorFactory<MongoIndraTranslator> {
 
     private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
 

@@ -1,4 +1,4 @@
-package org.lambda3.indra.mongo.test;
+package org.lambda3.indra.core.test;
 
 /*-
  * ==========================License-Start=============================
@@ -26,7 +26,7 @@ package org.lambda3.indra.mongo.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.mongo.MongoIndraTranslator;
+import org.lambda3.indra.core.translation.IndraTranslator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MongoIndraTranslatorTest {
+public class IndraTranslatorTest {
 
     @Test
     public void getRelevantTranslationsTest() {
@@ -47,7 +47,7 @@ public class MongoIndraTranslatorTest {
         tr.put("wife", 8d);
         tr.put("science", 4d);
 
-        List<String> res = MongoIndraTranslator.getRelavantTranslations(tr);
+        List<String> res = IndraTranslator.getRelevantTranslations(tr);
         Assert.assertEquals(res.size(), 5);
         Assert.assertTrue(res.contains("love"));
         Assert.assertTrue(res.contains("mother"));
