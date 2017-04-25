@@ -31,18 +31,18 @@ import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
+import java.util.Objects;
+
 public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient> {
-    private VectorSpaceFactory<VectorSpace> vectorSpaceFactory;
+    private VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
-    private IndraTranslatorFactory<IndraTranslator> translatorFactory;
+    private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
 
 
-    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
-        if (vectorSpaceFactory == null) {
-            throw new IllegalArgumentException("vectorSpaceFactory is mandatory");
-        }
-        this.vectorSpaceFactory = vectorSpaceFactory;
-        this.translatorFactory = translatorFactory;
+    public RelatednessClientFactory(VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
+                                    IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
+        this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
+        this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessFunctionFactory = new RelatednessFunctionFactory();
     }
 
