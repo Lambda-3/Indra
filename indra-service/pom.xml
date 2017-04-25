@@ -20,6 +20,18 @@
         <jersey.version>2.22.3</jersey.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <id>docker</id>
+            <properties>
+                <skipDocker>true</skipDocker>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -111,7 +123,6 @@
                 <version>0.4.13</version>
                 <configuration>
                     <dockerDirectory>${project.build.directory}/docker-resources</dockerDirectory>
-                    <skipDocker>true</skipDocker>
                     <pushImage>false</pushImage>
                     <imageName>lambdacube/indra:${project.version}-${buildNumber}</imageName>
                     <resources>
