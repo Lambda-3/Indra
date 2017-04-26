@@ -26,24 +26,16 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public class VectorResponse {
+public final class VectorResponse {
 
-    @JsonProperty
     private String corpus;
-    @JsonProperty
     private String model;
-    @JsonProperty
     private String language;
-    @JsonProperty
     private Map<String, Map<Integer, Double>> terms;
 
-    private VectorResponse() {
-        // happy serializer
-    }
 
     //TODO distinguish between sparse and dense vector.
     public VectorResponse(VectorRequest request, Map<String, Map<Integer, Double>> terms) {

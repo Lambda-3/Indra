@@ -33,13 +33,16 @@ import javax.ws.rs.core.MediaType;
 
 @Path("info")
 @Produces(MediaType.APPLICATION_JSON)
-public interface InfoResource {
+public abstract class InfoResource {
+
 
     @GET
     @Path("/version")
-    VersionResponse getVersion();
+    public final VersionResponse getVersion() {
+        return new VersionResponse();
+    }
 
     @GET
     @Path("/resources")
-    ResourceResponse getResources();
+    public abstract ResourceResponse getResources();
 }

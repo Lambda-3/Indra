@@ -46,7 +46,6 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>${server.mainClass}</mainClass>
                             <useUniqueVersions>false</useUniqueVersions>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                     <excludes>

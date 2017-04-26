@@ -28,30 +28,24 @@ package org.lambda3.indra.service.impl;
 
 import org.lambda3.indra.client.InfoResource;
 import org.lambda3.indra.client.ResourceResponse;
-import org.lambda3.indra.client.VersionResponse;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
-import org.lambda3.indra.service.Indra;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class InfoResourceImpl implements InfoResource {
+public final class InfoResourceImpl extends InfoResource {
 
     private VectorSpaceFactory<? extends VectorSpace> spaceFactory;
     private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
 
-    public InfoResourceImpl(VectorSpaceFactory<? extends VectorSpace> spaceFactory, IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
-        this.spaceFactory = spaceFactory;
-        this.translatorFactory = translatorFactory;
-    }
-
-    @Override
-    public VersionResponse getVersion() {
-        String version = Indra.class.getPackage().getImplementationVersion();
-        return new VersionResponse(version);
+    public InfoResourceImpl(VectorSpaceFactory<? extends VectorSpace> spaceFactory,
+                            IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
+        this.spaceFactory = Objects.requireNonNull(spaceFactory);
+        this.translatorFactory = Objects.requireNonNull(translatorFactory);
     }
 
     @Override

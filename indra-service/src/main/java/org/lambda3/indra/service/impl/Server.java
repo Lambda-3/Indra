@@ -54,7 +54,7 @@ public final class Server {
         port = System.getProperty("indra.http.port", "8916");
         BASE_URI = protocol + host + ":" + port;
         mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));
-        mongoURI = System.getProperty("indra.mongoURI", "mongodb://localhost:27017");
+        mongoURI = System.getProperty("indra.mongoURI", "localhost:27017");
     }
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,6 +73,7 @@ public final class Server {
             logger.warn("MOCK mode.");
             rc.register(new MockedRelatednessResourceImpl());
             rc.register(new MockedVectorResourceImpl());
+            rc.register(new MockedInfoResourceImpl());
         } else {
             MongoVectorSpaceFactory spaceFactory = new MongoVectorSpaceFactory(mongoURI);
             MongoTranslatorFactory translatorFactory = new MongoTranslatorFactory(mongoURI);

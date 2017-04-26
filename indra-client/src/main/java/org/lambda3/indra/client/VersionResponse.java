@@ -26,18 +26,11 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class VersionResponse {
-    @JsonProperty
     private String version;
 
     public VersionResponse() {
-
-    }
-
-    public VersionResponse(String version) {
-        this.version = version;
+        this.version = VersionResponse.class.getPackage().getImplementationVersion();
     }
 
     public String getVersion() {

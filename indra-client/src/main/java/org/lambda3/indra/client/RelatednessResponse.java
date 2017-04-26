@@ -26,20 +26,15 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collection;
 
 public final class RelatednessResponse {
-    @JsonProperty private String corpus;
-    @JsonProperty private String model;
-    @JsonProperty private String language;
-    @JsonProperty private Collection<ScoredTextPair> pairs;
-    @JsonProperty private ScoreFunction scoreFunction;
+    private String corpus;
+    private String model;
+    private String language;
+    private Collection<ScoredTextPair> pairs;
+    private ScoreFunction scoreFunction;
 
-    private RelatednessResponse() {
-        // happy serializer
-    }
 
     public RelatednessResponse(RelatednessRequest request, Collection<ScoredTextPair> pairs) {
         this.corpus = request.getCorpus();

@@ -26,21 +26,13 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
 
-public class ResourceResponse {
+public final class ResourceResponse {
 
-    @JsonProperty
     private Collection<String> dsms;
-
-    @JsonProperty
     private Collection<String> translations;
-
-    public ResourceResponse() {
-
-    }
 
     public ResourceResponse(Collection<String> dsms, Collection<String> translations) {
         this.dsms = dsms;
