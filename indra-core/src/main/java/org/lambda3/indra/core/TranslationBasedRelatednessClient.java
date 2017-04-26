@@ -56,10 +56,10 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedTranslatedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer<AnalyzedTranslatedPair> analyzer = new IndraAnalyzer<>(params.language, vectorSpace.getMetadata(), AnalyzedTranslatedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
 
         for (TextPair pair : pairs) {
-            AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair);
+            AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
             if (analyzedPair != null) {
                 analyzedPairs.add(analyzedPair);
             }

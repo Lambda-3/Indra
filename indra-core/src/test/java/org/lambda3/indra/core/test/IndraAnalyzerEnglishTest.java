@@ -26,13 +26,13 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.ModelMetadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class IndraAnalyzerEnglishTest {
@@ -42,7 +42,7 @@ public class IndraAnalyzerEnglishTest {
     @Test
     public void nonStemmedAnalyzeTest() {
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
-        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
         String loveString = "love";
         List<String> res = analyzer.analyze(loveString);
 
@@ -59,13 +59,13 @@ public class IndraAnalyzerEnglishTest {
     @Test
     public void stemmedAnalyzeTest() {
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(true);
-        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
 
         String term = "hapiness";
         List<String> res = analyzer.analyze(term);
         Assert.assertEquals(res.size(), 1);
 
-        List<String> stems = IndraAnalyzer.stem(Arrays.asList(term), LANG);
+        List<String> stems = IndraAnalyzer.stem(Collections.singleton(term), LANG);
         Assert.assertEquals(stems.size(), 1);
         Assert.assertEquals(res.get(0), stems.get(0));
     }
@@ -73,7 +73,7 @@ public class IndraAnalyzerEnglishTest {
     @Test
     public void expressionAnalyzeTest() {
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false).minWordLength(3);
-        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
         String term = "GIANT by thine OWN nature";
         List<String> res = analyzer.analyze(term);
 
@@ -87,7 +87,7 @@ public class IndraAnalyzerEnglishTest {
                 "strawberries", "refactorization");
 
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
-        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
 
         for (String term : terms) {
             List<String> res = analyzer.analyze(term);
@@ -95,7 +95,7 @@ public class IndraAnalyzerEnglishTest {
         }
 
         metadata = ModelMetadata.createDefault().applyStemmer(false);
-        analyzer = new IndraAnalyzer<>(LANG, metadata, AnalyzedPair.class);
+        analyzer = new IndraAnalyzer(LANG, metadata);
         for (String term : terms) {
             List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);

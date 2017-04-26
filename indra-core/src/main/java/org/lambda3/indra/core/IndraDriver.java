@@ -28,7 +28,6 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.client.TextPair;
@@ -79,7 +78,7 @@ public abstract class IndraDriver {
 
         if (params.translate) {
             ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
-            IndraAnalyzer<AnalyzedPair> nativeLangAnalyzer = new IndraAnalyzer<>(params.language, translationModelMetadata, AnalyzedPair.class);
+            IndraAnalyzer nativeLangAnalyzer = new IndraAnalyzer(params.language, translationModelMetadata);
 
             logger.trace("applying translation");
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
@@ -105,7 +104,7 @@ public abstract class IndraDriver {
             return vectorSpace.getTranslatedVectors(translatedTerms);
 
         } else {
-            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(params.language, modelMetadata, AnalyzedPair.class);
+            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(params.language, modelMetadata);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
             for (String term : terms) {
                 analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));

@@ -50,45 +50,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class IndraAnalyzer<T extends AnalyzedPair> {
+public final class IndraAnalyzer {
 
     private static Logger logger = LoggerFactory.getLogger(IndraAnalyzer.class);
 
-    private Class<? extends AnalyzedPair> classOfT;
     private Tokenizer tokenizer;
     private TokenStream tokenStream;
 
 
-    public IndraAnalyzer(String lang, ModelMetadata metadata, Class<T> classOfT) {
-        if (lang == null || metadata == null || classOfT == null) {
+    public IndraAnalyzer(String lang, ModelMetadata metadata) {
+        if (lang == null || metadata == null) {
             throw new IllegalArgumentException("all parameters are mandatory.");
         }
 
         logger.debug("Creating analyzer, lang={}, preprocessing={}", lang, metadata);
-        this.classOfT = classOfT;
         tokenizer = new StandardTokenizer();
         tokenStream = createStream(lang, metadata, tokenizer);
     }
 
-    public T analyze(TextPair pair) {
-        T ai;
-
-        if (classOfT.equals(AnalyzedTranslatedPair.class)) {
+    @SuppressWarnings("unchecked")
+    public <T extends AnalyzedPair> T analyze(TextPair pair, Class<T> clazz) {
+        if (clazz.equals(AnalyzedTranslatedPair.class)) {
             AnalyzedTranslatedPair analyzedPair = new AnalyzedTranslatedPair(pair);
-
             analyzedPair.setTranslatedTerm1(new MutableTranslatedTerm(pair.t1, analyze(pair.t1)));
             analyzedPair.setTranslatedTerm2(new MutableTranslatedTerm(pair.t2, analyze(pair.t2)));
-            ai = (T) analyzedPair;
-
-        } else {
-            AnalyzedPair analyzedPair = new AnalyzedPair(pair);
-
-            analyzedPair.setAnalyzedTerm1(new AnalyzedTerm(pair.t1, analyze(pair.t1)));
-            analyzedPair.setAnalyzedTerm2(new AnalyzedTerm(pair.t2, analyze(pair.t2)));
-            ai = (T) analyzedPair;
+            return (T) analyzedPair;
         }
 
-        return ai;
+        AnalyzedPair analyzedPair = new AnalyzedPair(pair);
+        analyzedPair.setAnalyzedTerm1(new AnalyzedTerm(pair.t1, analyze(pair.t1)));
+        analyzedPair.setAnalyzedTerm2(new AnalyzedTerm(pair.t2, analyze(pair.t2)));
+
+        return (T) analyzedPair;
     }
 
     public List<String> analyze(String text) {

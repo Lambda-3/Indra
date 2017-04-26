@@ -43,14 +43,14 @@ import java.util.stream.Collectors;
 
 public class CachedVectorSpaceTest {
 
-    MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace(new SumVectorComposer(), new AveragedVectorComposer());
-    IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>("EN", vectorSpace.getMetadata(), AnalyzedPair.class);
+    private MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace(new SumVectorComposer(), new AveragedVectorComposer());
+    private IndraAnalyzer analyzer = new IndraAnalyzer("EN", vectorSpace.getMetadata());
 
     @Test
     public void getSimpleVectorPairsTest() {
-        AnalyzedPair analyzedPair1 = analyzer.analyze(new TextPair("love", "hate"));
-        AnalyzedPair analyzedPair2 = analyzer.analyze(new TextPair("plane", "car"));
-        AnalyzedPair analyzedPair3 = analyzer.analyze(new TextPair("north", "south"));
+        AnalyzedPair analyzedPair1 = analyzer.analyze(new TextPair("love", "hate"), AnalyzedPair.class);
+        AnalyzedPair analyzedPair2 = analyzer.analyze(new TextPair("plane", "car"), AnalyzedPair.class);
+        AnalyzedPair analyzedPair3 = analyzer.analyze(new TextPair("north", "south"), AnalyzedPair.class);
         List<AnalyzedPair> pairs = Arrays.asList(analyzedPair1, analyzedPair2, analyzedPair3);
 
         Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
@@ -60,14 +60,14 @@ public class CachedVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), vectorSpace.ZERO_VECTOR);
+            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), MockCachedVectorSpace.ZERO_VECTOR);
         }
     }
 
     @Test
     public void getComposedVectorPairsTest() {
-        AnalyzedPair analyzedPair1 = analyzer.analyze(new TextPair("love plane", "hate car"));
-        AnalyzedPair analyzedPair2 = analyzer.analyze(new TextPair("good north", "bad south"));
+        AnalyzedPair analyzedPair1 = analyzer.analyze(new TextPair("love plane", "hate car"), AnalyzedPair.class);
+        AnalyzedPair analyzedPair2 = analyzer.analyze(new TextPair("good north", "bad south"), AnalyzedPair.class);
         List<AnalyzedPair> pairs = Arrays.asList(analyzedPair1, analyzedPair2);
 
         Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
@@ -77,14 +77,13 @@ public class CachedVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), vectorSpace.ZERO_VECTOR);
+            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), MockCachedVectorSpace.ZERO_VECTOR);
         }
     }
 
     @Test
     public void getComposedVectorTest() {
-        IndraAnalyzer<AnalyzedPair> analyzer = new IndraAnalyzer<>("EN",
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedPair.class);
+        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
         List<String> terms = Arrays.asList("love plane good south hot", "hate car bad north cold");
         List<AnalyzedTerm> analyzedTerms = terms.stream().map(t -> new AnalyzedTerm(t, analyzer.analyze(t))).
                 collect(Collectors.toList());
@@ -92,16 +91,15 @@ public class CachedVectorSpaceTest {
         Map<String, RealVector> vectorPairs = vectorSpace.getVectors(analyzedTerms);
         Assert.assertEquals(vectorPairs.size(), 2);
 
-        Assert.assertEquals(vectorPairs.get(terms.get(0)), vectorSpace.ONE_VECTOR);
-        Assert.assertEquals(vectorPairs.get(terms.get(1)), vectorSpace.NEGATIVE_ONE_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.ONE_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
     }
 
     @Test
     public void getTranslatedPairsTest() {
-        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
-        AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyze(new TextPair("mãe", "pai"));
-        AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyze(new TextPair("computador", "avaliação"));
+        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyze(new TextPair("mãe", "pai"), AnalyzedTranslatedPair.class);
+        AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyze(new TextPair("computador", "avaliação"), AnalyzedTranslatedPair.class);
 
         analyzedPair1.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
         analyzedPair1.getTranslatedT2().putAnalyzedTranslatedTokens("pai", Arrays.asList("father", "dad", "patriarch"));
@@ -118,16 +116,15 @@ public class CachedVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1, vectorSpace.ONE_VECTOR);
-            Assert.assertEquals(vectorPair.v2, vectorSpace.NEGATIVE_ONE_VECTOR);
+            Assert.assertEquals(vectorPair.v1, MockCachedVectorSpace.ONE_VECTOR);
+            Assert.assertEquals(vectorPair.v2, MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
         }
     }
 
     @Test
     public void getComposedTranslatedPairsTest() {
-        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
-        AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyze(new TextPair("mãe computador", "pai avaliação"));
+        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyze(new TextPair("mãe computador", "pai avaliação"), AnalyzedTranslatedPair.class);
 
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("computador", Arrays.asList("machine", "computer"));
@@ -144,15 +141,14 @@ public class CachedVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1, vectorSpace.TWO_VECTOR);
-            Assert.assertEquals(vectorPair.v2, vectorSpace.NEGATIVE_TWO_VECTOR);
+            Assert.assertEquals(vectorPair.v1, MockCachedVectorSpace.TWO_VECTOR);
+            Assert.assertEquals(vectorPair.v2, MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
         }
     }
 
     @Test
     public void getComposedTranslatedVectorsTest() {
-        IndraAnalyzer<AnalyzedTranslatedPair> ptAnalyzer = new IndraAnalyzer<>("PT",
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()), AnalyzedTranslatedPair.class);
+        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
         List<MutableTranslatedTerm> analyzedTerms = terms.stream().map(t -> new MutableTranslatedTerm(t,
                 ptAnalyzer.analyze(t))).collect(Collectors.toList());
@@ -166,8 +162,8 @@ public class CachedVectorSpaceTest {
         Map<String, RealVector> vectorPairs = vectorSpace.getTranslatedVectors(analyzedTerms);
         Assert.assertEquals(vectorPairs.size(), 2);
 
-        Assert.assertEquals(vectorPairs.get(terms.get(0)), vectorSpace.TWO_VECTOR);
-        Assert.assertEquals(vectorPairs.get(terms.get(1)), vectorSpace.NEGATIVE_TWO_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
     }
 
 }
