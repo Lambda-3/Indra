@@ -162,9 +162,14 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             </manifest>
+                            <manifestEntries>
+                                <Implementation-Version>${project.version}-${buildNumber}</Implementation-Version>
+                                <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+                                <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                                <Implementation-URL>${project.url}</Implementation-URL>
+                            </manifestEntries>
                         </archive>
                     </configuration>
                 </plugin>
