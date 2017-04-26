@@ -1,8 +1,5 @@
 package org.lambda3.indra.core;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -29,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * ==========================License-End===============================
  */
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class IndraCachedFactory<T> {
     private final Map<Object, T> cache = new ConcurrentHashMap<>();

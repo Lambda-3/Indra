@@ -32,7 +32,6 @@ import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.composition.VectorComposition;
 
-import java.util.Objects;
 
 public final class Params {
     public final String corpusName;

@@ -1,17 +1,5 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.function.RelatednessFunction;
-import org.lambda3.indra.core.translation.IndraTranslator;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -37,6 +25,18 @@ import java.util.Map;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTranslatedPair;
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.core.translation.IndraTranslator;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;

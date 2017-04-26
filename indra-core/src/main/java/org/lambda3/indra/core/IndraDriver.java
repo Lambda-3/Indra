@@ -1,18 +1,5 @@
 package org.lambda3.indra.core;
 
-import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -38,26 +25,42 @@ import java.util.*;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+
 public abstract class IndraDriver {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private VectorSpaceFactory<VectorSpace> vectorSpaceFactory;
-    private IndraTranslatorFactory<IndraTranslator> translatorFactory;
+    private VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory;
+    private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private Params currentParams;
 
-    public IndraDriver(Params params, VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+    public IndraDriver(Params params, VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
+                       IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
         this.currentParams = Objects.requireNonNull(params);
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public RelatednessResult getRelatedness(List<TextPair> pairs) {
+    public final RelatednessResult getRelatedness(List<TextPair> pairs) {
         return getRelatedness(pairs, currentParams);
     }
 
-    public RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
+    public final RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
         logger.trace("getting relatedness for {} pairs (params={})", pairs.size(), params);
         RelatednessClient relatednessClient = relatednessClientFactory.create(params);
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
@@ -65,11 +68,11 @@ public abstract class IndraDriver {
         return result;
     }
 
-    public Map<String, RealVector> getVectors(List<String> terms) {
+    public final Map<String, RealVector> getVectors(List<String> terms) {
         return this.getVectors(terms, this.currentParams);
     }
 
-    public Map<String, RealVector> getVectors(List<String> terms, Params params) {
+    public final Map<String, RealVector> getVectors(List<String> terms, Params params) {
         logger.trace("getting vectors for {} terms (params={})", terms.size(), params);
         VectorSpace vectorSpace = vectorSpaceFactory.create(params);
         ModelMetadata modelMetadata = vectorSpace.getMetadata();
@@ -112,7 +115,7 @@ public abstract class IndraDriver {
         }
     }
 
-    public Map<String, double[]> getVectorsAsArray(List<String> terms, Params params) {
+    public final Map<String, double[]> getVectorsAsArray(List<String> terms, Params params) {
         Map<String, RealVector> inVectors = getVectors(terms, params);
 
         Map<String, double[]> outVectors = new HashMap<>();
@@ -125,7 +128,7 @@ public abstract class IndraDriver {
         return outVectors;
     }
 
-    public Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
+    public final Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
         Map<String, RealVector> inVectors = getVectors(terms, params);
 
         Map<String, Map<Integer, Double>> outVectors = new HashMap<>();

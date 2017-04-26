@@ -1,16 +1,5 @@
 package org.lambda3.indra.core;
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -36,6 +25,18 @@ import java.util.*;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.AnalyzedTranslatedPair;
+import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.core.composition.VectorComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
 public abstract class CachedVectorSpace implements VectorSpace {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
