@@ -28,7 +28,7 @@ package org.lambda3.indra.client;
 
 import java.util.Objects;
 
-public class AbstractBasicRequest<T extends AbstractBasicRequest> {
+public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
 
     private String corpus;
     private String model;
