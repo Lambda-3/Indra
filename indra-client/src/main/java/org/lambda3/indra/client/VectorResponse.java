@@ -36,6 +36,9 @@ public final class VectorResponse {
     private String language;
     private Map<String, Map<Integer, Double>> terms;
 
+    public VectorResponse() {
+        //jersey demands.
+    }
 
     //TODO distinguish between sparse and dense vector.
     public VectorResponse(VectorRequest request, Map<String, Map<Integer, Double>> terms) {

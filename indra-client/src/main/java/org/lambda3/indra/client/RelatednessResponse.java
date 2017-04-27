@@ -35,6 +35,9 @@ public final class RelatednessResponse {
     private Collection<ScoredTextPair> pairs;
     private ScoreFunction scoreFunction;
 
+    public RelatednessResponse() {
+        //jersey demands.
+    }
 
     public RelatednessResponse(RelatednessRequest request, Collection<ScoredTextPair> pairs) {
         this.corpus = request.getCorpus();
