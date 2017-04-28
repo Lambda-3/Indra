@@ -36,7 +36,7 @@ public final class VectorResponse {
     private String language;
     private Map<String, Map<Integer, Double>> terms;
 
-    public VectorResponse() {
+    private VectorResponse() {
         //jersey demands.
     }
 
