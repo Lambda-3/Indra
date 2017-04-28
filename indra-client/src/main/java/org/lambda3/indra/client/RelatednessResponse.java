@@ -35,7 +35,7 @@ public final class RelatednessResponse {
     private Collection<ScoredTextPair> pairs;
     private ScoreFunction scoreFunction;
 
-    public RelatednessResponse() {
+    private RelatednessResponse() {
         //jersey demands.
     }
 
