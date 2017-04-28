@@ -10,7 +10,7 @@
     <name>Indra Web Service Module</name>
     
     <parent>
-        <groupId>org.lambda3</groupId>
+        <groupId>org.lambda3.indra</groupId>
         <artifactId>indra-parent</artifactId>
         <version>2.0.1-rc1</version>
     </parent>
@@ -162,7 +162,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.lambda3</groupId>
+            <groupId>org.lambda3.indra</groupId>
             <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -190,7 +190,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.lambda3</groupId>
+            <groupId>org.lambda3.indra</groupId>
             <artifactId>indra-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
