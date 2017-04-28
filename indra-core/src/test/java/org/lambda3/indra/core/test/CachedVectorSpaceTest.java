@@ -29,7 +29,7 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.core.ModelMetadata;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.SumVectorComposer;

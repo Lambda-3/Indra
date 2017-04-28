@@ -29,6 +29,7 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.translation.IndraTranslator;

@@ -37,7 +37,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.ModelMetadata;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

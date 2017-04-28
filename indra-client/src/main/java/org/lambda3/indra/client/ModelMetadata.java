@@ -1,8 +1,8 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,6 +26,8 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import java.util.Objects;
+
 public class ModelMetadata {
 
     public static final int DEFAULT_MIN_WORD_LENGTH = 3;
@@ -42,6 +44,9 @@ public class ModelMetadata {
     }
 
     private ModelMetadata(ModelMetadata other) {
+        if (other == null) {
+            throw new IllegalArgumentException();
+        }
         this.applyStemmer = other.applyStemmer;
         this.removeAccents = other.removeAccents;
         this.applyStopWords = other.applyStopWords;
@@ -104,31 +109,6 @@ public class ModelMetadata {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ModelMetadata that = (ModelMetadata) o;
-
-        if (applyStemmer != that.applyStemmer) return false;
-        if (removeAccents != that.removeAccents) return false;
-        if (applyStopWords != that.applyStopWords) return false;
-        if (minWordLength != that.minWordLength) return false;
-        return maxWordLength == that.maxWordLength;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (applyStemmer ? 1 : 0);
-        result = 31 * result + (removeAccents ? 1 : 0);
-        result = 31 * result + (applyStopWords ? 1 : 0);
-        result = 31 * result + minWordLength;
-        result = 31 * result + maxWordLength;
-        return result;
-    }
-
-    @Override
     public String toString() {
         return "ModelMetadata{" +
                 "applyStemmer=" + applyStemmer +
@@ -137,5 +117,22 @@ public class ModelMetadata {
                 ", minWordLength=" + minWordLength +
                 ", maxWordLength=" + maxWordLength +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModelMetadata that = (ModelMetadata) o;
+        return applyStemmer == that.applyStemmer &&
+                removeAccents == that.removeAccents &&
+                applyStopWords == that.applyStopWords &&
+                minWordLength == that.minWordLength &&
+                maxWordLength == that.maxWordLength;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(applyStemmer, removeAccents, applyStopWords, minWordLength, maxWordLength);
     }
 }

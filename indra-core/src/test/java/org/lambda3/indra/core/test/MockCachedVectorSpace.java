@@ -29,7 +29,7 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.ModelMetadata;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.util.*;

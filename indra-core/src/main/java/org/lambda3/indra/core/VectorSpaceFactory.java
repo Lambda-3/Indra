@@ -26,6 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 
 import java.util.Collection;

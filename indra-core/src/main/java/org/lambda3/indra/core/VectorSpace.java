@@ -30,6 +30,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.AnalyzedTranslatedPair;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.core.composition.VectorComposer;
 
