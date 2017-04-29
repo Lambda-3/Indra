@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class ModelMetadata {
+    private String loaderId = "legacy"; //Default is legacy for all models from the DInfra Era
     private boolean sparse = false;
     private boolean binary = true;
     private boolean applyStemmer = true;
@@ -50,6 +51,7 @@ public final class ModelMetadata {
         if (other == null) {
             throw new IllegalArgumentException();
         }
+        this.loaderId = other.loaderId;
         this.applyStemmer = other.applyStemmer;
         this.removeAccents = other.removeAccents;
         this.applyStopWords = other.applyStopWords;
@@ -68,6 +70,11 @@ public final class ModelMetadata {
     public static ModelMetadata createTranslationVersion(ModelMetadata metadata) {
         ModelMetadata newOne = new ModelMetadata(metadata);
         return newOne.applyStemmer(false).removeAccents(false);
+    }
+
+    public ModelMetadata loaderId(String loaderId) {
+        this.loaderId = Objects.requireNonNull(loaderId);
+        return this;
     }
 
     public ModelMetadata applyStemmer(boolean applyStemmer) {
@@ -113,6 +120,10 @@ public final class ModelMetadata {
     public ModelMetadata dimensions(int dimensions) {
         this.dimensions = dimensions;
         return this;
+    }
+
+    public String getLoaderId() {
+        return this.loaderId;
     }
 
     public Set<String> getStopWords() {
