@@ -26,21 +26,24 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class ModelMetadata {
-
-    public static final int DEFAULT_MIN_WORD_LENGTH = 3;
-    public static final int DEFAULT_MAX_WORD_LENGTH = 100;
-
+public final class ModelMetadata {
+    private boolean sparse = false;
+    private boolean binary = true;
     private boolean applyStemmer = true;
     private boolean removeAccents = true;
     private boolean applyStopWords = true;
-    private int minWordLength = DEFAULT_MIN_WORD_LENGTH;
-    private int maxWordLength = DEFAULT_MAX_WORD_LENGTH;
+    private int minWordLength = 3;
+    private int maxWordLength = 100;
+    private int dimensions = 300;
+    private Set<String> stopWords = Collections.emptySet();
 
     private ModelMetadata() {
-
+        //
     }
 
     private ModelMetadata(ModelMetadata other) {
@@ -52,6 +55,10 @@ public class ModelMetadata {
         this.applyStopWords = other.applyStopWords;
         this.minWordLength = other.minWordLength;
         this.maxWordLength = other.maxWordLength;
+        this.sparse = other.sparse;
+        this.binary = other.binary;
+        this.dimensions = other.dimensions;
+        this.stopWords = new HashSet<>(other.stopWords);
     }
 
     public static ModelMetadata createDefault() {
@@ -88,6 +95,42 @@ public class ModelMetadata {
         return this;
     }
 
+    public ModelMetadata stopWords(Set<String> stoṕWords) {
+        this.stopWords = new HashSet<>(stoṕWords);
+        return this;
+    }
+
+    public ModelMetadata sparse(boolean isSparse) {
+        this.sparse = isSparse;
+        return this;
+    }
+
+    public ModelMetadata binary(boolean isBinary) {
+        this.binary = isBinary;
+        return this;
+    }
+
+    public ModelMetadata dimensions(int dimensions) {
+        this.dimensions = dimensions;
+        return this;
+    }
+
+    public Set<String> getStopWords() {
+        return this.stopWords;
+    }
+
+    public int getDimensions() {
+        return dimensions;
+    }
+
+    public boolean isBinary() {
+        return binary;
+    }
+
+    public boolean isSparse() {
+        return sparse;
+    }
+
     public boolean isApplyStemmer() {
         return applyStemmer;
     }
@@ -110,12 +153,15 @@ public class ModelMetadata {
 
     @Override
     public String toString() {
-        return "ModelMetadata{" +
-                "applyStemmer=" + applyStemmer +
+        return "Metadata{" +
+                "sparse=" + sparse +
+                ", binary=" + binary +
+                ", applyStemmer=" + applyStemmer +
                 ", removeAccents=" + removeAccents +
                 ", applyStopWords=" + applyStopWords +
                 ", minWordLength=" + minWordLength +
                 ", maxWordLength=" + maxWordLength +
+                ", dimensions=" + dimensions +
                 '}';
     }
 
@@ -124,15 +170,19 @@ public class ModelMetadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModelMetadata that = (ModelMetadata) o;
-        return applyStemmer == that.applyStemmer &&
+        return sparse == that.sparse &&
+                binary == that.binary &&
+                applyStemmer == that.applyStemmer &&
                 removeAccents == that.removeAccents &&
                 applyStopWords == that.applyStopWords &&
                 minWordLength == that.minWordLength &&
-                maxWordLength == that.maxWordLength;
+                maxWordLength == that.maxWordLength &&
+                dimensions == that.dimensions;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(applyStemmer, removeAccents, applyStopWords, minWordLength, maxWordLength);
+        return Objects.hash(sparse, binary, applyStemmer, removeAccents, applyStopWords,
+                minWordLength, maxWordLength, dimensions);
     }
 }
