@@ -32,15 +32,38 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class ModelMetadata {
+
+    public static final String LOADER_ID_PARAM = "loader-id";
     private String loaderId = "legacy"; //Default is legacy for all models from the DInfra Era
+
+    public static final String SPARSE_PARAM = "sparse";
     private boolean sparse = false;
+
+    public static final String BINARY_PARAM = "binary";
     private boolean binary = true;
-    private boolean applyStemmer = true;
+
+    public static final String APPLY_STEMMER_PARAM = "apply-stemmer";
+    private int applyStemmer = 3;
+
+    public static final String REMOVE_ACCENTS_PARAM = "remove-accents";
     private boolean removeAccents = true;
+
+    public static final String APPLY_LOWERCASE_PARAM = "apply-lowercase";
+    private boolean applyLowercase = true;
+
+    public static final String APPLY_STOP_WORDS_PARAM = "apply-stop-words";
     private boolean applyStopWords = true;
+
+    public static final String MIN_WORD_LENGTH_PARAM = "min-word-length";
     private int minWordLength = 3;
+
+    public static final String MAX_WORD_LENGTH_PARAM = "max-word-length";
     private int maxWordLength = 100;
+
+    public static final String DIMENSIONS_PARAM = "dimensions";
     private int dimensions = 300;
+
+    public static final String STOP_WORDS_PARAM = "stop-words";
     private Set<String> stopWords = Collections.emptySet();
 
     private ModelMetadata() {
@@ -54,6 +77,7 @@ public final class ModelMetadata {
         this.loaderId = other.loaderId;
         this.applyStemmer = other.applyStemmer;
         this.removeAccents = other.removeAccents;
+        this.applyLowercase = other.applyLowercase;
         this.applyStopWords = other.applyStopWords;
         this.minWordLength = other.minWordLength;
         this.maxWordLength = other.maxWordLength;
@@ -69,7 +93,7 @@ public final class ModelMetadata {
 
     public static ModelMetadata createTranslationVersion(ModelMetadata metadata) {
         ModelMetadata newOne = new ModelMetadata(metadata);
-        return newOne.applyStemmer(false).removeAccents(false);
+        return newOne.applyStemmer(0).removeAccents(false).applyLowercase(true);
     }
 
     public ModelMetadata loaderId(String loaderId) {
@@ -77,13 +101,18 @@ public final class ModelMetadata {
         return this;
     }
 
-    public ModelMetadata applyStemmer(boolean applyStemmer) {
+    public ModelMetadata applyStemmer(int applyStemmer) {
         this.applyStemmer = applyStemmer;
         return this;
     }
 
     public ModelMetadata removeAccents(boolean removeAccents) {
         this.removeAccents = removeAccents;
+        return this;
+    }
+
+    public ModelMetadata applyLowercase(boolean applyLowercase) {
+        this.applyLowercase = applyLowercase;
         return this;
     }
 
@@ -142,12 +171,16 @@ public final class ModelMetadata {
         return sparse;
     }
 
-    public boolean isApplyStemmer() {
+    public int getApplyStemmer() {
         return applyStemmer;
     }
 
     public boolean isRemoveAccents() {
         return removeAccents;
+    }
+
+    public boolean isApplyLowercase() {
+        return applyLowercase;
     }
 
     public boolean isApplyStopWords() {
@@ -168,6 +201,7 @@ public final class ModelMetadata {
                 "sparse=" + sparse +
                 ", binary=" + binary +
                 ", applyStemmer=" + applyStemmer +
+                ", applyLowercase=" + applyLowercase +
                 ", removeAccents=" + removeAccents +
                 ", applyStopWords=" + applyStopWords +
                 ", minWordLength=" + minWordLength +
@@ -184,6 +218,7 @@ public final class ModelMetadata {
         return sparse == that.sparse &&
                 binary == that.binary &&
                 applyStemmer == that.applyStemmer &&
+                applyLowercase == that.applyLowercase &&
                 removeAccents == that.removeAccents &&
                 applyStopWords == that.applyStopWords &&
                 minWordLength == that.minWordLength &&
@@ -193,7 +228,7 @@ public final class ModelMetadata {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sparse, binary, applyStemmer, removeAccents, applyStopWords,
+        return Objects.hash(sparse, binary, applyStemmer, applyLowercase, removeAccents, applyStopWords,
                 minWordLength, maxWordLength, dimensions);
     }
 }

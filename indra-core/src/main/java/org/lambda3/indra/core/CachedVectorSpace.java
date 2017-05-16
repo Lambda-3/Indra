@@ -77,7 +77,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             allTerms.addAll(p.getAnalyzedT2().getAnalyzedTokens());
         }
 
-        collectVectors(allTerms, getVectorSize());
+        collectVectors(allTerms, getMetadata().getDimensions());
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
@@ -109,7 +109,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             }
         }
 
-        collectVectors(allTerms, getVectorSize());
+        collectVectors(allTerms, getMetadata().getDimensions());
 
 
         for (AnalyzedTranslatedPair p : pairs) {
@@ -150,7 +150,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
         Set<String> allTerms = new HashSet<>();
         terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
 
-        collectVectors(allTerms, getVectorSize());
+        collectVectors(allTerms, getMetadata().getDimensions());
 
         Map<String, RealVector> vectors = new HashMap<>();
 
@@ -176,7 +176,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             }
         }
 
-        collectVectors(allTerms, getVectorSize());
+        collectVectors(allTerms, getMetadata().getDimensions());
 
         Map<String, RealVector> vectors = new HashMap<>();
 
