@@ -3,6 +3,29 @@
 [![Build Status](https://travis-ci.org/Lambda-3/Indra.svg?branch=master)](https://travis-ci.org/Lambda-3/Indra)
 [![Chat](https://badges.gitter.im/Lambda-3/gitter.png)](https://gitter.im/Lambda-3/Lobby)
 
+Table of Contents
+=================
+
+   * [What is Indra?](#what-is-indra)
+   * [Features](#features)
+   * [Supported Models](#supported-models)
+   * [Word Embeddings](#word-embeddings)
+      * [Request data model (POST /vectors)](#request-data-model-post-vectors)
+         * [Field <em>corpus</em>](#field-corpus)
+         * [Field <em>model</em>](#field-model)
+         * [Field <em>language</em>](#field-language)
+      * [Response model](#response-model)
+   * [Semantic Similarity](#semantic-similarity)
+      * [Request data model (POST /relatedness)](#request-data-model-post-relatedness)
+         * [Field <em>scoreFunction</em>](#field-scorefunction)
+      * [Response model](#response-model-1)
+   * [Translated Word Embeddings and Semantic Similarity](#translated-word-embeddings-and-semantic-similarity)
+   * [Usage](#usage)
+      * [Public Endpoint](#public-endpoint)
+         * [For word embeddings:](#for-word-embeddings)
+         * [For semantic similarity:](#for-semantic-similarity)
+   * [Citing Indra](#citing-indra)
+
 # What is Indra?
 
 The creation of real-world Artificial Intelligence (AI) applications is dependent on leveraging a large volume of commonsense knowledge. Simple semantic interpretation tasks such as understanding that if 'A is married to B' then 'A is the spouse of B' or that 'car, vehicle, auto' have very similar meanings are examples of semantic approximation operations/inferences that are present in practically all applications of AI that interpret natural language.
