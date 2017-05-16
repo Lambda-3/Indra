@@ -94,8 +94,9 @@ public abstract class IndraDriver {
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     List<String> translatedTokens = term.getTranslatedTokens().get(token);
-                    if (modelMetadata.isApplyStemmer()) {
-                        translatedTokens = IndraAnalyzer.stem(translatedTokens, params.translateTargetLanguage);
+                    if (modelMetadata.getApplyStemmer() > 0) {
+                        translatedTokens = IndraAnalyzer.stem(translatedTokens, params.translateTargetLanguage,
+                                modelMetadata.getApplyStemmer());
                     }
 
                     term.putAnalyzedTranslatedTokens(token, translatedTokens);

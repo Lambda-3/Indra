@@ -65,7 +65,7 @@ public abstract class RelatednessClient {
 
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
 
-                if (!vectorSpace.isSparse()) {
+                if (!vectorSpace.getMetadata().isSparse()) {
                     scoredTextPairs.add(new ScoredTextPair(pair,
                             func.sim(vectorPair.v1, vectorPair.v2, false)));
                 } else {

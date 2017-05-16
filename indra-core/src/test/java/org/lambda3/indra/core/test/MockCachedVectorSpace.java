@@ -79,18 +79,8 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public boolean isSparse() {
-        return false;
-    }
-
-    @Override
-    public int getVectorSize() {
-        return VECTOR_SIZE;
-    }
-
-    @Override
     public ModelMetadata getMetadata() {
-        return ModelMetadata.createDefault().applyStemmer(false).removeAccents(false);
+        return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
     }
 
     @Override
