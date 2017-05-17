@@ -58,8 +58,8 @@ public class RelatednessDummyClient extends RelatednessClient {
     }
 
     @Override
-    protected List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs) {
-        return pairs.stream().map(p -> new AnalyzedPair(p)).collect(Collectors.toList());
+    protected List<AnalyzedPair> doAnalyze(List<TextPair> pairs) {
+        return pairs.stream().map(AnalyzedPair::new).collect(Collectors.toList());
     }
 
     @Override

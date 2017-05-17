@@ -44,6 +44,7 @@ public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
 
     @Override
     protected boolean isValid() {
-        return terms != null && !terms.isEmpty();
+        boolean valid = terms != null && !terms.isEmpty();
+        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
     }
 }

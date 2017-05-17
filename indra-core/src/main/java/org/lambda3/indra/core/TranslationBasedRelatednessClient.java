@@ -50,10 +50,10 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
     }
 
     @Override
-    protected List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs) {
+    protected List<AnalyzedPair> doAnalyze(List<TextPair> pairs) {
         logger.debug("Analyzing {} pairs", pairs.size());
 
-        List<AnalyzedTranslatedPair> analyzedPairs = new ArrayList<>(pairs.size());
+        List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
         IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
