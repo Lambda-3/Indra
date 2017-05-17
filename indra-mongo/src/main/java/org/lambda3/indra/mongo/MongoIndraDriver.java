@@ -27,18 +27,10 @@ package org.lambda3.indra.mongo;
  */
 
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
 
 public class MongoIndraDriver extends IndraDriver {
 
-    private static final Params DEFAULT_PARAMS = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
-
-    public MongoIndraDriver(Params params, MongoVectorSpaceFactory spaceFactory, MongoTranslatorFactory translatorFactory) {
-        super(params, spaceFactory, translatorFactory);
-    }
-
     public MongoIndraDriver(MongoVectorSpaceFactory spaceFactory, MongoTranslatorFactory translatorFactory) {
-        super(DEFAULT_PARAMS, spaceFactory, translatorFactory);
+        super(spaceFactory, translatorFactory);
     }
 }
