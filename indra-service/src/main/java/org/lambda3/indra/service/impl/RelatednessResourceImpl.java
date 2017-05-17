@@ -61,6 +61,7 @@ class RelatednessResourceImpl implements RelatednessResource {
     }
 
     private RelatednessResponse process(RelatednessRequest request, boolean translate) {
+        request.validate();
         Params params = ParamsUtils.buildParams(request, translate);
         RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
         RelatednessResponse response = new RelatednessResponse(request, result.getScores());

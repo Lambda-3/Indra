@@ -52,4 +52,8 @@ public final class RelatednessRequest extends AbstractBasicRequest<RelatednessRe
         return scoreFunction;
     }
 
+    @Override
+    protected boolean isValid() {
+        return pairs != null && !pairs.isEmpty() && scoreFunction != null;
+    }
 }

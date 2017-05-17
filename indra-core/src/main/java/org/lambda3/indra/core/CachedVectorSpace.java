@@ -65,7 +65,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
     @Override
     public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs) {
-        if (pairs == null) {
+        if (pairs == null || pairs.isEmpty()) {
             throw new IllegalArgumentException("pairs can't be null");
         }
 

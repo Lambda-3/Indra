@@ -42,4 +42,8 @@ public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
         return terms;
     }
 
+    @Override
+    protected boolean isValid() {
+        return terms != null && !terms.isEmpty();
+    }
 }
