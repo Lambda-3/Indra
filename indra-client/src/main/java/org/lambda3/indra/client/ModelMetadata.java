@@ -26,10 +26,7 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public final class ModelMetadata {
 
@@ -89,6 +86,23 @@ public final class ModelMetadata {
 
     public static ModelMetadata createDefault() {
         return new ModelMetadata();
+    }
+
+    public static ModelMetadata createFromMap(Map<String, Object> doc) {
+        ModelMetadata metaDefault = new ModelMetadata();
+        return metaDefault
+                .loaderId((String) doc.getOrDefault(LOADER_ID_PARAM, metaDefault.loaderId))
+                .applyStemmer((int) doc.getOrDefault(APPLY_STEMMER_PARAM, metaDefault.applyStemmer))
+                .removeAccents((boolean) doc.getOrDefault(REMOVE_ACCENTS_PARAM, metaDefault.removeAccents))
+                .applyLowercase((boolean) doc.getOrDefault(APPLY_LOWERCASE_PARAM, metaDefault.applyLowercase))
+                .applyStopWords((boolean) doc.getOrDefault(APPLY_STOP_WORDS_PARAM, metaDefault.applyStopWords))
+                .minWordLength((int) doc.getOrDefault(MIN_WORD_LENGTH_PARAM, metaDefault.minWordLength))
+                .maxWordLength((int) doc.getOrDefault(MAX_WORD_LENGTH_PARAM, metaDefault.maxWordLength))
+                .sparse((boolean) doc.getOrDefault(SPARSE_PARAM, metaDefault.sparse))
+                .binary((boolean) doc.getOrDefault(BINARY_PARAM, metaDefault.binary))
+                .dimensions((int) doc.getOrDefault(DIMENSIONS_PARAM, metaDefault.dimensions))
+                .stopWords(new HashSet<>((List<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)));
+
     }
 
     public static ModelMetadata createTranslationVersion(ModelMetadata metadata) {
