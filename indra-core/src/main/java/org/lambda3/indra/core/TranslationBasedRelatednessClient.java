@@ -26,10 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
@@ -56,7 +53,8 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
+        ModelMetadata metadata = vectorSpace.getMetadata();
+        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, ModelMetadata.createTranslationVersion(metadata));
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
@@ -76,7 +74,8 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
                 for (String token : transTokens.keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token), params.translateTargetLanguage));
+                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
+                            params.translateTargetLanguage, metadata.getApplyStemmer()));
                 }
             }
 

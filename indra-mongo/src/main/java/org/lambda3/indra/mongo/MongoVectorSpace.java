@@ -36,8 +36,8 @@ import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,23 +49,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-class MongoVectorSpace extends CachedVectorSpace {
+public class MongoVectorSpace extends CachedVectorSpace {
 
     private static final int MAX_DIMENSIONS = 5000000;
 
-    private static final String TERM_FIELD_NAME = "term";
-    private static final String VECTOR_FIELD_NAME = "vector";
-    private static final String PARAM_FIELD_NAME = "param";
-    private static final String VALUE_FIELD_NAME = "value";
+    public static final String TERM_FIELD_NAME = "term";
+    public static final String VECTOR_FIELD_NAME = "vector";
 
-    private static final String TERMS_COLL_NAME = "terms";
-    private static final String METADATA_COLL_NAME = "metadata";
-
-    private static final String APPLY_STEMMER_PARAM_FIELD_NAME = "apply-stemmer";
-    private static final String REMOVE_ACCENTS_PARAM_FIELD_NAME = "remove-accents";
-    private static final String APPLY_STOP_WORDS_PARAM_FIELD_NAME = "apply-stop-words";
-    private static final String MIN_WORD_LENGTH_PARAM_FIELD_NAME = "min-word-length";
-    private static final String MAX_WORD_LENGTH_PARAM_FIELD_NAME = "max-word-length";
+    public static final String TERMS_COLL_NAME = "terms";
+    public static final String METADATA_COLL_NAME = "metadata";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
@@ -91,60 +83,74 @@ class MongoVectorSpace extends CachedVectorSpace {
             }
         }
 
-
         this.metadata = ModelMetadata.createDefault();
 
         if (containsMetadataCollection) {
             MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
-            Object value = getField(metadataColl, APPLY_STEMMER_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.applyStemmer((Boolean) value);
-            }
+            FindIterable<Document> metadataDocs = metadataColl.find();
 
-            value = getField(metadataColl, APPLY_STEMMER_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.applyStemmer((Boolean) value);
-            }
+            for (Document doc : metadataDocs) {
 
-            value = getField(metadataColl, REMOVE_ACCENTS_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.removeAccents((Boolean) value);
-            }
+                Object loaderId = doc.get(ModelMetadata.LOADER_ID_PARAM);
+                if (loaderId != null) {
+                    this.metadata.loaderId((String) loaderId);
+                }
 
-            value = getField(metadataColl, APPLY_STOP_WORDS_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.applyStopWords((Boolean) value);
-            }
+                Object sparse = doc.get(ModelMetadata.SPARSE_PARAM);
+                if (sparse != null) {
+                    this.metadata.sparse((Boolean) sparse);
+                }
 
-            value = getField(metadataColl, MIN_WORD_LENGTH_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.minWordLength((Integer) value);
-            }
+                Object binary = doc.get(ModelMetadata.BINARY_PARAM);
+                if (binary != null) {
+                    this.metadata.binary((Boolean) binary);
+                }
 
-            value = getField(metadataColl, MAX_WORD_LENGTH_PARAM_FIELD_NAME);
-            if (value != null) {
-                this.metadata.maxWordLength((Integer) value);
+                Object applyStemmer = doc.get(ModelMetadata.APPLY_STEMMER_PARAM);
+                if (applyStemmer != null) {
+                    this.metadata.applyStemmer((Integer) applyStemmer);
+                }
+
+                Object removeAccents = doc.get(ModelMetadata.REMOVE_ACCENTS_PARAM);
+                if (removeAccents != null) {
+                    this.metadata.removeAccents((Boolean) removeAccents);
+                }
+
+                Object applyLowercase = doc.get(ModelMetadata.APPLY_LOWERCASE_PARAM);
+                if (applyLowercase != null) {
+                    this.metadata.applyLowercase((Boolean) applyLowercase);
+                }
+
+                Object applyStopWords = doc.get(ModelMetadata.APPLY_STOP_WORDS_PARAM);
+                if (applyStopWords != null) {
+                    this.metadata.applyStopWords((Boolean) applyStopWords);
+                }
+
+                Object minWordLength = doc.get(ModelMetadata.MIN_WORD_LENGTH_PARAM);
+                if (minWordLength != null) {
+                    this.metadata.minWordLength((Integer) minWordLength);
+                }
+
+                Object maxWordLength = doc.get(ModelMetadata.MAX_WORD_LENGTH_PARAM);
+                if (maxWordLength != null) {
+                    this.metadata.maxWordLength((Integer) maxWordLength);
+                }
+
+                Object dimensions = doc.get(ModelMetadata.DIMENSIONS_PARAM);
+                if (dimensions != null) {
+                    this.metadata.dimensions((Integer) dimensions);
+                }
+
+                Object stopWords = doc.get(ModelMetadata.STOP_WORDS_PARAM);
+                if (stopWords != null) {
+                    Set<String> effectiveStopWords = new HashSet<>();
+                    effectiveStopWords.addAll((Collection<? extends String>) stopWords);
+                    this.metadata.stopWords(effectiveStopWords);
+                }
+
+                break;
             }
         }
-    }
-
-    public Object getField(MongoCollection<Document> metadataColl, String field) {
-        FindIterable<Document> docs = metadataColl.find(Filters.in(PARAM_FIELD_NAME, field));
-        for (Document doc : docs) {
-            return doc.get(VALUE_FIELD_NAME);
-        }
-
-        return null;
-    }
-
-    @Override
-    public boolean isSparse() {
-        return dbName.toLowerCase().startsWith("esa-");
-    }
-
-    @Override
-    public int getVectorSize() {
-        return 1500;
     }
 
     @Override
@@ -198,7 +204,7 @@ class MongoVectorSpace extends CachedVectorSpace {
             int size = Math.min(dis.readInt(), limit);
 
             RealVector vector;
-            if (isSparse()) {
+            if (getMetadata().isSparse()) {
                 vector = new OpenMapRealVector(MAX_DIMENSIONS);
             } else {
                 vector = new ArrayRealVector(size);

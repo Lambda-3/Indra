@@ -39,10 +39,6 @@ import java.util.Map;
 
 public interface VectorSpace {
 
-    boolean isSparse();
-
-    int getVectorSize();
-
     Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs);
 
     Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs);

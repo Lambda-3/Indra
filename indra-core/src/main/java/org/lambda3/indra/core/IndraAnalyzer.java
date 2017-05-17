@@ -44,10 +44,7 @@ import org.tartarus.snowball.SnowballProgram;
 import org.tartarus.snowball.ext.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public final class IndraAnalyzer {
@@ -113,18 +110,18 @@ public final class IndraAnalyzer {
 
     private TokenStream createStream(String lang, ModelMetadata metadata, Tokenizer tokenizer) {
         TokenStream stream = new StandardFilter(tokenizer);
-        stream = new LowerCaseFilter(stream);
+        stream = new LengthFilter(stream, metadata.getMinWordLength(), metadata.getMaxWordLength());
 
-        if (!lang.equalsIgnoreCase("ZH") && !lang.equalsIgnoreCase("KO")) {
-            stream = new LengthFilter(stream, metadata.getMinWordLength(), metadata.getMaxWordLength());
+        if (metadata.isApplyLowercase()) {
+            stream = new LowerCaseFilter(stream);
         }
 
         if (metadata.isApplyStopWords()) {
-            stream = getStopFilter(lang, stream);
+            stream = getStopFilter(lang, metadata.getStopWords(), stream);
         }
 
-        if (metadata.isApplyStemmer()) {
-            stream = getStemmerFilter(lang, stream);
+        if (metadata.getApplyStemmer() > 0) {
+            stream = getStemmerFilter(lang, metadata.getApplyStemmer(), stream);
         }
 
         if (metadata.isRemoveAccents()) {
@@ -134,15 +131,16 @@ public final class IndraAnalyzer {
         return stream;
     }
 
-    private TokenStream getStemmerFilter(String lang, TokenStream stream) {
+    private TokenStream getStemmerFilter(String lang, int times, TokenStream stream) {
         SnowballProgram stemmer = getStemmer(lang);
 
-        if (stemmer != null) {
-            //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
-            return new SnowballFilter(new SnowballFilter(new SnowballFilter(stream, stemmer), stemmer), stemmer);
-        } else {
-            return stream;
+        if (stemmer != null && times > 0) {
+            for (int i = 0; i < times; i++) {
+                stream = new SnowballFilter(stream, stemmer);
+            }
         }
+
+        return stream;
     }
 
     private static SnowballProgram getStemmer(String lang) {
@@ -176,9 +174,7 @@ public final class IndraAnalyzer {
         return null;
     }
 
-    public static List<String> stem(Collection<String> tokens, String lang) {
-        //three steps of stemming for a stronger cut. The data was generated using three, so should be now.
-        int numberOfSteps = 3;
+    public static List<String> stem(Collection<String> tokens, String lang, int times) {
 
         List<String> stemmed = new LinkedList<>();
 
@@ -186,7 +182,7 @@ public final class IndraAnalyzer {
         for (String token : tokens) {
             String stemmedToken = token;
 
-            for (int i = 0; i < numberOfSteps; i++) {
+            for (int i = 0; i < times; i++) {
                 stemmer.setCurrent(stemmedToken);
                 stemmer.stem();
                 stemmedToken = stemmer.getCurrent();
@@ -198,32 +194,38 @@ public final class IndraAnalyzer {
         return stemmed;
     }
 
-    private TokenStream getStopFilter(String lang, TokenStream stream) {
-        try {
-            InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
-            if (in != null) {
-                logger.debug("Loading Stop words for lang={}", lang);
-                CharArraySet stopWords = new CharArraySet(30, true);
-                try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
-                    String line;
-                    String[] parts;
-                    while ((line = bin.readLine()) != null) {
-                        parts = line.split(Pattern.quote("|"));
-                        line = parts[0].trim();
+    private TokenStream getStopFilter(String lang, Set<String> metadataStopWords, TokenStream stream) {
 
-                        if (line.length() > 0) {
-                            stopWords.add(line);
+        if (metadataStopWords != null && !metadataStopWords.isEmpty()) {
+            return new StopFilter(stream, new CharArraySet(metadataStopWords, false));
+
+        } else {
+            try {
+                InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
+                if (in != null) {
+                    logger.debug("Loading Stop words for lang={}", lang);
+                    CharArraySet stopWords = new CharArraySet(30, true);
+                    try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
+                        String line;
+                        String[] parts;
+                        while ((line = bin.readLine()) != null) {
+                            parts = line.split(Pattern.quote("|"));
+                            line = parts[0].trim();
+
+                            if (line.length() > 0) {
+                                stopWords.add(line);
+                            }
                         }
+                        return new StopFilter(stream, stopWords);
                     }
-
+                } else {
+                    logger.warn("No stop words found for lang={}", lang);
                 }
-                return new StopFilter(stream, stopWords);
-            } else {
-                logger.warn("No stop words found for lang={}", lang);
+            } catch (Exception e) {
+                logger.error("Error creating stop filter for lang={}", lang, e);
             }
-        } catch (Exception e) {
-            logger.error("Error creating stop filter for lang={}", lang, e);
         }
+
         return stream;
     }
 }
