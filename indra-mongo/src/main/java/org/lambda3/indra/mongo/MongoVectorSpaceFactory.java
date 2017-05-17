@@ -40,7 +40,6 @@ import java.util.Set;
 public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVectorSpace> {
 
     private MongoClient mongoClient;
-    private Set<String> availableModels;
 
     public MongoVectorSpaceFactory(String mongoURI) {
         this(new MongoClient(mongoURI));
@@ -48,15 +47,11 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
 
     public MongoVectorSpaceFactory(MongoClient mongoClient) {
         this.mongoClient = Objects.requireNonNull(mongoClient);
-        availableModels = new HashSet<>();
-        for (String s : mongoClient.listDatabaseNames()) {
-            availableModels.add(s);
-        }
     }
 
     @Override
     public MongoVectorSpace doCreate(Params params) throws ModelNoFound {
-        if (availableModels.contains(getDBName(params))) {
+        if (getAvailableModels().contains(getDBName(params))) {
             VectorComposer termComposer = this.vectorComposerFactory.getComposer(params.termComposition);
             VectorComposer translationComposer = this.vectorComposerFactory.getComposer(params.translationComposition);
             return new MongoVectorSpace(mongoClient, getDBName(params), termComposer, translationComposer);
@@ -79,6 +74,10 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVecto
 
     @Override
     public Collection<String> getAvailableModels() {
+        Set<String> availableModels = new HashSet<>();
+        for (String s : mongoClient.listDatabaseNames()) {
+            availableModels.add(s);
+        }
         return availableModels;
     }
 }
