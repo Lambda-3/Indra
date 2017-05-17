@@ -1,21 +1,21 @@
 package org.lambda3.indra.client.test;
 
-import org.lambda3.indra.client.ClientError;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.WebApplicationException;
 import java.util.Collections;
 
 public final class RequestTest {
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError1Test() {
         new RelatednessRequest().validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError2Test() {
         new RelatednessRequest()
                 .corpus("any")
@@ -25,7 +25,7 @@ public final class RequestTest {
                 .validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError3Test() {
         new RelatednessRequest()
                 .language("en")
@@ -35,7 +35,7 @@ public final class RequestTest {
                 .validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError4Test() {
         new RelatednessRequest()
                 .corpus("any")
@@ -45,7 +45,7 @@ public final class RequestTest {
                 .validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError5Test() {
         new RelatednessRequest()
                 .corpus("any")
@@ -55,7 +55,7 @@ public final class RequestTest {
                 .validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError6Test() {
         new RelatednessRequest()
                 .corpus("any")
@@ -65,7 +65,7 @@ public final class RequestTest {
                 .validate();
     }
 
-    @Test(expectedExceptions = ClientError.class)
+    @Test(expectedExceptions = WebApplicationException.class)
     public void clientError7Test() {
         new RelatednessRequest()
                 .corpus("any")
