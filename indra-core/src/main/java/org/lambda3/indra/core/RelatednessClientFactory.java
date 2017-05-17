@@ -28,19 +28,17 @@ package org.lambda3.indra.core;
 
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
-import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Objects;
 
 public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient> {
-    private VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory;
+    private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
-    private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
+    private IndraTranslatorFactory translatorFactory;
 
 
-    public RelatednessClientFactory(VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
-                                    IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
+    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessFunctionFactory = new RelatednessFunctionFactory();

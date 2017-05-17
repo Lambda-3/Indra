@@ -33,6 +33,7 @@ import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.*;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.composition.VectorComposition;
+import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -134,7 +135,7 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected Object doCreate(Params params) {
+            protected IndraTranslator doCreate(Params params) {
                 return new MockIndraTranslator();
             }
 
