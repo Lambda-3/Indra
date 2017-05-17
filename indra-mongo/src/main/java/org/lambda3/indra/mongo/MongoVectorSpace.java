@@ -53,10 +53,10 @@ public class MongoVectorSpace extends CachedVectorSpace {
 
     private static final int MAX_DIMENSIONS = 5000000;
 
-    private static final String TERM_FIELD_NAME = "term";
-    private static final String VECTOR_FIELD_NAME = "vector";
+    public static final String TERM_FIELD_NAME = "term";
+    public static final String VECTOR_FIELD_NAME = "vector";
 
-    private static final String TERMS_COLL_NAME = "terms";
+    public static final String TERMS_COLL_NAME = "terms";
     public static final String METADATA_COLL_NAME = "metadata";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
