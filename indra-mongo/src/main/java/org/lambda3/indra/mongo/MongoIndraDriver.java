@@ -32,7 +32,7 @@ import org.lambda3.indra.core.utils.ParamsUtils;
 
 public class MongoIndraDriver extends IndraDriver {
 
-    public static final Params DEFAULT_PARAMS = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
+    private static final Params DEFAULT_PARAMS = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
 
     public MongoIndraDriver(Params params, MongoVectorSpaceFactory spaceFactory, MongoTranslatorFactory translatorFactory) {
         super(params, spaceFactory, translatorFactory);
