@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class MongoVectorSpaceFactory extends VectorSpaceFactory<MongoVectorSpace> {
+public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
 
     private MongoClient mongoClient;
 

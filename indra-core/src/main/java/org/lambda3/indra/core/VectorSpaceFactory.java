@@ -31,7 +31,7 @@ import org.lambda3.indra.core.composition.VectorComposerFactory;
 
 import java.util.Collection;
 
-public abstract class VectorSpaceFactory<T extends VectorSpace> extends IndraCachedFactory<T> {
+public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace> {
     protected VectorComposerFactory vectorComposerFactory;
 
     public VectorSpaceFactory() {
@@ -39,9 +39,9 @@ public abstract class VectorSpaceFactory<T extends VectorSpace> extends IndraCac
     }
 
     @Override
-    public T create(Params params) {
-        T model = super.create(params);
-        ModelMetadata metadata = model.getMetadata();
+    public VectorSpace create(Params params) {
+        VectorSpace vectorSpace = super.create(params);
+        ModelMetadata metadata = vectorSpace.getMetadata();
         if (params.applyStopWords != null) {
             metadata.applyStopWords(params.applyStopWords);
         }
@@ -50,7 +50,7 @@ public abstract class VectorSpaceFactory<T extends VectorSpace> extends IndraCac
             metadata.minWordLength(params.minWordLength);
         }
 
-        return model;
+        return vectorSpace;
     }
 
     public abstract Collection<String> getAvailableModels();

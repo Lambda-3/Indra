@@ -43,12 +43,11 @@ import java.util.*;
 public class IndraDriver {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory;
-    private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
+    private VectorSpaceFactory vectorSpaceFactory;
+    private IndraTranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
 
-    public IndraDriver(VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
-                       IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
+    public IndraDriver(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);

@@ -28,9 +28,7 @@ package org.lambda3.indra.service.impl;
 
 import org.lambda3.indra.client.InfoResource;
 import org.lambda3.indra.client.ResourceResponse;
-import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Collection;
@@ -39,11 +37,10 @@ import java.util.stream.Collectors;
 
 public final class InfoResourceImpl extends InfoResource {
 
-    private VectorSpaceFactory<? extends VectorSpace> spaceFactory;
-    private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
+    private VectorSpaceFactory spaceFactory;
+    private IndraTranslatorFactory translatorFactory;
 
-    public InfoResourceImpl(VectorSpaceFactory<? extends VectorSpace> spaceFactory,
-                            IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
+    public InfoResourceImpl(VectorSpaceFactory spaceFactory, IndraTranslatorFactory translatorFactory) {
         this.spaceFactory = Objects.requireNonNull(spaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
     }

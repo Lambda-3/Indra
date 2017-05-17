@@ -29,7 +29,7 @@ import java.util.Collection;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public abstract class IndraTranslatorFactory<T extends IndraTranslator> extends IndraCachedFactory<T> {
+public abstract class IndraTranslatorFactory extends IndraCachedFactory<IndraTranslator> {
 
     public abstract Collection<String> getAvailableModels();
 }
