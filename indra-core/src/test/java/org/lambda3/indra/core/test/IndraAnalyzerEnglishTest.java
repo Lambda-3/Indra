@@ -41,7 +41,7 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void nullStringTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
         IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
         Assert.assertNull(analyzer.analyze(null));
     }
