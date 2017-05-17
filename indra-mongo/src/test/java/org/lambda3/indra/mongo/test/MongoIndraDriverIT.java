@@ -71,10 +71,10 @@ public final class MongoIndraDriverIT {
     public void relatednessSimpleTest() {
         Params params = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
+        MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
         TextPair pair = new TextPair("car", "engine");
 
-        RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair));
+        RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair), params);
         Assert.assertNotNull(res);
         Assert.assertEquals(1, res.getScores().size());
         ScoredTextPair scoredPair = res.getScore(pair);
@@ -87,9 +87,9 @@ public final class MongoIndraDriverIT {
     public void translatedRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
+        MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
         List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
-        RelatednessResult res = driver.getRelatedness(pairs);
+        RelatednessResult res = driver.getRelatedness(pairs, params);
 
         Assert.assertNotNull(res);
         Assert.assertEquals(pairs.size(), res.getScores().size());
@@ -106,9 +106,9 @@ public final class MongoIndraDriverIT {
     public void translatedZeroRelatednessTest() {
         Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
+        MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
         List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
-        RelatednessResult res = driver.getRelatedness(pairs);
+        RelatednessResult res = driver.getRelatedness(pairs, params);
 
         Assert.assertNotNull(res);
         Assert.assertEquals(pairs.size(), res.getScores().size());
@@ -125,9 +125,9 @@ public final class MongoIndraDriverIT {
     public void testMinWordLengthParam() {
         Params params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 3);
 
-        MongoIndraDriver driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
-        List<TextPair> pairs = Arrays.asList(new TextPair("love", "romance"));
-        RelatednessResult res = driver.getRelatedness(pairs);
+        MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        List<TextPair> pairs = Collections.singletonList(new TextPair("love", "romance"));
+        RelatednessResult res = driver.getRelatedness(pairs, params);
         Assert.assertEquals(res.getScores().size(), 1);
         for (ScoredTextPair stp : res.getScores()) {
             Assert.assertTrue(Math.abs(stp.score) > 0d);
@@ -135,9 +135,9 @@ public final class MongoIndraDriverIT {
 
         params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 5);
 
-        driver = new MongoIndraDriver(params, vectorSpaceFactory, translatorFactory);
-        pairs = Arrays.asList(new TextPair("love", "romance"));
-        res = driver.getRelatedness(pairs);
+        driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        pairs = Collections.singletonList(new TextPair("love", "romance"));
+        res = driver.getRelatedness(pairs, params);
         Assert.assertEquals(res.getScores().size(), 1);
         for (ScoredTextPair stp : res.getScores()) {
             Assert.assertEquals(Math.abs(stp.score), 0d);

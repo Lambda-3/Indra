@@ -40,24 +40,18 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 
-public abstract class IndraDriver {
+public class IndraDriver {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory;
     private IndraTranslatorFactory<? extends IndraTranslator> translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
-    private Params currentParams;
 
-    public IndraDriver(Params params, VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
+    public IndraDriver(VectorSpaceFactory<? extends VectorSpace> vectorSpaceFactory,
                        IndraTranslatorFactory<? extends IndraTranslator> translatorFactory) {
-        this.currentParams = Objects.requireNonNull(params);
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
-    }
-
-    public final RelatednessResult getRelatedness(List<TextPair> pairs) {
-        return getRelatedness(pairs, currentParams);
     }
 
     public final RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
@@ -66,10 +60,6 @@ public abstract class IndraDriver {
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
         logger.trace("done");
         return result;
-    }
-
-    public final Map<String, RealVector> getVectors(List<String> terms) {
-        return this.getVectors(terms, this.currentParams);
     }
 
     public final Map<String, RealVector> getVectors(List<String> terms, Params params) {

@@ -35,6 +35,7 @@ import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.composition.VectorComposition;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -44,19 +45,65 @@ import java.util.Map;
 
 public class IndraDriverTest {
 
+    private Params params;
     private IndraDriver driver;
 
-    public IndraDriverTest() {
-        Params params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, null,
+    @BeforeClass
+    public void beforeClass() {
+        params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, null,
                 VectorComposition.SUM, VectorComposition.AVERAGE);
 
         VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
         IndraTranslatorFactory translatorFactory = createIndraTranslatorFactory();
-        this.driver = new IndraDriver(params, vectorSpaceFactory, translatorFactory) {
-        };
+        this.driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
     }
 
-    public static VectorSpaceFactory createVectorSpaceFactor() {
+    @Test
+    public void nonExistingTerms() {
+        final String NON_EXISTENT_TERM = "yyyyyyyywywywywy";
+        List<String> terms = Arrays.asList(NON_EXISTENT_TERM, "amor");
+        Map<String, RealVector> results = driver.getVectors(terms, params);
+        Assert.assertEquals(results.size(), terms.size());
+        Assert.assertNull(results.get(NON_EXISTENT_TERM));
+    }
+
+    @Test
+    public void getTranslatedVectors() {
+        List<String> terms = Arrays.asList("mãe", "pai");
+        Map<String, RealVector> res = driver.getVectors(terms, params);
+        Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
+        Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
+    }
+
+    @Test
+    public void getComposedTranslatedVectors() {
+        List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
+        Map<String, RealVector> res = driver.getVectors(terms, params);
+        Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
+        Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
+    }
+
+    @Test
+    public void getRelatedness() {
+        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("mãe", "pai"),
+                new TextPair("mãe computador", "pai avaliação")), params);
+
+        for (ScoredTextPair pair : res.getScores()) {
+            Assert.assertEquals(Math.floor(pair.score), -1d);
+        }
+    }
+
+    @Test
+    public void getZeroRelatedness() {
+        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("blabla", "ttt"),
+                new TextPair("these tokens are not in the vector model", "neither those")), params);
+
+        for (ScoredTextPair pair : res.getScores()) {
+            Assert.assertEquals(pair.score, 0d);
+        }
+    }
+
+    private static VectorSpaceFactory createVectorSpaceFactor() {
         VectorSpaceFactory factory = new VectorSpaceFactory() {
             @Override
             public Collection<String> getAvailableModels() {
@@ -79,7 +126,7 @@ public class IndraDriverTest {
         return factory;
     }
 
-    public static IndraTranslatorFactory createIndraTranslatorFactory() {
+    private static IndraTranslatorFactory createIndraTranslatorFactory() {
         IndraTranslatorFactory factory = new IndraTranslatorFactory() {
             @Override
             public Collection<String> getAvailableModels() {
@@ -98,41 +145,5 @@ public class IndraDriverTest {
         };
 
         return factory;
-    }
-
-    @Test
-    public void getTranslatedVectors() {
-        List<String> terms = Arrays.asList("mãe", "pai");
-        Map<String, RealVector> res = driver.getVectors(terms);
-        Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
-        Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
-    }
-
-    @Test
-    public void getComposedTranslatedVectors() {
-        List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
-        Map<String, RealVector> res = driver.getVectors(terms);
-        Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
-        Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
-    }
-
-    @Test
-    public void getRelatedness() {
-        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("mãe", "pai"),
-                new TextPair("mãe computador", "pai avaliação")));
-
-        for (ScoredTextPair pair : res.getScores()) {
-            Assert.assertEquals(Math.floor(pair.score), -1d);
-        }
-    }
-
-    @Test
-    public void getZeroRelatedness() {
-        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("blabla", "ttt"),
-                new TextPair("these tokens are not in the vector model", "neither those")));
-
-        for (ScoredTextPair pair : res.getScores()) {
-            Assert.assertEquals(pair.score, 0d);
-        }
     }
 }
