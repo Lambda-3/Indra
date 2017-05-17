@@ -40,6 +40,13 @@ public class IndraAnalyzerEnglishTest {
     private static final String LANG = "EN";
 
     @Test
+    public void nullStringTest() {
+        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(false);
+        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        Assert.assertNull(analyzer.analyze(null));
+    }
+
+    @Test
     public void nonStemmedAnalyzeTest() {
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
         IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);

@@ -82,6 +82,10 @@ public final class IndraAnalyzer {
     }
 
     public List<String> analyze(String text) {
+        if (text == null) {
+            return null;
+        }
+
         List<String> result = new ArrayList<>();
         try (StringReader reader = new StringReader(text)) {
             tokenizer.setReader(reader);
