@@ -54,6 +54,8 @@ public final class RelatednessRequest extends AbstractBasicRequest<RelatednessRe
 
     @Override
     protected boolean isValid() {
-        return pairs != null && !pairs.isEmpty() && scoreFunction != null;
+        boolean valid = pairs != null && !pairs.isEmpty() && scoreFunction != null;
+        return valid &&
+                pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
     }
 }

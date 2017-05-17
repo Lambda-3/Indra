@@ -93,7 +93,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
                 language == null || language.isEmpty() || minWordLength < 0 || !isValid();
 
         if (invalid) {
-            throw new WebApplicationException("Invalid  Indra Request", Response.Status.BAD_REQUEST);
+            throw new WebApplicationException("Invalid Indra Request", Response.Status.BAD_REQUEST);
         }
     }
 

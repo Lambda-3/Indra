@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class RelatednessClient {
 
@@ -48,12 +49,12 @@ public abstract class RelatednessClient {
         if (params == null || vectorSpace == null || func == null) {
             throw new IllegalArgumentException("Missing required arguments.");
         }
-        this.vectorSpace = vectorSpace;
-        this.params = params;
-        this.func = func;
+        this.vectorSpace = Objects.requireNonNull(vectorSpace);
+        this.params = Objects.requireNonNull(params);
+        this.func = Objects.requireNonNull(func);
     }
 
-    protected abstract List<? extends AnalyzedPair> doAnalyze(List<TextPair> pairs);
+    protected abstract List<AnalyzedPair> doAnalyze(List<TextPair> pairs);
 
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
 
@@ -83,7 +84,7 @@ public abstract class RelatednessClient {
     }
 
     public final RelatednessResult getRelatedness(List<TextPair> pairs) {
-        List<? extends AnalyzedPair> analyzedPairs = doAnalyze(pairs);
+        List<AnalyzedPair> analyzedPairs = doAnalyze(pairs);
         Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs);
         return new RelatednessResult(compute(vectorsPairs));
     }
