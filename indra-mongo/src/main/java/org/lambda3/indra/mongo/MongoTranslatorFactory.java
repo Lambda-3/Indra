@@ -73,7 +73,7 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
     }
 
     @Override
-    protected Object createKey(Params params) {
+    protected String createKey(Params params) {
         return getDbName(params.language, params.translateTargetLanguage);
     }
 

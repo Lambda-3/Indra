@@ -32,7 +32,7 @@ import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Objects;
 
-public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient> {
+public final class RelatednessClientFactory extends IndraCachedFactory<Params, RelatednessClient> {
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
     private IndraTranslatorFactory translatorFactory;
@@ -61,7 +61,7 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
     }
 
     @Override
-    protected Object createKey(Params params) {
+    protected Params createKey(Params params) {
         return params;
     }
 }
