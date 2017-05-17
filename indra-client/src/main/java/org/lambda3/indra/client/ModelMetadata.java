@@ -198,7 +198,8 @@ public final class ModelMetadata {
     @Override
     public String toString() {
         return "Metadata{" +
-                "sparse=" + sparse +
+                "loaderId=" + loaderId +
+                ", sparse=" + sparse +
                 ", binary=" + binary +
                 ", applyStemmer=" + applyStemmer +
                 ", applyLowercase=" + applyLowercase +
@@ -215,7 +216,8 @@ public final class ModelMetadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModelMetadata that = (ModelMetadata) o;
-        return sparse == that.sparse &&
+        return  loaderId.equals(that.loaderId) &&
+                sparse == that.sparse &&
                 binary == that.binary &&
                 applyStemmer == that.applyStemmer &&
                 applyLowercase == that.applyLowercase &&
@@ -228,7 +230,7 @@ public final class ModelMetadata {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sparse, binary, applyStemmer, applyLowercase, removeAccents, applyStopWords,
+        return Objects.hash(loaderId, sparse, binary, applyStemmer, applyLowercase, removeAccents, applyStopWords,
                 minWordLength, maxWordLength, dimensions);
     }
 }
