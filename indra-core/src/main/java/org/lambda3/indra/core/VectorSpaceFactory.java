@@ -31,7 +31,7 @@ import org.lambda3.indra.core.composition.VectorComposerFactory;
 
 import java.util.Collection;
 
-public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace> {
+public abstract class VectorSpaceFactory extends IndraCachedFactory<Params, VectorSpace> {
     protected VectorComposerFactory vectorComposerFactory;
 
     public VectorSpaceFactory() {

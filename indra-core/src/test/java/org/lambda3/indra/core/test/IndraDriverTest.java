@@ -119,7 +119,7 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected Object createKey(Params params) {
+            protected Params createKey(Params params) {
                 return params;
             }
         };
@@ -140,8 +140,8 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected Object createKey(Params params) {
-                return params;
+            protected String createKey(Params params) {
+                return String.format("%s-%s_blah", params.language, params.translateTargetLanguage);
             }
         };
 

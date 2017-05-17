@@ -61,8 +61,8 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
     }
 
     @Override
-    public String createKey(Params params) {
-        return getDBName(params);
+    public Params createKey(Params params) {
+        return params;
     }
 
     private String getDBName(Params params) {
