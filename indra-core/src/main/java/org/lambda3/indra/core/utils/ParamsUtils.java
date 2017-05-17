@@ -1,11 +1,5 @@
 package org.lambda3.indra.core.utils;
 
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.composition.VectorComposition;
-
 /*-
  * ==========================License-Start=============================
  * Indra Core Module
@@ -31,6 +25,14 @@ import org.lambda3.indra.core.composition.VectorComposition;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
+
+import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.client.ScoreFunction;
+import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.composition.VectorComposition;
+
+
 public class ParamsUtils {
 
     public static final Boolean DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS = null;
