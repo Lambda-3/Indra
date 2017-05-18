@@ -101,7 +101,7 @@ public final class ModelMetadata {
                 .sparse((boolean) doc.getOrDefault(SPARSE_PARAM, metaDefault.sparse))
                 .binary((boolean) doc.getOrDefault(BINARY_PARAM, metaDefault.binary))
                 .dimensions((int) doc.getOrDefault(DIMENSIONS_PARAM, metaDefault.dimensions))
-                .stopWords(new HashSet<>((List<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)));
+                .stopWords(new HashSet<>((Collection<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)));
 
     }
 
