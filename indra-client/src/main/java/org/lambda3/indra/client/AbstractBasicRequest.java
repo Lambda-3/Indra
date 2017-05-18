@@ -36,7 +36,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
     private String model;
     private String language;
     private Boolean applyStopWords;
-    private int minWordLength;
+    private Integer minWordLength;
 
     public T corpus(String corpusName) {
         this.corpus = Objects.requireNonNull(corpusName);
@@ -58,7 +58,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return (T) this;
     }
 
-    public T minWordLength(int minWordLength) {
+    public T minWordLength(Integer minWordLength) {
         this.minWordLength = minWordLength;
         return (T) this;
     }
@@ -80,7 +80,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return applyStopWords;
     }
 
-    public int getMinWordLength() {
+    public Integer getMinWordLength() {
         return minWordLength;
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
      */
     public final void validate() {
         boolean invalid = corpus == null || corpus.isEmpty() || model == null || model.isEmpty() ||
-                language == null || language.isEmpty() || minWordLength < 0 || !isValid();
+                language == null || language.isEmpty() || (minWordLength != null && minWordLength < 0) || !isValid();
 
         if (invalid) {
             throw new WebApplicationException("Invalid Indra Request", Response.Status.BAD_REQUEST);
