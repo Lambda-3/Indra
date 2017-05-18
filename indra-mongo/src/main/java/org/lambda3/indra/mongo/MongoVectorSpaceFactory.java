@@ -76,7 +76,9 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
     public Collection<String> getAvailableModels() {
         Set<String> availableModels = new HashSet<>();
         for (String s : mongoClient.listDatabaseNames()) {
-            availableModels.add(s);
+            if (!s.equalsIgnoreCase("admin") || s.equalsIgnoreCase("local")) {
+                availableModels.add(s);
+            }
         }
         return availableModels;
     }
