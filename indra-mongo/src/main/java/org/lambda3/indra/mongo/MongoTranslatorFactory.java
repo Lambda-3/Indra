@@ -28,6 +28,7 @@ package org.lambda3.indra.mongo;
 
 import com.mongodb.MongoClient;
 import org.lambda3.indra.core.Params;
+import org.lambda3.indra.core.exception.ModelNoFound;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Collection;
@@ -41,7 +42,6 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
 
     private MongoClient mongoClient;
     private String dbNameSuffix;
-    private Set<String> availableModels = new HashSet<>();
 
     public MongoTranslatorFactory(String mongoURI) {
         this(new MongoClient(mongoURI), DEFAULT_DB_NAME_SUFFIX);
@@ -53,23 +53,17 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
 
     private MongoTranslatorFactory(MongoClient client, String dbNameSuffix) {
         this.mongoClient = Objects.requireNonNull(client);
-        this.dbNameSuffix = dbNameSuffix;
-
-        for (String s : mongoClient.listDatabaseNames()) {
-            if (s.endsWith(dbNameSuffix)) {
-                availableModels.add(s);
-            }
-        }
+        this.dbNameSuffix = Objects.requireNonNull(dbNameSuffix);
     }
 
     @Override
-    protected MongoIndraTranslator doCreate(Params params) {
+    protected MongoIndraTranslator doCreate(Params params) throws ModelNoFound  {
         String dbName = getDbName(params.language, params.translateTargetLanguage);
-        if (availableModels.contains(dbName)) {
+        if (getAvailableModels().contains(dbName)) {
             return new MongoIndraTranslator(mongoClient, dbName);
-        } else {
-            throw new RuntimeException(String.format("DB %s is not available.", dbName));
         }
+
+        throw new ModelNoFound(dbName);
     }
 
     @Override
@@ -83,6 +77,12 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
 
     @Override
     public Collection<String> getAvailableModels() {
+        Set<String> availableModels = new HashSet<>();
+        for (String s : mongoClient.listDatabaseNames()) {
+            if (s.endsWith(dbNameSuffix)) {
+                availableModels.add(s);
+            }
+        }
         return availableModels;
     }
 }
