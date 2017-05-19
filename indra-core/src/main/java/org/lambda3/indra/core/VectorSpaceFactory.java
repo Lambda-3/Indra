@@ -46,7 +46,7 @@ public abstract class VectorSpaceFactory extends IndraCachedFactory<Params, Vect
             metadata.applyStopWords(params.applyStopWords);
         }
 
-        if (params.minWordLength != null) {
+        if (params.minWordLength >= 0) {
             metadata.minWordLength(params.minWordLength);
         }
 
