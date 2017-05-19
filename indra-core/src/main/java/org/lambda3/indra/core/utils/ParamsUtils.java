@@ -36,7 +36,7 @@ import org.lambda3.indra.core.composition.VectorComposition;
 public class ParamsUtils {
 
     public static final Boolean DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS = null;
-    public static final Integer DONT_OVERRIDE_DEFAULT_MIN_WORD_LENGTH = null;
+    public static final int DONT_OVERRIDE_DEFAULT_MIN_WORD_LENGTH = -1;
 
     public static final VectorComposition DEFAULT_TERM_COMPOSTION = VectorComposition.UNIQUE_SUM;
     public static final VectorComposition DEFAULT_TRANSLATION_COMPOSTION = VectorComposition.AVERAGE;

@@ -51,7 +51,7 @@ public class IndraDriverTest {
 
     @BeforeClass
     public void beforeClass() {
-        params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, null,
+        params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, -1,
                 VectorComposition.SUM, VectorComposition.AVERAGE);
 
         VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
