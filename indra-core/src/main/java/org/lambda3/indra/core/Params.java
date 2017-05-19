@@ -32,6 +32,8 @@ import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.composition.VectorComposition;
 
+import java.util.Objects;
+
 
 public final class Params {
     public final String corpusName;
@@ -41,7 +43,7 @@ public final class Params {
     public final boolean translate;
 
     public final Boolean applyStopWords;
-    public final Integer minWordLength;
+    public final int minWordLength;
 
     public final String translateTargetLanguage = "EN";
 
@@ -76,12 +78,12 @@ public final class Params {
     }
 
     public Params(String corpusName, ScoreFunction func, String language, String model, boolean translate,
-                  Boolean applyStopWords, Integer minWordLength,
+                  Boolean applyStopWords, int minWordLength,
                   VectorComposition termComposition, VectorComposition translationComposition) {
 
         if (corpusName == null || func == null || language == null || model == null || termComposition == null
                 || translationComposition == null) {
-            throw new IllegalArgumentException("Except applyStopWords and minWordLength, all arguments are mandatory!");
+            throw new IllegalArgumentException("Except applyStopWords all arguments are mandatory!");
         }
 
         this.corpusName = corpusName;
@@ -95,41 +97,27 @@ public final class Params {
         this.translationComposition = translationComposition;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Params params = (Params) o;
-
-        if (translate != params.translate) return false;
-        if (corpusName != null ? !corpusName.equals(params.corpusName) : params.corpusName != null) return false;
-        if (func != params.func) return false;
-        if (language != null ? !language.equals(params.language) : params.language != null) return false;
-        if (model != null ? !model.equals(params.model) : params.model != null) return false;
-        if (applyStopWords != null ? !applyStopWords.equals(params.applyStopWords) : params.applyStopWords != null)
-            return false;
-        if (minWordLength != null ? !minWordLength.equals(params.minWordLength) : params.minWordLength != null)
-            return false;
-        if (translateTargetLanguage != null ? !translateTargetLanguage.equals(params.translateTargetLanguage) : params.translateTargetLanguage != null)
-            return false;
-        if (termComposition != params.termComposition) return false;
-        return translationComposition == params.translationComposition;
-
+        return translate == params.translate &&
+                minWordLength == params.minWordLength &&
+                Objects.equals(corpusName, params.corpusName) &&
+                func == params.func &&
+                Objects.equals(language, params.language) &&
+                Objects.equals(model, params.model) &&
+                Objects.equals(applyStopWords, params.applyStopWords) &&
+                Objects.equals(translateTargetLanguage, params.translateTargetLanguage) &&
+                termComposition == params.termComposition &&
+                translationComposition == params.translationComposition;
     }
 
     @Override
     public int hashCode() {
-        int result = corpusName != null ? corpusName.hashCode() : 0;
-        result = 31 * result + (func != null ? func.hashCode() : 0);
-        result = 31 * result + (language != null ? language.hashCode() : 0);
-        result = 31 * result + (model != null ? model.hashCode() : 0);
-        result = 31 * result + (translate ? 1 : 0);
-        result = 31 * result + (applyStopWords != null ? applyStopWords.hashCode() : 0);
-        result = 31 * result + (minWordLength != null ? minWordLength.hashCode() : 0);
-        result = 31 * result + (translateTargetLanguage != null ? translateTargetLanguage.hashCode() : 0);
-        result = 31 * result + (termComposition != null ? termComposition.hashCode() : 0);
-        result = 31 * result + (translationComposition != null ? translationComposition.hashCode() : 0);
-        return result;
+        return Objects.hash(corpusName, func, language, model, translate, applyStopWords, minWordLength,
+                translateTargetLanguage, termComposition, translationComposition);
     }
 }
