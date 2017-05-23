@@ -152,8 +152,9 @@ public class IndraDriverTest {
         }
     }
 
-    private static VectorSpaceFactory createVectorSpaceFactor() {
-        VectorSpaceFactory factory = new VectorSpaceFactory() {
+    public static VectorSpaceFactory createVectorSpaceFactor() {
+
+        return new VectorSpaceFactory() {
             @Override
             protected VectorSpace doCreate(AbstractBasicRequest request) {
                 VectorComposerFactory composerFactory = new VectorComposerFactory();
@@ -171,12 +172,11 @@ public class IndraDriverTest {
                 return null;
             }
         };
-
-        return factory;
     }
 
-    private static IndraTranslatorFactory createIndraTranslatorFactory() {
-        IndraTranslatorFactory factory = new IndraTranslatorFactory() {
+    public static IndraTranslatorFactory createIndraTranslatorFactory() {
+
+        return new IndraTranslatorFactory() {
             @Override
             public Collection<String> getAvailableModels() {
                 return null;
@@ -192,7 +192,5 @@ public class IndraDriverTest {
                 return request.toString();
             }
         };
-
-        return factory;
     }
 }

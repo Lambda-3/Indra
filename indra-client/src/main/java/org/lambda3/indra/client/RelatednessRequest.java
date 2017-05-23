@@ -26,7 +26,6 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.List;
 import java.util.Objects;
 
 public abstract class RelatednessRequest<T extends AbstractBasicRequest> extends AbstractBasicRequest<T> {
