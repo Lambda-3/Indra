@@ -38,8 +38,8 @@ import java.util.Map;
 public class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
 
-    public TranslationBasedRelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
-        super(params, vectorSpace, func);
+    public TranslationBasedRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
+        super(request, vectorSpace, func);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
         }
@@ -54,7 +54,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
         ModelMetadata metadata = vectorSpace.getMetadata();
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, ModelMetadata.createTranslationVersion(metadata));
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), ModelMetadata.createTranslationVersion(metadata));
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
@@ -75,7 +75,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
                 for (String token : transTokens.keySet()) {
                     term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
-                            params.translateTargetLanguage, metadata.getApplyStemmer()));
+                            IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE, metadata.getApplyStemmer()));
                 }
             }
 

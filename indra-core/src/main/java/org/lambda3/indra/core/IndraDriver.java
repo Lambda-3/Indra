@@ -28,10 +28,8 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.MutableTranslatedTerm;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.composition.VectorComposition;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.slf4j.Logger;
@@ -41,6 +39,9 @@ import java.util.*;
 
 
 public class IndraDriver {
+    public static final VectorComposition DEFAULT_TERM_COMPOSTION = VectorComposition.UNIQUE_SUM;
+    public static final VectorComposition DEFAULT_TRANSLATION_COMPOSTION = VectorComposition.AVERAGE;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory vectorSpaceFactory;
@@ -53,22 +54,22 @@ public class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public final RelatednessResult getRelatedness(List<TextPair> pairs, Params params) {
-        logger.trace("getting relatedness for {} pairs (params={})", pairs.size(), params);
-        RelatednessClient relatednessClient = relatednessClientFactory.create(params);
+    public final RelatednessResult getRelatedness(List<TextPair> pairs, RelatednessRequest request) {
+        logger.trace("getting relatedness for {} pairs (params={})", pairs.size(), request);
+        RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         RelatednessResult result = relatednessClient.getRelatedness(pairs);
         logger.trace("done");
         return result;
     }
 
-    public final Map<String, RealVector> getVectors(List<String> terms, Params params) {
-        logger.trace("getting vectors for {} terms (params={})", terms.size(), params);
-        VectorSpace vectorSpace = vectorSpaceFactory.create(params);
+    public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {
+        logger.trace("getting vectors for {} terms (params={})", terms.size(), request);
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         ModelMetadata modelMetadata = vectorSpace.getMetadata();
 
-        if (params.translate) {
+        if (request.isMt()) {
             ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
-            IndraAnalyzer nativeLangAnalyzer = new IndraAnalyzer(params.language, translationModelMetadata);
+            IndraAnalyzer nativeLangAnalyzer = new IndraAnalyzer(request.getLanguage(), translationModelMetadata);
 
             logger.trace("applying translation");
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
@@ -77,14 +78,14 @@ public class IndraDriver {
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
 
-            IndraTranslator translator = translatorFactory.create(params);
+            IndraTranslator translator = translatorFactory.create(request);
             translator.translate(translatedTerms);
 
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     List<String> translatedTokens = term.getTranslatedTokens().get(token);
                     if (modelMetadata.getApplyStemmer() > 0) {
-                        translatedTokens = IndraAnalyzer.stem(translatedTokens, params.translateTargetLanguage,
+                        translatedTokens = IndraAnalyzer.stem(translatedTokens, IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE,
                                 modelMetadata.getApplyStemmer());
                     }
 
@@ -95,7 +96,7 @@ public class IndraDriver {
             return vectorSpace.getTranslatedVectors(translatedTerms);
 
         } else {
-            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(params.language, modelMetadata);
+            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(request.getLanguage(), modelMetadata);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
             for (String term : terms) {
                 analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
@@ -105,8 +106,8 @@ public class IndraDriver {
         }
     }
 
-    public final Map<String, double[]> getVectorsAsArray(List<String> terms, Params params) {
-        Map<String, RealVector> inVectors = getVectors(terms, params);
+    public final Map<String, double[]> getVectorsAsArray(List<String> terms, VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(terms, request);
 
         Map<String, double[]> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
@@ -118,8 +119,8 @@ public class IndraDriver {
         return outVectors;
     }
 
-    public final Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, Params params) {
-        Map<String, RealVector> inVectors = getVectors(terms, params);
+    public final Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(terms, request);
 
         Map<String, Map<Integer, Double>> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {

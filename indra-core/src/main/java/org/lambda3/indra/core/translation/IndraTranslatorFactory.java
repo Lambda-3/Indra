@@ -1,5 +1,6 @@
 package org.lambda3.indra.core.translation;
 
+import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.IndraCachedFactory;
 
 import java.util.Collection;
@@ -29,7 +30,7 @@ import java.util.Collection;
  * THE SOFTWARE.
  * ==========================License-End===============================
  */
-public abstract class IndraTranslatorFactory extends IndraCachedFactory<String, IndraTranslator> {
+public abstract class IndraTranslatorFactory extends IndraCachedFactory<IndraTranslator, AbstractBasicRequest> {
 
     public abstract Collection<String> getAvailableModels();
 }

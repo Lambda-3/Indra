@@ -35,6 +35,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
     private String corpus;
     private String model;
     private String language;
+    private boolean mt = false;
     private Boolean applyStopWords;
     private int minWordLength = -1; // flags user did not override the defaults
 
@@ -53,8 +54,18 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return (T) this;
     }
 
+    public T mt(boolean mt) {
+        this.mt = mt;
+        return (T) this;
+    }
+
+    public boolean isMt() {
+        return mt;
+    }
+
     public T applyStopWords(Boolean applyStopWords) {
         this.applyStopWords = applyStopWords;
+
         return (T) this;
     }
 
@@ -86,6 +97,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
 
     /**
      * Throws an exception if this request is not in a safe state.
+     *
      * @throws WebApplicationException
      */
     public final void validate() {

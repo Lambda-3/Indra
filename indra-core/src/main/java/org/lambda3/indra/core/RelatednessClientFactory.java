@@ -26,13 +26,14 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Objects;
 
-public final class RelatednessClientFactory extends IndraCachedFactory<Params, RelatednessClient> {
+public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient, RelatednessRequest> {
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
     private IndraTranslatorFactory translatorFactory;
@@ -45,23 +46,23 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Params, R
     }
 
     @Override
-    protected RelatednessClient doCreate(Params params) {
-        VectorSpace vectorSpace = vectorSpaceFactory.create(params);
-        RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(params.func);
+    protected RelatednessClient doCreate(RelatednessRequest request) {
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+        RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(request.getScoreFunction());
 
-        if (params.translate) {
+        if (request.isMt()) {
             if (translatorFactory == null) {
                 throw new IllegalStateException("Translation-based relatedness not activated.");
             }
-            return new TranslationBasedRelatednessClient(params, vectorSpace, relatednessFunction,
-                    translatorFactory.create(params));
+            return new TranslationBasedRelatednessClient(request, vectorSpace, relatednessFunction,
+                    translatorFactory.create(request));
         } else {
-            return new StandardRelatednessClient(params, vectorSpace, relatednessFunction);
+            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction);
         }
     }
 
     @Override
-    protected Params createKey(Params params) {
-        return params;
+    protected Object createKey(RelatednessRequest request) {
+        return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt();
     }
 }

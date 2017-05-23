@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Web Service Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.service.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,40 +26,37 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public abstract class AbstractBasicResponse {
+    private String corpus;
+    private String model;
+    private String language;
 
-import java.util.Map;
+    protected AbstractBasicResponse() {
+        //jersey demands.
+    }
 
-public class VectorResourceImpl implements VectorResource {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private IndraDriver driver;
+    public AbstractBasicResponse(AbstractBasicRequest<?> request) {
+        this.corpus = request.getCorpus();
+        this.model = request.getModel();
+        this.language = request.getLanguage();
+    }
 
-    VectorResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+    public String getCorpus() {
+        return corpus;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 
     @Override
-    public VectorResponse getVector(VectorRequest request) {
-        return process(request, false);
-    }
-
-    public VectorResponse process(VectorRequest request, boolean translate) {
-        logger.trace("getVector - User Request: {}", request);
-        Params params = ParamsUtils.buildParams(request, translate);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), params);
-
-        VectorResponse response = new VectorResponse(request, results);
-        logger.trace("Response: {}", response);
-        return response;
+    public String toString() {
+        return "corpus='" + corpus + '\'' +
+                ", model='" + model + '\'' +
+                ", language='" + language + '\'';
     }
 }

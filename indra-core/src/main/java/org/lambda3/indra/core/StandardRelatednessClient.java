@@ -27,6 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.function.RelatednessFunction;
 
@@ -36,8 +37,8 @@ import java.util.Map;
 
 public class StandardRelatednessClient extends RelatednessClient {
 
-    protected StandardRelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
-        super(params, vectorSpace, func);
+    protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func) {
+        super(request, vectorSpace, func);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class StandardRelatednessClient extends RelatednessClient {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        IndraAnalyzer analyzer = new IndraAnalyzer(params.language, vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
 
         for (TextPair pair : pairs) {
             AnalyzedPair analyzedPair = analyzer.analyze(pair, AnalyzedPair.class);

@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 
 public abstract class IndraTranslator {
 
+    public static final String DEFAULT_TRANSLATION_TARGET_LANGUAGE = "EN";
+
     /**
      * Translate each AnalyzedTerm token by token and store into MutableTranslatedTerm.translatedTokens.
      *

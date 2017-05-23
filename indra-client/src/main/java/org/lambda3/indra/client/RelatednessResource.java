@@ -46,6 +46,7 @@ public interface RelatednessResource {
 
     @POST
     @Valid
-    @Path("/mt")
-    RelatednessResponse getTranslatedRelatedness(RelatednessRequest request);
+    @Path("/otm")
+    RelatednessResponse getRelatedness(RelatednessOneToManyRequest request);
+
 }

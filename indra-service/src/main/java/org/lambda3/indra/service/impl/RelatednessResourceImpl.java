@@ -26,6 +26,7 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.RelatednessOneToManyRequest;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.RelatednessResource;
 import org.lambda3.indra.client.RelatednessResponse;
@@ -53,12 +54,11 @@ class RelatednessResourceImpl implements RelatednessResource {
         return process(request, false);
     }
 
-
     @Override
-    public RelatednessResponse getTranslatedRelatedness(RelatednessRequest request) {
-        logger.trace("getTranslatedRelatedness - User Request: {}", request);
-        return process(request, true);
+    public RelatednessResponse getRelatedness(RelatednessOneToManyRequest request) {
+        return null;
     }
+
 
     private RelatednessResponse process(RelatednessRequest request, boolean translate) {
         request.validate();
