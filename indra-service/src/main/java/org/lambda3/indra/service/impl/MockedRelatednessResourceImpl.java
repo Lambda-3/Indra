@@ -41,7 +41,7 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     private static Random rnd = new Random();
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessPairRequest request) {
+    public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         Collection<ScoredTextPair> scored = new ArrayList<>();
 
         for (TextPair pair : ((RelatednessPairRequest) request).getPairs()) {
@@ -50,12 +50,12 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
             scored.add(stp);
         }
 
-        return new RelatednessResponse(request, scored);
+        return new RelatednessPairResponse(request, scored);
 
     }
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public RelatednessPairResponse getRelatedness(RelatednessOneToManyRequest request) {
         //TODO implement me.
         return null;
     }

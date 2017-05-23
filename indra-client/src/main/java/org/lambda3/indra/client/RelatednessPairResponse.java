@@ -28,15 +28,15 @@ package org.lambda3.indra.client;
 
 import java.util.Collection;
 
-public final class RelatednessResponse extends AbstractBasicResponse {
+public final class RelatednessPairResponse extends AbstractBasicResponse {
     private Collection<ScoredTextPair> pairs;
     private ScoreFunction scoreFunction;
 
-    private RelatednessResponse() {
+    private RelatednessPairResponse() {
         //jersey demands.
     }
 
-    public RelatednessResponse(RelatednessRequest request, Collection<ScoredTextPair> pairs) {
+    public RelatednessPairResponse(RelatednessPairRequest request, Collection<ScoredTextPair> pairs) {
         super(request);
         this.scoreFunction = request.getScoreFunction();
         this.pairs = pairs;
@@ -52,7 +52,7 @@ public final class RelatednessResponse extends AbstractBasicResponse {
 
     @Override
     public String toString() {
-        return "RelatednessResponse{" + super.toString() +
+        return "RelatednessPairResponse{" + super.toString() +
                 ", pairs=" + pairs +
                 ", scoreFunction=" + scoreFunction +
                 '}';

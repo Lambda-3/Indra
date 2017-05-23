@@ -54,18 +54,25 @@ public class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    //TODO pair is into request
-    public final RelatednessResult getRelatedness(RelatednessPairRequest request) {
-        logger.trace("getting relatedness for {} pairs (request={})", request.getPairs(), request);
+    public final RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
+        logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
+
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        RelatednessResult result = relatednessClient.getRelatedness(request.getPairs());
+        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
+        RelatednessPairResponse response = new RelatednessPairResponse(request, scoredPairs);
         logger.trace("done");
-        return result;
+        return response;
     }
 
-    public final RelatednessResult getRelatedness(RelatednessOneToManyRequest request) {
-        //TODO implement me.
-        return null;
+    public final RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
+        logger.trace("getting relatedness for one {} to many (size){} (request={})", request.getOne(),
+                request.getMany().size(), request);
+
+        RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getOne(), request.getMany());
+        RelatednessPairResponse response = new RelatednessPairResponse(request, scoredPairs);
+        logger.trace("done");
+        return response;
     }
 
     public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {
