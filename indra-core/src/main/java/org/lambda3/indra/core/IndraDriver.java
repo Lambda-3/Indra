@@ -69,8 +69,8 @@ public class IndraDriver {
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getOne(), request.getMany());
-        RelatednessPairResponse response = new RelatednessPairResponse(request, scoredPairs);
+        Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany());
+        RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, scores);
         logger.trace("done");
         return response;
     }
