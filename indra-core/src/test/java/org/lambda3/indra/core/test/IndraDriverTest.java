@@ -83,7 +83,8 @@ public class IndraDriverTest {
 
     @Test
     public void getRelatedness() {
-        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE)
+                .language("PT").mt(true);
         request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
         RelatednessPairResponse res = driver.getRelatedness(request);
 

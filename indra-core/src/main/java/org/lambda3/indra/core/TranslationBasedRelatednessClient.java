@@ -67,7 +67,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
             analyzedTerms.add(analyzedPair.getTranslatedT2());
         }
 
-        logger.debug("Translating terms..");
+        logger.debug("Translating terms.");
 
         if (translator != null) {
             translator.translate(analyzedTerms);

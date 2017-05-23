@@ -79,7 +79,7 @@ public final class MongoIndraDriverIT {
     @Test
     public void translatedRelatednessTest() {
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
-        RelatednessPairRequest request = buildDefaulRequest().mt(true);
+        RelatednessPairRequest request = buildDefaulRequest().mt(true).language("PT");
         List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
         request.pairs(pairs);
 
@@ -104,7 +104,7 @@ public final class MongoIndraDriverIT {
     @Test
     public void translatedZeroRelatednessTest() {
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
-        RelatednessPairRequest request = buildDefaulRequest().mt(true);
+        RelatednessPairRequest request = buildDefaulRequest().mt(true).language("PT");
         List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
         request.pairs(pairs);
 
