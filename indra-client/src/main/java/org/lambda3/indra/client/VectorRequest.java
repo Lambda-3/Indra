@@ -33,7 +33,7 @@ public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
 
     private List<String> terms;
 
-    public VectorRequest pairs(List<String> terms) {
+    public VectorRequest terms(List<String> terms) {
         this.terms = Objects.requireNonNull(terms);
         return this;
     }

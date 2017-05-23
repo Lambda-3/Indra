@@ -63,8 +63,8 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
     }
 
     @Override
-    public Object createKey(AbstractBasicRequest request) {
-        return request;
+    public String createKey(AbstractBasicRequest request) {
+        return getDBName(request) + request.isMt();
     }
 
     private String getDBName(AbstractBasicRequest<?> request) {

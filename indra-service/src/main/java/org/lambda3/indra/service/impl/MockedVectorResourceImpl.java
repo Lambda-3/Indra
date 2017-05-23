@@ -29,6 +29,7 @@ package org.lambda3.indra.service.impl;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
+import org.lambda3.indra.client.SparseVectorResponse;
 import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.client.VectorResource;
 import org.lambda3.indra.client.VectorResponse;
@@ -49,8 +50,7 @@ public class MockedVectorResourceImpl implements VectorResource {
     public VectorResponse getVector(VectorRequest request) {
         Map<String, Map<Integer, Double>> terms = new HashMap<>();
         request.getTerms().forEach(t -> terms.put(t, RealVectorUtil.vectorToMap(new ArrayRealVector(rvg.nextVector()))));
-        VectorResponse response = new VectorResponse(request);
-        response.setSparseVectors(terms);
+        VectorResponse response = new SparseVectorResponse(request, terms);
 
         return response;
     }

@@ -26,9 +26,7 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,7 @@ public class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
-    VectorResourceImpl(IndraDriver driver) {
+    public VectorResourceImpl(IndraDriver driver) {
         if (driver == null) {
             throw new IllegalArgumentException("driver can't be null.");
         }
@@ -49,14 +47,14 @@ public class VectorResourceImpl implements VectorResource {
     @Override
     public VectorResponse getVector(VectorRequest request) {
         logger.trace("getVector - User Request: {}", request);
-        VectorResponse response = new VectorResponse(request);
+        VectorResponse response;
 
         if (this.driver.isSparseModel(request)) {
             Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
-            response.setSparseVectors(results);
+            response = new SparseVectorResponse(request, results);
         } else {
             Map<String, double[]> results = this.driver.getVectorsAsArray(request.getTerms(), request);
-            response.setDenseVectors(results);
+            response = new DenseVectorResponse(request, results);
         }
 
         logger.trace("Response: {}", response);

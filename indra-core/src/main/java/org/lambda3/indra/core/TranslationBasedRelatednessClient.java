@@ -92,12 +92,13 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
+    protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
                 ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
 
-        List<? extends AnalyzedTerm> analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
+        List analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
                 .collect(Collectors.toList());
+        analyzedTerms.add(new MutableTranslatedTerm(one, analyzer.analyze(one)));
 
         translate((List<MutableTranslatedTerm>) analyzedTerms);
         return (List<AnalyzedTerm>) analyzedTerms;

@@ -42,6 +42,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.lambda3.indra.client.ScoreFunction.COSINE;
 
 public class IndraDriverTest {
     private IndraDriver driver;
@@ -83,7 +86,7 @@ public class IndraDriverTest {
 
     @Test
     public void getRelatedness() {
-        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE)
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE)
                 .language("PT").mt(true);
         request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
         RelatednessPairResponse res = driver.getRelatedness(request);
@@ -95,13 +98,57 @@ public class IndraDriverTest {
 
     @Test
     public void getZeroRelatedness() {
-        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE).language("PT");
         request.pairs(Arrays.asList(new TextPair("blabla", "ttt"),
                 new TextPair("these tokens are not in the vector model", "neither those")));
         RelatednessPairResponse res = driver.getRelatedness(request);
 
         for (ScoredTextPair pair : res.getPairs()) {
             Assert.assertEquals(pair.score, 0d);
+        }
+    }
+
+    @Test
+    public void oneToManyRelatednessPTMT() {
+        String lang = "PT";
+        boolean mt = true;
+        RelatednessPairRequest pairRequest = new RelatednessPairRequest().scoreFunction(COSINE)
+                .language(lang).mt(mt);
+        pairRequest.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe", "mãe computador"),
+                new TextPair("mãe", "pai avaliação")));
+
+        RelatednessOneToManyRequest otmRequest = new RelatednessOneToManyRequest().scoreFunction(COSINE)
+                .language(lang).mt(mt);
+        otmRequest.one("mãe").many(Arrays.asList("pai", "mãe computador", "pai avaliação"));
+        oneToManyRelatedness(pairRequest, otmRequest);
+    }
+
+    @Test
+    public void oneToManyRelatednessEN() {
+        String lang = "EN";
+        boolean mt = false;
+        RelatednessPairRequest pairRequest = new RelatednessPairRequest().scoreFunction(COSINE)
+                .language(lang).mt(mt);
+        pairRequest.pairs(Arrays.asList(new TextPair("throne", "plane"), new TextPair("throne", "good"),
+                new TextPair("throne", "hot"), new TextPair("throne", "south"), new TextPair("throne", "hate"),
+                new TextPair("throne", "car"), new TextPair("throne", "bad"), new TextPair("throne", "cold"),
+                new TextPair("throne", "north"), new TextPair("throne", "hot cold bad car")));
+
+        RelatednessOneToManyRequest otmRequest = new RelatednessOneToManyRequest().scoreFunction(COSINE)
+                .language(lang).mt(mt);
+        otmRequest.one("throne").many(Arrays.asList("plane", "good", "hot", "south", "hate", "car", "bad", "cold",
+                "north", "hot cold bad car"));
+        oneToManyRelatedness(pairRequest, otmRequest);
+    }
+
+    public void oneToManyRelatedness(RelatednessPairRequest pairRequest, RelatednessOneToManyRequest otmRequest) {
+        RelatednessPairResponse pairRes = driver.getRelatedness(pairRequest);
+        Map<String, Double> pairResults = pairRes.getPairs().stream().collect(Collectors.toMap(p -> p.t2, p -> p.score));
+
+        RelatednessOneToManyResponse otmRes = driver.getRelatedness(otmRequest);
+
+        for (String m : otmRes.getMany().keySet()) {
+            Assert.assertEquals(otmRes.getMany().get(m), pairResults.get(m));
         }
     }
 
@@ -115,8 +162,8 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected Object createKey(AbstractBasicRequest request) {
-                return request;
+            protected String createKey(AbstractBasicRequest request) {
+                return request.toString();
             }
 
             @Override
@@ -141,8 +188,8 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected Object createKey(AbstractBasicRequest request) {
-                return request;
+            protected String createKey(AbstractBasicRequest request) {
+                return request.toString();
             }
         };
 
