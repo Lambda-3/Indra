@@ -27,6 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.function.RelatednessFunction;
@@ -42,15 +43,12 @@ public abstract class RelatednessClient {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected VectorSpace vectorSpace;
-    protected Params params;
+    protected RelatednessRequest request;
     protected RelatednessFunction func;
 
-    protected RelatednessClient(Params params, VectorSpace vectorSpace, RelatednessFunction func) {
-        if (params == null || vectorSpace == null || func == null) {
-            throw new IllegalArgumentException("Missing required arguments.");
-        }
+    protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func) {
         this.vectorSpace = Objects.requireNonNull(vectorSpace);
-        this.params = Objects.requireNonNull(params);
+        this.request = Objects.requireNonNull(request);
         this.func = Objects.requireNonNull(func);
     }
 

@@ -29,33 +29,16 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public final class RelatednessRequest extends AbstractBasicRequest<RelatednessRequest> {
+public abstract class RelatednessRequest extends AbstractBasicRequest<RelatednessRequest> {
 
-    private List<TextPair> pairs;
-    private ScoreFunction scoreFunction;
+    protected ScoreFunction scoreFunction;
 
     public RelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);
         return this;
     }
 
-    public RelatednessRequest pairs(List<TextPair> pairs) {
-        this.pairs = Objects.requireNonNull(pairs);
-        return this;
-    }
-
-    public List<TextPair> getPairs() {
-        return pairs;
-    }
-
     public ScoreFunction getScoreFunction() {
         return scoreFunction;
-    }
-
-    @Override
-    protected boolean isValid() {
-        boolean valid = pairs != null && !pairs.isEmpty() && scoreFunction != null;
-        return valid &&
-                pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
     }
 }

@@ -53,7 +53,8 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     }
 
     @Override
-    public RelatednessResponse getTranslatedRelatedness(RelatednessRequest request) {
-        return getRelatedness(request);
+    public RelatednessResponse getRelatedness(RelatednessOneToManyRequest request) {
+        //TODO implement me.
+        return null;
     }
 }

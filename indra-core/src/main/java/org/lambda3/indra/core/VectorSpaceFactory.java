@@ -26,12 +26,14 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 
 import java.util.Collection;
 
-public abstract class VectorSpaceFactory extends IndraCachedFactory<Params, VectorSpace> {
+public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> {
     protected VectorComposerFactory vectorComposerFactory;
 
     public VectorSpaceFactory() {
@@ -39,15 +41,15 @@ public abstract class VectorSpaceFactory extends IndraCachedFactory<Params, Vect
     }
 
     @Override
-    public VectorSpace create(Params params) {
-        VectorSpace vectorSpace = super.create(params);
+    public VectorSpace create(AbstractBasicRequest request) {
+        VectorSpace vectorSpace = super.create(request);
         ModelMetadata metadata = vectorSpace.getMetadata();
-        if (params.applyStopWords != null) {
-            metadata.applyStopWords(params.applyStopWords);
+        if (request.getApplyStopWords() != null) {
+            metadata.applyStopWords(request.getApplyStopWords());
         }
 
-        if (params.minWordLength >= 0) {
-            metadata.minWordLength(params.minWordLength);
+        if (request.getMinWordLength() >= 0) {
+            metadata.minWordLength(request.getMinWordLength());
         }
 
         return vectorSpace;

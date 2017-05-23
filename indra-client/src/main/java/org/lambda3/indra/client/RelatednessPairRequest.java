@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Web Service Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.service.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,40 +26,25 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Objects;
 
-import java.util.Map;
+public class RelatednessPairRequest extends RelatednessRequest {
+    private List<TextPair> pairs;
 
-public class VectorResourceImpl implements VectorResource {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private IndraDriver driver;
+    public RelatednessRequest pairs(List<TextPair> pairs) {
+        this.pairs = Objects.requireNonNull(pairs);
+        return this;
+    }
 
-    VectorResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+    public List<TextPair> getPairs() {
+        return pairs;
     }
 
     @Override
-    public VectorResponse getVector(VectorRequest request) {
-        return process(request, false);
-    }
-
-    public VectorResponse process(VectorRequest request, boolean translate) {
-        logger.trace("getVector - User Request: {}", request);
-        Params params = ParamsUtils.buildParams(request, translate);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), params);
-
-        VectorResponse response = new VectorResponse(request, results);
-        logger.trace("Response: {}", response);
-        return response;
+    protected boolean isValid() {
+        boolean valid = pairs != null && !pairs.isEmpty() && scoreFunction != null;
+        return valid &&
+                pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
     }
 }

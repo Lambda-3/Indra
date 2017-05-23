@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Web Service Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.service.impl;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,40 +26,42 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 
-public class VectorResourceImpl implements VectorResource {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private IndraDriver driver;
+public final class RelatednessOneToManyResponse extends AbstractBasicResponse {
+    private String one;
+    private Map<String, Double> many;
+    private ScoreFunction scoreFunction;
 
-    VectorResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+    private RelatednessOneToManyResponse() {
+        //jersey demands.
+    }
+
+    public RelatednessOneToManyResponse(RelatednessOneToManyRequest request, Map<String, Double> scoredMany) {
+        super(request);
+        this.one = request.getOne();
+        this.many = scoredMany;
+        this.scoreFunction = request.getScoreFunction();
+    }
+
+    public String getOne() {
+        return one;
+    }
+
+    public Map<String, Double> getMany() {
+        return many;
+    }
+
+    public ScoreFunction getScoreFunction() {
+        return scoreFunction;
     }
 
     @Override
-    public VectorResponse getVector(VectorRequest request) {
-        return process(request, false);
-    }
-
-    public VectorResponse process(VectorRequest request, boolean translate) {
-        logger.trace("getVector - User Request: {}", request);
-        Params params = ParamsUtils.buildParams(request, translate);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), params);
-
-        VectorResponse response = new VectorResponse(request, results);
-        logger.trace("Response: {}", response);
-        return response;
+    public String toString() {
+        return "RelatednessOneToManyResponse{" + super.toString() +
+                "one='" + one + '\'' +
+                ", many=" + many +
+                ", scoreFunction=" + scoreFunction +
+                '}';
     }
 }

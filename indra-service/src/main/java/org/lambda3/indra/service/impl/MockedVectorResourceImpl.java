@@ -52,9 +52,4 @@ public class MockedVectorResourceImpl implements VectorResource {
 
         return new VectorResponse(request, terms);
     }
-
-    @Override
-    public VectorResponse getTranslatedVector(VectorRequest request) {
-        return getVector(request);
-    }
 }

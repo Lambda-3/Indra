@@ -29,15 +29,15 @@ package org.lambda3.indra.core;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class IndraCachedFactory<K, T> {
-    private final Map<K, T> cache = new ConcurrentHashMap<>();
+public abstract class IndraCachedFactory<T, R> {
+    private final Map<Object, T> cache = new ConcurrentHashMap<>();
 
-    protected abstract T doCreate(Params params);
+    protected abstract T doCreate(R request);
 
-    protected abstract K createKey(Params params);
+    protected abstract Object createKey(R request);
 
-    public T create(Params params) {
-        K key = createKey(params);
-        return cache.computeIfAbsent(key, (T) -> doCreate(params));
+    public T create(R request) {
+        Object key = createKey(request);
+        return cache.computeIfAbsent(key, (T) -> doCreate(request));
     }
 }
