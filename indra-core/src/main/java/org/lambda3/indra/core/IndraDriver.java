@@ -54,12 +54,18 @@ public class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public final RelatednessResult getRelatedness(List<TextPair> pairs, RelatednessRequest request) {
-        logger.trace("getting relatedness for {} pairs (params={})", pairs.size(), request);
+    //TODO pair is into request
+    public final RelatednessResult getRelatedness(RelatednessPairRequest request) {
+        logger.trace("getting relatedness for {} pairs (request={})", request.getPairs(), request);
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        RelatednessResult result = relatednessClient.getRelatedness(pairs);
+        RelatednessResult result = relatednessClient.getRelatedness(request.getPairs());
         logger.trace("done");
         return result;
+    }
+
+    public final RelatednessResult getRelatedness(RelatednessOneToManyRequest request) {
+        //TODO implement me.
+        return null;
     }
 
     public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {

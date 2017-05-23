@@ -42,7 +42,7 @@ public interface RelatednessResource {
     @POST
     @Valid
     @Path("/")
-    RelatednessResponse getRelatedness(RelatednessRequest request);
+    RelatednessResponse getRelatedness(RelatednessPairRequest request);
 
     @POST
     @Valid

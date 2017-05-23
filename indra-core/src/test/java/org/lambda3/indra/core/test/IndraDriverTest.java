@@ -27,12 +27,12 @@ package org.lambda3.indra.core.test;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.*;
+import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.RelatednessResult;
+import org.lambda3.indra.core.VectorSpace;
+import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
-import org.lambda3.indra.core.composition.VectorComposition;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
@@ -45,15 +45,10 @@ import java.util.List;
 import java.util.Map;
 
 public class IndraDriverTest {
-
-    private Params params;
     private IndraDriver driver;
 
     @BeforeClass
     public void beforeClass() {
-        params = new Params("", ScoreFunction.COSINE, "PT", "", true, null, -1,
-                VectorComposition.SUM, VectorComposition.AVERAGE);
-
         VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
         IndraTranslatorFactory translatorFactory = createIndraTranslatorFactory();
         this.driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
@@ -61,33 +56,37 @@ public class IndraDriverTest {
 
     @Test
     public void nonExistingTerms() {
+        VectorRequest request = new VectorRequest().language("PT");
         final String NON_EXISTENT_TERM = "yyyyyyyywywywywy";
         List<String> terms = Arrays.asList(NON_EXISTENT_TERM, "amor");
-        Map<String, RealVector> results = driver.getVectors(terms, params);
+        Map<String, RealVector> results = driver.getVectors(terms, request);
         Assert.assertEquals(results.size(), terms.size());
         Assert.assertNull(results.get(NON_EXISTENT_TERM));
     }
 
     @Test
     public void getTranslatedVectors() {
+        VectorRequest request = new VectorRequest().language("PT").mt(true);
         List<String> terms = Arrays.asList("mãe", "pai");
-        Map<String, RealVector> res = driver.getVectors(terms, params);
+        Map<String, RealVector> res = driver.getVectors(terms, request);
         Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
         Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
     }
 
     @Test
     public void getComposedTranslatedVectors() {
+        VectorRequest request = new VectorRequest().language("PT").mt(true);
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
-        Map<String, RealVector> res = driver.getVectors(terms, params);
+        Map<String, RealVector> res = driver.getVectors(terms, request);
         Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
         Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
     }
 
     @Test
     public void getRelatedness() {
-        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("mãe", "pai"),
-                new TextPair("mãe computador", "pai avaliação")), params);
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
+        request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
+        RelatednessResult res = driver.getRelatedness(request);
 
         for (ScoredTextPair pair : res.getScores()) {
             Assert.assertEquals(Math.floor(pair.score), -1d);
@@ -96,8 +95,10 @@ public class IndraDriverTest {
 
     @Test
     public void getZeroRelatedness() {
-        RelatednessResult res = driver.getRelatedness(Arrays.asList(new TextPair("blabla", "ttt"),
-                new TextPair("these tokens are not in the vector model", "neither those")), params);
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
+        request.pairs(Arrays.asList(new TextPair("blabla", "ttt"),
+                new TextPair("these tokens are not in the vector model", "neither those")));
+        RelatednessResult res = driver.getRelatedness(request);
 
         for (ScoredTextPair pair : res.getScores()) {
             Assert.assertEquals(pair.score, 0d);
@@ -107,20 +108,20 @@ public class IndraDriverTest {
     private static VectorSpaceFactory createVectorSpaceFactor() {
         VectorSpaceFactory factory = new VectorSpaceFactory() {
             @Override
+            protected VectorSpace doCreate(AbstractBasicRequest request) {
+                VectorComposerFactory composerFactory = new VectorComposerFactory();
+                return new MockCachedVectorSpace(composerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION),
+                        composerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION));
+            }
+
+            @Override
+            protected Object createKey(AbstractBasicRequest request) {
+                return request;
+            }
+
+            @Override
             public Collection<String> getAvailableModels() {
                 return null;
-            }
-
-            @Override
-            protected VectorSpace doCreate(Params params) {
-                VectorComposerFactory composerFactory = new VectorComposerFactory();
-                return new MockCachedVectorSpace(composerFactory.getComposer(params.termComposition),
-                        composerFactory.getComposer(params.translationComposition));
-            }
-
-            @Override
-            protected Params createKey(Params params) {
-                return params;
             }
         };
 
@@ -135,13 +136,13 @@ public class IndraDriverTest {
             }
 
             @Override
-            protected IndraTranslator doCreate(Params params) {
+            protected IndraTranslator doCreate(AbstractBasicRequest request) {
                 return new MockIndraTranslator();
             }
 
             @Override
-            protected String createKey(Params params) {
-                return String.format("%s-%s_blah", params.language, params.translateTargetLanguage);
+            protected Object createKey(AbstractBasicRequest request) {
+                return request;
             }
         };
 

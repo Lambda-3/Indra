@@ -27,8 +27,9 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import org.lambda3.indra.core.Params;
+import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.exception.ModelNoFound;
+import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 
 import java.util.Collection;
@@ -57,8 +58,8 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
     }
 
     @Override
-    protected MongoIndraTranslator doCreate(Params params) throws ModelNoFound  {
-        String dbName = getDbName(params.language, params.translateTargetLanguage);
+    protected MongoIndraTranslator doCreate(AbstractBasicRequest<?> request) throws ModelNoFound {
+        String dbName = getDbName(request.getLanguage(), IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE);
         if (getAvailableModels().contains(dbName)) {
             return new MongoIndraTranslator(mongoClient, dbName);
         }
@@ -67,8 +68,8 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
     }
 
     @Override
-    protected String createKey(Params params) {
-        return getDbName(params.language, params.translateTargetLanguage);
+    protected String createKey(AbstractBasicRequest<?> request) {
+        return getDbName(request.getLanguage(), IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE);
     }
 
     private String getDbName(String fromLang, String toLang) {

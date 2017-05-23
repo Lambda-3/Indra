@@ -41,15 +41,17 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     private static Random rnd = new Random();
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessRequest request) {
+    public RelatednessResponse getRelatedness(RelatednessPairRequest request) {
         Collection<ScoredTextPair> scored = new ArrayList<>();
-        request.getPairs().forEach(p -> {
-            AnalyzedPair analyzedPair = new AnalyzedPair(p);
+
+        for (TextPair pair : ((RelatednessPairRequest) request).getPairs()) {
+            AnalyzedPair analyzedPair = new AnalyzedPair(pair);
             ScoredTextPair stp = new ScoredTextPair(analyzedPair, rnd.nextDouble());
             scored.add(stp);
-        });
+        }
 
         return new RelatednessResponse(request, scored);
+
     }
 
     @Override
