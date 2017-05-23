@@ -28,9 +28,7 @@ package org.lambda3.indra.service.impl;
 
 import org.lambda3.indra.client.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 /**
  * RelatednessResource implementation that randomly assigns a relatedness value.
@@ -44,19 +42,23 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         Collection<ScoredTextPair> scored = new ArrayList<>();
 
-        for (TextPair pair : ((RelatednessPairRequest) request).getPairs()) {
+        for (TextPair pair : request.getPairs()) {
             AnalyzedPair analyzedPair = new AnalyzedPair(pair);
             ScoredTextPair stp = new ScoredTextPair(analyzedPair, rnd.nextDouble());
             scored.add(stp);
         }
 
         return new RelatednessPairResponse(request, scored);
-
     }
 
     @Override
     public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
-        //TODO implement me.
-        return null;
+        Map<String, Double> results = new LinkedHashMap<>();
+
+        for (String m : request.getMany()) {
+            results.put(m, rnd.nextDouble());
+        }
+
+        return new RelatednessOneToManyResponse(request, results);
     }
 }
