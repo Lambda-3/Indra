@@ -44,23 +44,23 @@ class RelatednessResourceImpl implements RelatednessResource {
     }
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessPairRequest request) {
+    public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
         request.validate();
         RelatednessResult result;
         result = this.driver.getRelatedness(request);
-        RelatednessResponse response = new RelatednessResponse(request, result.getScores());
+        RelatednessPairResponse response = new RelatednessPairResponse(request, result.getScores());
         logger.trace("Response: {}", response);
 
         return response;
     }
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public RelatednessPairResponse getRelatedness(RelatednessOneToManyRequest request) {
         request.validate();
         RelatednessResult result;
         result = this.driver.getRelatedness(request);
-        RelatednessResponse response = new RelatednessResponse(request, result.getScores());
+        RelatednessPairResponse response = new RelatednessPairResponse(request, result.getScores());
         logger.trace("Response: {}", response);
 
         return response;

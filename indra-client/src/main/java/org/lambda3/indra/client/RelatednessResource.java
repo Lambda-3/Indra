@@ -42,11 +42,11 @@ public interface RelatednessResource {
     @POST
     @Valid
     @Path("/")
-    RelatednessResponse getRelatedness(RelatednessPairRequest request);
+    RelatednessPairResponse getRelatedness(RelatednessPairRequest request);
 
     @POST
     @Valid
     @Path("/otm")
-    RelatednessResponse getRelatedness(RelatednessOneToManyRequest request);
+    RelatednessPairResponse getRelatedness(RelatednessOneToManyRequest request);
 
 }

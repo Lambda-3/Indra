@@ -26,18 +26,13 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class RelatednessClient {
 
@@ -54,7 +49,11 @@ public abstract class RelatednessClient {
 
     protected abstract List<AnalyzedPair> doAnalyze(List<TextPair> pairs);
 
+    protected abstract Map<AnalyzedTerm, List<AnalyzedTerm>> doAnalyze(String one, List<String> many);
+
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
+
+    protected abstract Map<String, RealVector> getVectors(Map<AnalyzedTerm, List<AnalyzedTerm>> analyzedTerms);
 
     protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
@@ -63,27 +62,44 @@ public abstract class RelatednessClient {
             VectorPair vectorPair = vectorPairs.get(pair);
 
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
-
-                if (!vectorSpace.getMetadata().isSparse()) {
-                    scoredTextPairs.add(new ScoredTextPair(pair,
-                            func.sim(vectorPair.v1, vectorPair.v2, false)));
-                } else {
-                    scoredTextPairs.add(new ScoredTextPair(pair,
-                            func.sim(vectorPair.v1, vectorPair.v2, true)));
-                }
-
+                scoredTextPairs.add(new ScoredTextPair(pair,
+                        func.sim(vectorPair.v1, vectorPair.v2, vectorSpace.getMetadata().isSparse())));
             } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
-
         }
 
         return scoredTextPairs;
     }
 
-    public final RelatednessResult getRelatedness(List<TextPair> pairs) {
+    public final List<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
         List<AnalyzedPair> analyzedPairs = doAnalyze(pairs);
         Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs);
-        return new RelatednessResult(compute(vectorsPairs));
+        return compute(vectorsPairs);
+    }
+
+    public Map<String, Double> getRelatedness(String one, List<String> many) {
+        Map<AnalyzedTerm, List<AnalyzedTerm>> analyzedTerms = doAnalyze(one, many);
+        Map<String, RealVector> vectors = getVectors(analyzedTerms);
+
+        Map<String, Double> results = new LinkedHashMap<>();
+
+        for (AnalyzedTerm oneAnalyzed : analyzedTerms.keySet()) {
+            RealVector oneVector : vectors.keySet(oneAnalyzed.getTerm());
+
+            List<RealVector> manyVectors = vectors.get(oneVector);
+
+            if (oneVector != null) {
+                for (RealVector mVector : manyVectors) {
+                    if (mVector != null) {
+                        double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse();
+                        results.put()
+                    } else {
+                        scoredTextPairs.add(new ScoredTextPair(pair, 0));
+                    }
+                }
+            }
+        }
+
     }
 }
