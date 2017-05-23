@@ -29,14 +29,13 @@ package org.lambda3.indra.client;
 
 import java.util.Map;
 
-public final class VectorResponse {
+public abstract class VectorResponse {
 
     private String corpus;
     private String model;
     private String language;
-    private Map<String, ?> terms;
 
-    private VectorResponse() {
+    protected VectorResponse() {
         //jersey demands.
     }
 
@@ -44,14 +43,6 @@ public final class VectorResponse {
         this.corpus = request.getCorpus();
         this.model = request.getModel();
         this.language = request.getLanguage();
-    }
-
-    public void setDenseVectors(Map<String, double[]> terms) {
-        this.terms = terms;
-    }
-
-    public void setSparseVectors(Map<String, Map<Integer, Double>> terms) {
-        this.terms = terms;
     }
 
     public String getCorpus() {
@@ -66,29 +57,10 @@ public final class VectorResponse {
         return language;
     }
 
-    public Map<String, Map<Integer, Double>> getSparseVectors() {
-        try {
-            return (Map<String, Map<Integer, Double>>) terms;
-        } catch (ClassCastException e) {
-            return null;
-        }
-    }
-
-    public Map<String, double[]> getDenseVectors() {
-        try {
-            return (Map<String, double[]>) terms;
-        } catch (ClassCastException e) {
-            return null;
-        }
-    }
-
     @Override
     public String toString() {
-        return "VectorResponse{" +
-                "corpus='" + corpus + '\'' +
+        return  "corpus='" + corpus + '\'' +
                 ", model='" + model + '\'' +
-                ", language='" + language + '\'' +
-                ", terms=" + terms +
-                '}';
+                ", language='" + language + '\'';
     }
 }

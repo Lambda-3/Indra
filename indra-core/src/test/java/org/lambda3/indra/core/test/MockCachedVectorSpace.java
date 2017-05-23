@@ -47,6 +47,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
 
     public MockCachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
         super(termComposer, translationComposer);
+        vectors.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
         vectors.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
         vectors.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
         vectors.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));

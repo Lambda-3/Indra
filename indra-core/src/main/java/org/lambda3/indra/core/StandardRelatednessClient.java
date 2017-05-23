@@ -61,9 +61,12 @@ public class StandardRelatednessClient extends RelatednessClient {
     }
 
     @Override
-    protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
+    protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
-        return terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
+        List<AnalyzedTerm> ats = terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
+        ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));
+
+        return ats;
     }
 
     @Override

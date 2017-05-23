@@ -49,7 +49,7 @@ public abstract class RelatednessClient {
 
     protected abstract List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs);
 
-    protected abstract List<AnalyzedTerm> doAnalyze(List<String> terms);
+    protected abstract List<AnalyzedTerm> doAnalyze(String one, List<String> terms);
 
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
 
@@ -76,13 +76,15 @@ public abstract class RelatednessClient {
         return compute(vectorsPairs);
     }
 
-    public Map<String, Double> getRelatedness(String one, List<String> many) {
-        //avoiding creating a new list for performance purpose.
-        many.add(one);
-        List<AnalyzedTerm> analyzedTerms = doAnalyze(many);
-        many.remove(many.size());
+    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
+        List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
 
-        Map<String, RealVector> vectors = vectorSpace.getVectors(analyzedTerms);
+        Map<String, RealVector> vectors;
+        if(translated) {
+            vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms);
+        } else {
+            vectors = vectorSpace.getVectors((List<AnalyzedTerm>) analyzedTerms);
+        }
         Map<String, Double> results = new LinkedHashMap<>();
 
         RealVector oneVector = vectors.get(one);

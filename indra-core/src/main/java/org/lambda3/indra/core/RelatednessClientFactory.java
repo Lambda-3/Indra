@@ -62,7 +62,7 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
     }
 
     @Override
-    protected Object createKey(RelatednessRequest request) {
+    protected String createKey(RelatednessRequest request) {
         return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt();
     }
 }
