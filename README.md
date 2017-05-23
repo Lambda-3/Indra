@@ -193,6 +193,38 @@ This is the response for the request above.
 }
 ```
 
+## One-to-many request data model `(POST /relatedness/otm)`
+
+```json
+{
+        "corpus": "wiki-2014",
+        "model": "W2V",
+        "language": "EN",
+        "scoreFunction": "COSINE",
+        "one" : "love",
+	"many" : ["mother", "father", "child"]
+}
+```
+
+## One-to-many response model
+
+This is the response for the request above.
+```json
+{
+  "corpus" : "wiki-2014",
+  "model" : "W2V",
+  "language" : "EN",
+  "scoreFunction": "COSINE",
+  "one" : "love",
+  "many" : 
+   {
+      "mother" : 0.45996829519139865,
+      "father": 0.32337835808129745,
+      "child": 0.39881548413514684
+   }
+}
+```
+
 # Translated Word Embeddings and Semantic Similarity
 
 For __translated word embeddings__ and __translated semantic similarity__ just append _"mt" : true_ in the JSON payload.
