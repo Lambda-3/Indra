@@ -36,10 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class TranslationBasedRelatednessClient extends RelatednessClient {
+class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
 
-    public TranslationBasedRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
+    TranslationBasedRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
         super(request, vectorSpace, func);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
@@ -79,9 +79,8 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
-            if (analyzedPair != null) {
-                analyzedPairs.add(analyzedPair);
-            }
+
+            analyzedPairs.add(analyzedPair);
 
             analyzedTerms.add(analyzedPair.getTranslatedT1());
             analyzedTerms.add(analyzedPair.getTranslatedT2());
@@ -92,6 +91,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
                 ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
@@ -104,6 +104,7 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
         return vectorSpace.getTranslatedVectorPairs((List<AnalyzedTranslatedPair>) analyzedPairs);
     }
