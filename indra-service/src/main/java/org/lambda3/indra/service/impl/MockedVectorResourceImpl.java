@@ -49,7 +49,9 @@ public class MockedVectorResourceImpl implements VectorResource {
     public VectorResponse getVector(VectorRequest request) {
         Map<String, Map<Integer, Double>> terms = new HashMap<>();
         request.getTerms().forEach(t -> terms.put(t, RealVectorUtil.vectorToMap(new ArrayRealVector(rvg.nextVector()))));
+        VectorResponse response = new VectorResponse(request);
+        response.setSparseVectors(terms);
 
-        return new VectorResponse(request, terms);
+        return response;
     }
 }
