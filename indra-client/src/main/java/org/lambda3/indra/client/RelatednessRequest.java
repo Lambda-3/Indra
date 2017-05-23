@@ -29,13 +29,13 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class RelatednessRequest extends AbstractBasicRequest<RelatednessRequest> {
+public abstract class RelatednessRequest<T extends AbstractBasicRequest> extends AbstractBasicRequest<T> {
 
     protected ScoreFunction scoreFunction;
 
-    public RelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
+    public T scoreFunction(ScoreFunction scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);
-        return this;
+        return (T) this;
     }
 
     public ScoreFunction getScoreFunction() {

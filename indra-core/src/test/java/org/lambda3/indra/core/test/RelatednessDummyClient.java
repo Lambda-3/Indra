@@ -27,6 +27,7 @@ package org.lambda3.indra.core.test;
  */
 
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.RelatednessClient;
@@ -34,7 +35,6 @@ import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
 import org.lambda3.indra.core.function.CosineRelatednessFunction;
-import org.lambda3.indra.core.utils.ParamsUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class RelatednessDummyClient extends RelatednessClient {
     private static Random rnd = new Random();
 
     protected RelatednessDummyClient() {
-        super(ParamsUtils.buildNoTranslateCosineDefaultParams("corpus", "EN", "ESA"),
+        super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"),
                 new MockCachedVectorSpace(new UniqueSumVectorComposer(), new AveragedVectorComposer()),
                 new CosineRelatednessFunction());
     }

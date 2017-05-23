@@ -26,14 +26,9 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.RelatednessOneToManyRequest;
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.RelatednessResource;
-import org.lambda3.indra.client.RelatednessResponse;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.utils.ParamsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,21 +44,22 @@ class RelatednessResourceImpl implements RelatednessResource {
     }
 
     @Override
-    public RelatednessResponse getRelatedness(RelatednessRequest request) {
+    public RelatednessResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
-        return process(request, false);
+        request.validate();
+        RelatednessResult result;
+        result = this.driver.getRelatedness(request);
+        RelatednessResponse response = new RelatednessResponse(request, result.getScores());
+        logger.trace("Response: {}", response);
+
+        return response;
     }
 
     @Override
     public RelatednessResponse getRelatedness(RelatednessOneToManyRequest request) {
-        return null;
-    }
-
-
-    private RelatednessResponse process(RelatednessRequest request, boolean translate) {
         request.validate();
-        Params params = ParamsUtils.buildParams(request, translate);
-        RelatednessResult result = this.driver.getRelatedness(request.getPairs(), params);
+        RelatednessResult result;
+        result = this.driver.getRelatedness(request);
         RelatednessResponse response = new RelatednessResponse(request, result.getScores());
         logger.trace("Response: {}", response);
 

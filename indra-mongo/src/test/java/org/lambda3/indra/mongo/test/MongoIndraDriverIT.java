@@ -28,12 +28,11 @@ package org.lambda3.indra.mongo.test;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.Params;
 import org.lambda3.indra.core.RelatednessResult;
-import org.lambda3.indra.core.utils.ParamsUtils;
 import org.lambda3.indra.mongo.MongoIndraDriver;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
@@ -50,7 +49,7 @@ public final class MongoIndraDriverIT {
     private MongoTranslatorFactory translatorFactory;
 
     @BeforeTest
-    public void configure() {
+    private void configure() {
         final String mongoURI = System.getProperty("indra.mongoURI");
         if (mongoURI == null) {
             Assert.fail("System.getProperty(\"indra.mongoURI\") is null. Provide a mongoURI to execute the integration test.");
@@ -62,19 +61,19 @@ public final class MongoIndraDriverIT {
         translatorFactory = new MongoTranslatorFactory(mongoClient);
     }
 
-    public static Params buildDefaulParams(Boolean applyStopWords, Integer minWordLength) {
-        return new Params("wiki-2014", ScoreFunction.COSINE, "EN", "W2V", false, applyStopWords, minWordLength,
-                ParamsUtils.DEFAULT_TERM_COMPOSTION, ParamsUtils.DEFAULT_TRANSLATION_COMPOSTION);
+    private static RelatednessPairRequest buildDefaulRequest() {
+        return new RelatednessPairRequest().corpus("wiki-2014").scoreFunction(ScoreFunction.COSINE).language("EN").
+                model("W2V").mt(false);
     }
 
     @Test
     public void relatednessSimpleTest() {
-        Params params = ParamsUtils.buildNoTranslateCosineDefaultParams("wiki-2014", "EN", "W2V");
+        RelatednessPairRequest request = buildDefaulRequest();
+        TextPair pair = new TextPair("car", "engine");
+        request.pairs(Arrays.asList(pair));
 
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
-        TextPair pair = new TextPair("car", "engine");
-
-        RelatednessResult res = driver.getRelatedness(Collections.singletonList(pair), params);
+        RelatednessResult res = driver.getRelatedness(request);
         Assert.assertNotNull(res);
         Assert.assertEquals(1, res.getScores().size());
         ScoredTextPair scoredPair = res.getScore(pair);
@@ -85,11 +84,12 @@ public final class MongoIndraDriverIT {
 
     @Test
     public void translatedRelatednessTest() {
-        Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
-
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        RelatednessPairRequest request = buildDefaulRequest().mt(true);
         List<TextPair> pairs = Arrays.asList(new TextPair("carro", "motor"), new TextPair("carro amarelo", "motor preto"));
-        RelatednessResult res = driver.getRelatedness(pairs, params);
+        request.pairs(pairs);
+
+        RelatednessResult res = driver.getRelatedness(request);
 
         Assert.assertNotNull(res);
         Assert.assertEquals(pairs.size(), res.getScores().size());
@@ -104,11 +104,12 @@ public final class MongoIndraDriverIT {
 
     @Test
     public void translatedZeroRelatednessTest() {
-        Params params = ParamsUtils.buildTranslateCosineDefaultParams("wiki-2014", "PT", "W2V");
-
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        RelatednessPairRequest request = buildDefaulRequest().mt(true);
         List<TextPair> pairs = Arrays.asList(new TextPair("asdfasdf", "asdfpoqw"), new TextPair("adwwwf cawerr", "asf erewr"));
-        RelatednessResult res = driver.getRelatedness(pairs, params);
+        request.pairs(pairs);
+
+        RelatednessResult res = driver.getRelatedness(request);
 
         Assert.assertNotNull(res);
         Assert.assertEquals(pairs.size(), res.getScores().size());
@@ -123,21 +124,23 @@ public final class MongoIndraDriverIT {
 
     @Test
     public void testMinWordLengthParam() {
-        Params params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 3);
-
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        RelatednessPairRequest request = buildDefaulRequest().minWordLength(3);
         List<TextPair> pairs = Collections.singletonList(new TextPair("love", "romance"));
-        RelatednessResult res = driver.getRelatedness(pairs, params);
+        request.pairs(pairs);
+
+        RelatednessResult res = driver.getRelatedness(request);
         Assert.assertEquals(res.getScores().size(), 1);
         for (ScoredTextPair stp : res.getScores()) {
             Assert.assertTrue(Math.abs(stp.score) > 0d);
         }
 
-        params = buildDefaulParams(ParamsUtils.DONT_OVERRIDE_DEFAULT_APPLY_STOPWORDS, 5);
-
         driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
+        request = buildDefaulRequest().minWordLength(5);
         pairs = Collections.singletonList(new TextPair("love", "romance"));
-        res = driver.getRelatedness(pairs, params);
+        request.pairs(pairs);
+
+        res = driver.getRelatedness(request);
         Assert.assertEquals(res.getScores().size(), 1);
         for (ScoredTextPair stp : res.getScores()) {
             Assert.assertEquals(Math.abs(stp.score), 0d);

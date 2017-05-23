@@ -30,8 +30,6 @@ import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.client.VectorResource;
 import org.lambda3.indra.client.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.Params;
-import org.lambda3.indra.core.utils.ParamsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +53,7 @@ public class VectorResourceImpl implements VectorResource {
 
     public VectorResponse process(VectorRequest request, boolean translate) {
         logger.trace("getVector - User Request: {}", request);
-        Params params = ParamsUtils.buildParams(request, translate);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), params);
+        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
 
         VectorResponse response = new VectorResponse(request, results);
         logger.trace("Response: {}", response);

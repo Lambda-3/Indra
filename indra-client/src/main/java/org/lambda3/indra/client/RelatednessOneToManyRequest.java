@@ -29,7 +29,7 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public class RelatednessOneToManyRequest extends AbstractBasicRequest<RelatednessOneToManyRequest> {
+public class RelatednessOneToManyRequest extends RelatednessRequest<RelatednessOneToManyRequest> {
 
     private String one;
     private List<String> many;

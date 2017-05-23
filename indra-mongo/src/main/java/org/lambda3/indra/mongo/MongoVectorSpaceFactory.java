@@ -27,10 +27,12 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import org.lambda3.indra.core.Params;
+import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.exception.ModelNoFound;
+import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,26 +52,26 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
     }
 
     @Override
-    public MongoVectorSpace doCreate(Params params) throws ModelNoFound {
-        if (getAvailableModels().contains(getDBName(params))) {
-            VectorComposer termComposer = this.vectorComposerFactory.getComposer(params.termComposition);
-            VectorComposer translationComposer = this.vectorComposerFactory.getComposer(params.translationComposition);
-            return new MongoVectorSpace(mongoClient, getDBName(params), termComposer, translationComposer);
+    public MongoVectorSpace doCreate(AbstractBasicRequest request) throws ModelNoFound {
+        if (getAvailableModels().contains(getDBName(request))) {
+            VectorComposer termComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION);
+            VectorComposer translationComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION);
+            return new MongoVectorSpace(mongoClient, getDBName(request), termComposer, translationComposer);
         }
 
-        throw new ModelNoFound(getDBName(params));
+        throw new ModelNoFound(getDBName(request));
     }
 
     @Override
-    public Params createKey(Params params) {
-        return params;
+    public Object createKey(AbstractBasicRequest request) {
+        return request;
     }
 
-    private String getDBName(Params params) {
+    private String getDBName(AbstractBasicRequest<?> request) {
         return String.format("%s-%s-%s",
-                params.model.toLowerCase(),
-                params.translate ? params.translateTargetLanguage.toLowerCase() : params.language.toLowerCase(),
-                params.corpusName.toLowerCase());
+                request.getModel().toLowerCase(),
+                request.isMt() ? IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE.toLowerCase() : request.getLanguage().toLowerCase(),
+                request.getCorpus().toLowerCase());
     }
 
     @Override

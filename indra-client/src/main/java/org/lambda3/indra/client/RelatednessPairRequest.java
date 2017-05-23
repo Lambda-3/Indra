@@ -29,10 +29,10 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public class RelatednessPairRequest extends RelatednessRequest {
+public class RelatednessPairRequest extends RelatednessRequest<RelatednessPairRequest> {
     private List<TextPair> pairs;
 
-    public RelatednessRequest pairs(List<TextPair> pairs) {
+    public RelatednessPairRequest pairs(List<TextPair> pairs) {
         this.pairs = Objects.requireNonNull(pairs);
         return this;
     }
