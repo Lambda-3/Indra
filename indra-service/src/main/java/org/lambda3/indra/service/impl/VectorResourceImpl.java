@@ -48,14 +48,17 @@ public class VectorResourceImpl implements VectorResource {
 
     @Override
     public VectorResponse getVector(VectorRequest request) {
-        return process(request, false);
-    }
-
-    public VectorResponse process(VectorRequest request, boolean translate) {
         logger.trace("getVector - User Request: {}", request);
-        Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
+        VectorResponse response = new VectorResponse(request);
 
-        VectorResponse response = new VectorResponse(request, results);
+        if (this.driver.isSparseModel(request)) {
+            Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
+            response.setSparseVectors(results);
+        } else {
+            Map<String, double[]> results = this.driver.getVectorsAsArray(request.getTerms(), request);
+            response.setDenseVectors(results);
+        }
+
         logger.trace("Response: {}", response);
         return response;
     }

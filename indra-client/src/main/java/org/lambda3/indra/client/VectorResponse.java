@@ -34,17 +34,23 @@ public final class VectorResponse {
     private String corpus;
     private String model;
     private String language;
-    private Map<String, Map<Integer, Double>> terms;
+    private Map<String, ?> terms;
 
     private VectorResponse() {
         //jersey demands.
     }
 
-    //TODO distinguish between sparse and dense vector.
-    public VectorResponse(VectorRequest request, Map<String, Map<Integer, Double>> terms) {
+    public VectorResponse(VectorRequest request) {
         this.corpus = request.getCorpus();
         this.model = request.getModel();
         this.language = request.getLanguage();
+    }
+
+    public void setDenseVectors(Map<String, double[]> terms) {
+        this.terms = terms;
+    }
+
+    public void setSparseVectors(Map<String, Map<Integer, Double>> terms) {
         this.terms = terms;
     }
 
@@ -60,8 +66,20 @@ public final class VectorResponse {
         return language;
     }
 
-    public Map<String, Map<Integer, Double>> getTerms() {
-        return terms;
+    public Map<String, Map<Integer, Double>> getSparseVectors() {
+        try {
+            return (Map<String, Map<Integer, Double>>) terms;
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+
+    public Map<String, double[]> getDenseVectors() {
+        try {
+            return (Map<String, double[]>) terms;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     @Override

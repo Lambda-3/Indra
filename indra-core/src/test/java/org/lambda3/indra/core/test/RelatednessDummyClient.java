@@ -33,6 +33,7 @@ import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
 import org.lambda3.indra.core.function.CosineRelatednessFunction;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -61,8 +62,7 @@ public class RelatednessDummyClient extends RelatednessClient {
 
     @Override
     protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
-        return null;
-        //TODO implement me.
+        return terms.stream().map(t -> new AnalyzedTerm(t, Collections.singletonList(t))).collect(Collectors.toList());
     }
 
     @Override

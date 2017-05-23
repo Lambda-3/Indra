@@ -75,6 +75,10 @@ public class IndraDriver {
         return response;
     }
 
+    public final boolean isSparseModel(VectorRequest request) {
+        return vectorSpaceFactory.create(request).getMetadata().isSparse();
+    }
+
     public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {
         logger.trace("getting vectors for {} terms (params={})", terms.size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
