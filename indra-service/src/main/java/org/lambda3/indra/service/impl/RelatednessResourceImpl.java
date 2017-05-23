@@ -28,7 +28,6 @@ package org.lambda3.indra.service.impl;
 
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.RelatednessResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,20 +46,16 @@ class RelatednessResourceImpl implements RelatednessResource {
     public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
         request.validate();
-        RelatednessResult result;
-        result = this.driver.getRelatedness(request);
-        RelatednessPairResponse response = new RelatednessPairResponse(request, result.getScores());
+        RelatednessPairResponse response = this.driver.getRelatedness(request);
         logger.trace("Response: {}", response);
 
         return response;
     }
 
     @Override
-    public RelatednessPairResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
         request.validate();
-        RelatednessResult result;
-        result = this.driver.getRelatedness(request);
-        RelatednessPairResponse response = new RelatednessPairResponse(request, result.getScores());
+        RelatednessOneToManyResponse response = this.driver.getRelatedness(request);
         logger.trace("Response: {}", response);
 
         return response;

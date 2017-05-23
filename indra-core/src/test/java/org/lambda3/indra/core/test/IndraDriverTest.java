@@ -29,7 +29,6 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.RelatednessResult;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
@@ -86,9 +85,9 @@ public class IndraDriverTest {
     public void getRelatedness() {
         RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
         request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
-        RelatednessResult res = driver.getRelatedness(request);
+        RelatednessPairResponse res = driver.getRelatedness(request);
 
-        for (ScoredTextPair pair : res.getScores()) {
+        for (ScoredTextPair pair : res.getPairs()) {
             Assert.assertEquals(Math.floor(pair.score), -1d);
         }
     }
@@ -98,9 +97,9 @@ public class IndraDriverTest {
         RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(ScoreFunction.COSINE).language("PT");
         request.pairs(Arrays.asList(new TextPair("blabla", "ttt"),
                 new TextPair("these tokens are not in the vector model", "neither those")));
-        RelatednessResult res = driver.getRelatedness(request);
+        RelatednessPairResponse res = driver.getRelatedness(request);
 
-        for (ScoredTextPair pair : res.getScores()) {
+        for (ScoredTextPair pair : res.getPairs()) {
             Assert.assertEquals(pair.score, 0d);
         }
     }

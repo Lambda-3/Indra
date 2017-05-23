@@ -28,11 +28,11 @@ package org.lambda3.indra.core.test;
 
 import org.lambda3.indra.client.ScoredTextPair;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.RelatednessResult;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.List;
 
 public class RelatednessTest {
 
@@ -41,11 +41,11 @@ public class RelatednessTest {
         RelatednessDummyClient cli = new RelatednessDummyClient();
         TextPair pair = new TextPair("car", "engine");
 
-        RelatednessResult res = cli.getRelatedness(Collections.singletonList(pair));
+        List<ScoredTextPair> res = cli.getRelatedness(Collections.singletonList(pair));
 
         Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getScores().size());
-        ScoredTextPair scoredPair = res.getScore(pair);
+        Assert.assertEquals(1, res.size());
+        ScoredTextPair scoredPair = res.get(0);
         Assert.assertEquals(pair.t1, scoredPair.t1);
         Assert.assertEquals(pair.t2, scoredPair.t2);
     }

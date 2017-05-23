@@ -55,7 +55,7 @@ class MockedRelatednessResourceImpl implements RelatednessResource {
     }
 
     @Override
-    public RelatednessPairResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
         //TODO implement me.
         return null;
     }
