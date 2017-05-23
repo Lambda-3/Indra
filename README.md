@@ -112,11 +112,21 @@ This is the response for the request above.
   "language": "EN",
   "terms":
     {
-      "love" : { "0" : 0.333, "1" : 0.21, "2" : 0.3532 },
-      "mother" : { "0" : 0.6356, "1" : 0.756, "2" : 0.9867 }
+      "love" : [0.333, 0.21, 0.3532],
+      "mother" : [0.6356, 0.756, 0.9867]
     }
 }
 ```
+
+In the case that the model provides sparse vectors, *terms* attribute will be defined as follows:
+
+```json
+{
+  "love" : { "0" : 0.333, "1" : 0.21, "2" : 0.3532 },
+  "mother" : { "0" : 0.6356, "1" : 0.756, "2" : 0.9867 }
+}
+```
+Currently, only the __ESA__ model is sparse.
 
 # Semantic Similarity
 
@@ -185,10 +195,7 @@ This is the response for the request above.
 
 # Translated Word Embeddings and Semantic Similarity
 
-For __translated word embeddings__ and __translated semantic similarity__ just append "/mt" in the endpoint address and submit the same paylod.
-
-* `POST /relatedness/mt`
-* `POST /vectors/mt`
+For __translated word embeddings__ and __translated semantic similarity__ just append _"mt" : true_ in the JSON payload.
 
 # Usage
 
