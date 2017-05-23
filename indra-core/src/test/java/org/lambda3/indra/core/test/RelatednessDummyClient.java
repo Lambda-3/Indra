@@ -26,10 +26,9 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.RelatednessPairRequest;
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.OneToManyAnalyzedTerms;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
@@ -63,7 +62,19 @@ public class RelatednessDummyClient extends RelatednessClient {
     }
 
     @Override
+    protected OneToManyAnalyzedTerms doAnalyze(String one, List<String> many) {
+        //TODO implement me.
+        return null;
+    }
+
+    @Override
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
         return analyzedPairs.stream().collect(Collectors.toMap(p -> p, p -> new VectorPair()));
+    }
+
+    @Override
+    protected Map<AnalyzedTerm, RealVector> getVectors(OneToManyAnalyzedTerms analyzedTerms) {
+        //TODO implement me.
+        return null;
     }
 }

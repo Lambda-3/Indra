@@ -26,7 +26,9 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.function.RelatednessFunction;
@@ -59,8 +61,22 @@ public class StandardRelatednessClient extends RelatednessClient {
     }
 
     @Override
+    protected OneToManyAnalyzedTerms doAnalyze(String one, List<String> many) {
+        //TODO implement me.
+        return null;
+    }
+
+
+    @Override
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
         return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs);
     }
+
+    @Override
+    protected Map<AnalyzedTerm, RealVector> getVectors(OneToManyAnalyzedTerms analyzedTerms) {
+        //TODO implement me.
+        return null;
+    }
+
 
 }
