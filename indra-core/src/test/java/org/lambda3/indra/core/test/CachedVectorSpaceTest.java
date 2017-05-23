@@ -29,7 +29,6 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.AveragedVectorComposer;
 import org.lambda3.indra.core.composition.SumVectorComposer;
@@ -37,6 +36,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -132,7 +132,7 @@ public class CachedVectorSpaceTest {
         analyzedPair.getTranslatedT2().putAnalyzedTranslatedTokens("pai", Arrays.asList("father", "dad", "patriarch"));
         analyzedPair.getTranslatedT2().putAnalyzedTranslatedTokens("avaliação", Arrays.asList("test", "evaluation"));
 
-        List<AnalyzedTranslatedPair> pairs = Arrays.asList(analyzedPair);
+        List<AnalyzedTranslatedPair> pairs = Collections.singletonList(analyzedPair);
 
         Map<AnalyzedTranslatedPair, VectorPair> vectorPairs = vectorSpace.getTranslatedVectorPairs(pairs);
         Assert.assertEquals(vectorPairs.size(), 1);

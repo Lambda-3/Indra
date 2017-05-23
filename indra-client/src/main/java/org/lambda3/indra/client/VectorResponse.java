@@ -27,8 +27,6 @@ package org.lambda3.indra.client;
  */
 
 
-import java.util.Map;
-
 public abstract class VectorResponse {
 
     private String corpus;

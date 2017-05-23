@@ -1,20 +1,44 @@
 package org.lambda3.indra.service.test;
 
-import org.lambda3.indra.client.*;
+/*-
+ * ==========================License-Start=============================
+ * Indra Web Service Module
+ * --------------------------------------------------------------------
+ * Copyright (C) 2016 - 2017 Lambda^3
+ * --------------------------------------------------------------------
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * ==========================License-End===============================
+ */
+
+import org.lambda3.indra.client.DenseVectorResponse;
+import org.lambda3.indra.client.SparseVectorResponse;
+import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.client.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.VectorComposerFactory;
-import org.lambda3.indra.core.test.MockCachedVectorSpace;
-import org.lambda3.indra.core.test.MockIndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.test.IndraDriverTest;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.lambda3.indra.service.impl.VectorResourceImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +46,8 @@ public class VectorResourceImplTest {
 
     @Test
     public void generalTest() {
-        VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
-        IndraTranslatorFactory translatorFactory = createIndraTranslatorFactory();
+        VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactor();
+        IndraTranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
         IndraDriver driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
         VectorResourceImpl impl = new VectorResourceImpl(driver);
 
@@ -42,51 +66,5 @@ public class VectorResourceImplTest {
         }
 
         Assert.assertFalse(response instanceof SparseVectorResponse);
-    }
-
-
-    //TODO repeated code to be solved.
-    private static VectorSpaceFactory createVectorSpaceFactor() {
-        VectorSpaceFactory factory = new VectorSpaceFactory() {
-            @Override
-            protected VectorSpace doCreate(AbstractBasicRequest request) {
-                VectorComposerFactory composerFactory = new VectorComposerFactory();
-                return new MockCachedVectorSpace(composerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION),
-                        composerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION));
-            }
-
-            @Override
-            protected String createKey(AbstractBasicRequest request) {
-                return request.toString();
-            }
-
-            @Override
-            public Collection<String> getAvailableModels() {
-                return null;
-            }
-        };
-
-        return factory;
-    }
-
-    private static IndraTranslatorFactory createIndraTranslatorFactory() {
-        IndraTranslatorFactory factory = new IndraTranslatorFactory() {
-            @Override
-            public Collection<String> getAvailableModels() {
-                return null;
-            }
-
-            @Override
-            protected IndraTranslator doCreate(AbstractBasicRequest request) {
-                return new MockIndraTranslator();
-            }
-
-            @Override
-            protected String createKey(AbstractBasicRequest request) {
-                return request.toString();
-            }
-        };
-
-        return factory;
     }
 }

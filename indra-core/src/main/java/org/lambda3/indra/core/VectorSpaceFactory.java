@@ -28,7 +28,6 @@ package org.lambda3.indra.core;
 
 import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 
 import java.util.Collection;
