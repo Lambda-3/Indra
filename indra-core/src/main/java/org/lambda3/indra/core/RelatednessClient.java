@@ -53,7 +53,7 @@ public abstract class RelatednessClient {
 
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
 
-    protected abstract Map<String, RealVector> getVectors(Map<AnalyzedTerm, List<AnalyzedTerm>> analyzedTerms);
+    protected abstract Map<AnalyzedTerm, RealVector> getVectors(Map<AnalyzedTerm, List<AnalyzedTerm>> analyzedTerms);
 
     protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
@@ -80,26 +80,28 @@ public abstract class RelatednessClient {
 
     public Map<String, Double> getRelatedness(String one, List<String> many) {
         Map<AnalyzedTerm, List<AnalyzedTerm>> analyzedTerms = doAnalyze(one, many);
-        Map<String, RealVector> vectors = getVectors(analyzedTerms);
+        Map<AnalyzedTerm, RealVector> vectors = getVectors(analyzedTerms);
 
         Map<String, Double> results = new LinkedHashMap<>();
 
         for (AnalyzedTerm oneAnalyzed : analyzedTerms.keySet()) {
-            RealVector oneVector : vectors.keySet(oneAnalyzed.getTerm());
-
-            List<RealVector> manyVectors = vectors.get(oneVector);
+            RealVector oneVector = vectors.get(oneAnalyzed);
 
             if (oneVector != null) {
-                for (RealVector mVector : manyVectors) {
+                List<AnalyzedTerm> manyTerms = analyzedTerms.get(oneAnalyzed);
+
+                for (AnalyzedTerm mTerm : manyTerms) {
+                    RealVector mVector = vectors.get(mTerm);
                     if (mVector != null) {
-                        double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse();
-                        results.put()
+                        double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse());
+                        results.put(mTerm.getTerm(), score);
                     } else {
-                        scoredTextPairs.add(new ScoredTextPair(pair, 0));
+                        results.put(mTerm.getTerm(), 0d);
                     }
                 }
             }
         }
 
+        return results;
     }
 }
