@@ -47,13 +47,11 @@ public abstract class RelatednessClient {
         this.func = Objects.requireNonNull(func);
     }
 
-    protected abstract List<AnalyzedPair> doAnalyze(List<TextPair> pairs);
+    protected abstract List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs);
 
-    protected abstract OneToManyAnalyzedTerms doAnalyze(String one, List<String> many);
+    protected abstract List<AnalyzedTerm> doAnalyze(List<String> terms);
 
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
-
-    protected abstract Map<AnalyzedTerm, RealVector> getVectors(OneToManyAnalyzedTerms analyzedTerms);
 
     protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
         List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
@@ -73,29 +71,29 @@ public abstract class RelatednessClient {
     }
 
     public final List<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
-        List<AnalyzedPair> analyzedPairs = doAnalyze(pairs);
+        List<AnalyzedPair> analyzedPairs = doAnalyzePairs(pairs);
         Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs);
         return compute(vectorsPairs);
     }
 
     public Map<String, Double> getRelatedness(String one, List<String> many) {
-        OneToManyAnalyzedTerms analyzedTerms = doAnalyze(one, many);
-        Map<AnalyzedTerm, RealVector> vectors = getVectors(analyzedTerms);
+        //avoiding creating a new list for performance purpose.
+        many.add(one);
+        List<AnalyzedTerm> analyzedTerms = doAnalyze(many);
+        many.remove(many.size());
 
+        Map<String, RealVector> vectors = vectorSpace.getVectors(analyzedTerms);
         Map<String, Double> results = new LinkedHashMap<>();
 
-        RealVector oneVector = vectors.get(analyzedTerms.oneAnalyzedTerm);
+        RealVector oneVector = vectors.get(one);
 
-        if (oneVector != null) {
-
-            for (AnalyzedTerm mTerm : analyzedTerms.manyAnalyzedTerms) {
-                RealVector mVector = vectors.get(mTerm);
-                if (mVector != null) {
-                    double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse());
-                    results.put(mTerm.getTerm(), score);
-                } else {
-                    results.put(mTerm.getTerm(), 0d);
-                }
+        for (String m : many) {
+            RealVector mVector = vectors.get(m);
+            if (oneVector != null && mVector != null) {
+                double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse());
+                results.put(m, score);
+            } else {
+                results.put(m, 0d);
             }
         }
 

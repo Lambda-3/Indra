@@ -26,7 +26,6 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.RelatednessRequest;
@@ -36,6 +35,7 @@ import org.lambda3.indra.core.function.RelatednessFunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StandardRelatednessClient extends RelatednessClient {
 
@@ -44,7 +44,7 @@ public class StandardRelatednessClient extends RelatednessClient {
     }
 
     @Override
-    protected List<AnalyzedPair> doAnalyze(List<TextPair> pairs) {
+    protected List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs) {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
@@ -61,22 +61,13 @@ public class StandardRelatednessClient extends RelatednessClient {
     }
 
     @Override
-    protected OneToManyAnalyzedTerms doAnalyze(String one, List<String> many) {
-        //TODO implement me.
-        return null;
+    protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        return terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
     }
-
 
     @Override
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
         return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs);
     }
-
-    @Override
-    protected Map<AnalyzedTerm, RealVector> getVectors(OneToManyAnalyzedTerms analyzedTerms) {
-        //TODO implement me.
-        return null;
-    }
-
-
 }

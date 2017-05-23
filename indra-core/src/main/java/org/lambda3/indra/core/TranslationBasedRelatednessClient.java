@@ -26,7 +26,6 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.translation.IndraTranslator;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
@@ -47,15 +47,35 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
         this.translator = translator;
     }
 
+
+    private void translate(List<MutableTranslatedTerm> analyzedTerms) {
+        logger.debug("Translating terms.");
+
+        if (translator != null) {
+            translator.translate(analyzedTerms);
+
+            for (MutableTranslatedTerm term : analyzedTerms) {
+                Map<String, List<String>> transTokens = term.getTranslatedTokens();
+                for (String token : transTokens.keySet()) {
+                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
+                            IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE, vectorSpace.getMetadata().getApplyStemmer()));
+                }
+            }
+
+        } else {
+            logger.error("IndraTranslator is not available, but getParams().translate is true.");
+        }
+    }
+
     @Override
-    protected List<AnalyzedPair> doAnalyze(List<TextPair> pairs) {
+    protected List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs) {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        ModelMetadata metadata = vectorSpace.getMetadata();
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), ModelMetadata.createTranslationVersion(metadata));
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
@@ -67,40 +87,24 @@ public class TranslationBasedRelatednessClient extends RelatednessClient {
             analyzedTerms.add(analyzedPair.getTranslatedT2());
         }
 
-        logger.debug("Translating terms.");
-
-        if (translator != null) {
-            translator.translate(analyzedTerms);
-
-            for (MutableTranslatedTerm term : analyzedTerms) {
-                Map<String, List<String>> transTokens = term.getTranslatedTokens();
-                for (String token : transTokens.keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
-                            IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE, metadata.getApplyStemmer()));
-                }
-            }
-
-        } else {
-            logger.error("IndraTranslator is not available, but getParams().translate is true.");
-        }
-
+        translate(analyzedTerms);
         return analyzedPairs;
     }
 
     @Override
-    protected OneToManyAnalyzedTerms doAnalyze(String one, List<String> many) {
-        //TODO implement me.
-        return null;
+    protected List<AnalyzedTerm> doAnalyze(List<String> terms) {
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
+                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+
+        List<? extends AnalyzedTerm> analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
+                .collect(Collectors.toList());
+
+        translate((List<MutableTranslatedTerm>) analyzedTerms);
+        return (List<AnalyzedTerm>) analyzedTerms;
     }
 
     @Override
     protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
         return vectorSpace.getTranslatedVectorPairs((List<AnalyzedTranslatedPair>) analyzedPairs);
-    }
-
-    @Override
-    protected Map<AnalyzedTerm, RealVector> getVectors(OneToManyAnalyzedTerms analyzedTerms) {
-        //TODO implement me.
-        return null;
     }
 }
