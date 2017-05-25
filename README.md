@@ -254,7 +254,7 @@ url="http://dx.doi.org/10.1007/978-3-319-49004-5_14"
 }
 ```
 
-# Contributors
+# Contributors (alphabetical order)
 
 - Andre Freitas
 - Brian Davis
@@ -262,5 +262,3 @@ url="http://dx.doi.org/10.1007/978-3-319-49004-5_14"
 - Leonardo Souza
 - Siamak Barzegar
 - Siegfried Handschuh
-
-
