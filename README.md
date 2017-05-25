@@ -253,4 +253,14 @@ doi="10.1007/978-3-319-49004-5_14",
 url="http://dx.doi.org/10.1007/978-3-319-49004-5_14"
 }
 ```
----
+
+# Contributors
+
+- Andre Freitas
+- Brian Davis
+- Juliano Sales
+- Leonardo Souza
+- Siamak Barzegar
+- Siegfried Handschuh
+
+
