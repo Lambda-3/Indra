@@ -28,8 +28,9 @@ package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.CachedVectorSpace;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.util.*;
@@ -80,6 +81,16 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     @Override
+    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
+    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
     public ModelMetadata getMetadata() {
         return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
     }
@@ -88,6 +99,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     protected void collectVectors(Collection<String> terms, int limit) {
         //does nothing
     }
+
 
     @Override
     protected List<RealVector> getFromCache(Collection<String> terms) {
