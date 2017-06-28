@@ -34,6 +34,7 @@ import com.mongodb.client.model.Filters;
 import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
 import org.bson.types.Binary;
+import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
@@ -78,13 +79,22 @@ public class MongoVectorSpace extends CachedVectorSpace {
             logger.debug("Using stored metadata of {}", dbName);
             Document storedMetadata = metadataColl.find().first();
             metadata = ModelMetadata.createFromMap(storedMetadata);
-        }
-        else {
+        } else {
             logger.debug("No metadata found in {}, using defaults.", dbName);
             metadata = ModelMetadata.createDefault();
         }
 
         logger.info("Model metadata: {}", metadata);
+    }
+
+    @Override
+    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' functions.");
+    }
+
+    @Override
+    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' functions.");
     }
 
     @Override
@@ -139,12 +149,10 @@ public class MongoVectorSpace extends CachedVectorSpace {
 
             if (metadata.getLoaderId().equalsIgnoreCase("legacy")) {
                 return BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
-            }
-            else {
+            } else {
                 return BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error unmarshalling vector", e);
         }
 

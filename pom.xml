@@ -38,6 +38,7 @@
         <module>indra-core</module>
         <module>indra-client</module>
         <module>indra-mongo</module>
+        <module>indra-annoy</module>
     </modules>
 
     <properties>
