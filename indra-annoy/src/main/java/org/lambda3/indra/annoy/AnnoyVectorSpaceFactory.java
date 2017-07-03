@@ -26,7 +26,7 @@ package org.lambda3.indra.annoy;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.Params;
+import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 
@@ -36,17 +36,17 @@ import java.util.Collection;
 public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
 
     @Override
-    protected VectorSpace doCreate(Params params) {
-        return null;
-    }
-
-    @Override
-    protected Params createKey(Params params) {
-        return null;
-    }
-
-    @Override
     public Collection<String> getAvailableModels() {
+        return null;
+    }
+
+    @Override
+    protected VectorSpace doCreate(AbstractBasicRequest request) {
+        return null;
+    }
+
+    @Override
+    protected String createKey(AbstractBasicRequest request) {
         return null;
     }
 }
