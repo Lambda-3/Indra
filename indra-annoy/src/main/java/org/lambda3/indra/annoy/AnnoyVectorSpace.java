@@ -1,8 +1,8 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.annoy;
 
 /*-
  * ==========================License-Start=============================
- * Indra Core Module
+ * Indra Annoy Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.core;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,34 +27,44 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-public interface VectorSpace {
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs);
+public class AnnoyVectorSpace extends CachedVectorSpace {
 
-    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs);
+    public AnnoyVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
+        super(termComposer, translationComposer);
+    }
 
-    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms);
+    @Override
+    protected void collectVectors(Collection<String> terms, int limit) {
 
-    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms);
+    }
 
-    LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk);
+    @Override
+    protected List<RealVector> getFromCache(Collection<String> terms) {
+        return null;
+    }
 
-    LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk);
+    @Override
+    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
+        return null;
+    }
 
-    VectorComposer getTermComposer();
+    @Override
+    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
+        return null;
+    }
 
-    VectorComposer getTranslationComposer();
-
-    ModelMetadata getMetadata();
+    @Override
+    public ModelMetadata getMetadata() {
+        return null;
+    }
 }
