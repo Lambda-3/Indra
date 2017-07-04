@@ -27,10 +27,14 @@ package org.lambda3.indra.benchmark;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
 import org.lambda3.indra.client.AnalyzedTerm;
+import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,9 +44,9 @@ import java.util.*;
 
 public class BenchmarkRunner {
 
-    private static final String WORD_SET_1_FILE = "wordSet1.txt";
-    private static final String WORD_SET_2_FILE = "wordSet2.txt";
-    private static final String WORD_SET_3_FILE = "wordSet3.txt";
+    private static final String WORD_SET_1_FILE = "wordSet1-pt.txt";
+    private static final String WORD_SET_2_FILE = "wordSet2-pt.txt";
+    private static final String WORD_SET_3_FILE = "wordSet3-pt.txt";
 
     private VectorSpaceFactory factory1;
     private VectorSpaceFactory factory2;
@@ -74,7 +78,7 @@ public class BenchmarkRunner {
         return set;
     }
 
-    public void run(String file, IndraAnalyzer analyzer, VectorSpace vs1, VectorSpace vs2) {
+    private void run(String file, IndraAnalyzer analyzer, VectorSpace vs1, VectorSpace vs2) {
         Set<String> words = loadWordSet(file);
 
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
@@ -93,9 +97,42 @@ public class BenchmarkRunner {
         this.report.addInfo(file, vs1.getClass().getSimpleName(), end1 - start1,
                 vs2.getClass().getSimpleName(), end2 - start2);
 
+        if (vectors1.size() == vectors2.size()) {
+            for (String term : vectors1.keySet()) {
+                RealVector v1 = vectors1.get(term);
+                RealVector v2 = vectors2.get(term);
+
+                if (!((v1 == null && v2 == null) || v1.equals(v2))) {
+                    System.out.println(String.format("ERROR: %s - %s", v1, v2));
+                }
+            }
+        } else {
+            System.out.println(String.format("ERROR: different size %d - %d", vectors1.size(), vectors2.size()));
+        }
+    }
+
+    public Report run() {
+        VectorRequest request = new VectorRequest();
+        request.model("W2V").language("PT").corpus("wiki-2014").mt(false);
+
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), ModelMetadata.createDefault());
+        String[] files = {WORD_SET_1_FILE, WORD_SET_2_FILE, WORD_SET_3_FILE};
+
+        for (String file : files) {
+            run(file, analyzer, factory1.create(request), factory2.create(request));
+        }
+
+        return report;
     }
 
     public static void main(String[] args) {
-        String mongoService = System.getProperty("indra.mongoURI");
+        String mongoServer = System.getProperty("indra.mongoURI");
+        String annoyDir = System.getProperty("indra.annoyBaseDir");
+
+        MongoVectorSpaceFactory mongoFactory = new MongoVectorSpaceFactory(mongoServer);
+        AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(annoyDir);
+
+        BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
+        System.out.println(runner.run());
     }
 }
