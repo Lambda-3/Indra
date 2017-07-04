@@ -63,6 +63,10 @@ public final class ModelMetadata {
     public static final String STOP_WORDS_PARAM = "stop-words";
     private Set<String> stopWords = Collections.emptySet();
 
+    public static final String MORE_PARAM = "more";
+    private Map<String, String> more = new HashMap<>();
+    //TODO more here.
+
     private ModelMetadata() {
         //
     }
@@ -101,7 +105,8 @@ public final class ModelMetadata {
                 .sparse((boolean) doc.getOrDefault(SPARSE_PARAM, metaDefault.sparse))
                 .binary((boolean) doc.getOrDefault(BINARY_PARAM, metaDefault.binary))
                 .dimensions((int) doc.getOrDefault(DIMENSIONS_PARAM, metaDefault.dimensions))
-                .stopWords(new HashSet<>((Collection<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)));
+                .stopWords(new HashSet<>((Collection<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)))
+                .more((HashMap<String, String>) doc.getOrDefault(MORE_PARAM, metaDefault.more));
 
     }
 
@@ -165,6 +170,11 @@ public final class ModelMetadata {
         return this;
     }
 
+    public ModelMetadata more(Map<String, String> more) {
+        this.more = more;
+        return this;
+    }
+
     public String getLoaderId() {
         return this.loaderId;
     }
@@ -209,6 +219,10 @@ public final class ModelMetadata {
         return maxWordLength;
     }
 
+    public Map<String, String> getMore() {
+        return more;
+    }
+
     @Override
     public String toString() {
         return "Metadata{" +
@@ -230,7 +244,7 @@ public final class ModelMetadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModelMetadata that = (ModelMetadata) o;
-        return  loaderId.equals(that.loaderId) &&
+        return loaderId.equals(that.loaderId) &&
                 sparse == that.sparse &&
                 binary == that.binary &&
                 applyStemmer == that.applyStemmer &&
@@ -245,6 +259,6 @@ public final class ModelMetadata {
     @Override
     public int hashCode() {
         return Objects.hash(loaderId, sparse, binary, applyStemmer, applyLowercase, removeAccents, applyStopWords,
-                minWordLength, maxWordLength, dimensions);
+                minWordLength, maxWordLength, dimensions, more);
     }
 }

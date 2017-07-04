@@ -27,30 +27,38 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class CachedVectorSpace implements VectorSpace {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
+    protected ModelMetadata metadata;
     private VectorComposer termComposer;
     private VectorComposer translationComposer;
 
     protected abstract void collectVectors(Collection<String> terms, int limit);
 
-    protected abstract List<RealVector> getFromCache(Collection<String> terms);
+    protected abstract ModelMetadata loadMetadata();
 
     public CachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
         this.termComposer = termComposer;
         this.translationComposer = translationComposer;
+        logger.info("Model metadata: {}", metadata);
+    }
+
+    protected List<RealVector> getFromCache(Collection<String> terms) {
+        List<RealVector> termVectors = new ArrayList<>();
+        terms.stream().
+                filter(t -> this.vectorsCache.containsKey(t)).
+                forEach((t) -> termVectors.add(this.vectorsCache.get(t)));
+        return termVectors;
     }
 
     @Override
@@ -61,6 +69,11 @@ public abstract class CachedVectorSpace implements VectorSpace {
     @Override
     public VectorComposer getTranslationComposer() {
         return this.translationComposer;
+    }
+
+    @Override
+    public ModelMetadata getMetadata() {
+        return metadata;
     }
 
     @Override
