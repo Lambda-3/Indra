@@ -30,7 +30,6 @@ import com.spotify.annoy.ANNIndex;
 import com.spotify.annoy.AnnoyIndex;
 import com.spotify.annoy.IndexType;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -45,12 +44,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 
 public class AnnoyVectorSpace extends CachedVectorSpace {
 
     public static final String INDEX_TYPE = "index-type";
-    public static final String TREE_FILE = "tree";
+    public static final String TREE_FILE = "trees.ann";
     public static final String METADATA_FILE = "metadata.json";
     public static final String WORD_MAPPING_FILE = "mappings.txt";
 
@@ -66,7 +66,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
         this.metadata = loadMetadata();
         loadMappings();
 
-        IndexType type = IndexType.valueOf(metadata.getMore().get(INDEX_TYPE));
+        IndexType type = IndexType.valueOf(metadata.getMore().getOrDefault(INDEX_TYPE, "ANGULAR"));
 
         try {
             this.index = new ANNIndex(metadata.getDimensions(), new File(dataDir, TREE_FILE).getAbsolutePath(), type);
@@ -87,7 +87,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("|");
+                String[] parts = line.split(Pattern.quote("|"));
                 int id = Integer.parseInt(parts[0]);
                 this.idToWord[id] = parts[1];
                 this.wordToId.put(parts[1], id);
@@ -107,14 +107,16 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     protected void collectVectors(Collection<String> terms, int limit) {
-        terms.stream().parallel().forEach(term -> {
+        terms.stream().forEach(term -> {
             if (!vectorsCache.containsKey(term)) {
                 float[] vector = getVector(term);
-                RealVector rVector = new ArrayRealVector(vector.length);
-                for (int i = 0; i < vector.length; i++) {
-                    rVector.append(vector[i]);
+                if (vector != null) {
+                    ArrayRealVector rVector = new ArrayRealVector(vector.length);
+                    for (int i = 0; i < vector.length; i++) {
+                        rVector.addToEntry(i, vector[i]);
+                    }
+                    vectorsCache.put(term, rVector);
                 }
-                vectorsCache.put(term, rVector);
             }
         });
     }
@@ -122,17 +124,24 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     @Override
     protected ModelMetadata loadMetadata() {
 
-        try {
-            JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(new File(dataDir, METADATA_FILE)));
-            return ModelMetadata.createFromMap(jsonObject);
+        File file = new File(dataDir, METADATA_FILE);
 
-        } catch (ParseException | IOException e) {
-            logger.error(String.format("problem reading the metadata file. dataDir=%s", dataDir));
-            e.printStackTrace();
+        if (file.exists()) {
+            try {
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(file));
+                return ModelMetadata.createFromMap(jsonObject);
+
+            } catch (ParseException | IOException e) {
+                logger.error(String.format("problem reading the metadata file. dataDir=%s", dataDir));
+                e.printStackTrace();
+
+                return null;
+            }
+
+        } else {
+            return ModelMetadata.createDefault();
         }
-
-        return null;
     }
 
     @Override
@@ -140,23 +149,31 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
         if (term.getAnalyzedTokens().size() == 1) {
             float[] vector = getVector(term.getAnalyzedTokens().get(0));
-            List<Integer> nearest = this.index.getNearest(vector, topk);
-
             Map<String, float[]> results = new HashMap<>();
-            for (Integer id : nearest) {
-                results.put(idToWord[id], index.getItemVector(id));
+
+            if (vector != null) {
+                List<Integer> nearest = this.index.getNearest(vector, topk);
+
+                for (Integer id : nearest) {
+                    results.put(idToWord[id], index.getItemVector(id));
+                }
             }
+
+            return results;
         } else {
             String message = "NearestFunction is available only for single-token terms.";
             logger.error(message);
             throw new IllegalArgumentException(message);
         }
-
-        return null;
     }
 
     private float[] getVector(String term) {
-        int termId = this.wordToId.get(term);
-        return index.getItemVector(termId);
+        Integer termId = this.wordToId.get(term);
+        if (termId != null) {
+            return index.getItemVector(termId);
+        } else {
+            return null;
+        }
+
     }
 }

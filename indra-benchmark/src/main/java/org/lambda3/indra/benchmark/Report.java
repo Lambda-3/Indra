@@ -41,7 +41,7 @@ public class Report {
 
         Double winnerPercent = (score1 < score2 ? score1 / score2 : score2 / score1);
         String winner = (score1 < score2 ? cand1 : cand2);
-        String data = String.format("%s - [%d] Winner -> %s | %s=%d | %s=%d", dataset, winnerPercent, winner,
+        String data = String.format("%s - [%f] Winner -> %s | %s=%f | %s=%f", dataset, winnerPercent, winner,
                 cand1, score1, cand2, score2);
 
         content.add(data);
