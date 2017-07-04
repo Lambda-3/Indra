@@ -76,7 +76,7 @@ public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
             VectorComposer translationComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION);
             return new AnnoyVectorSpace(vsDirFile.getAbsolutePath(), termComposer, translationComposer);
         } else {
-            throw new ModelNoFound(vsDirFile.getName());
+            throw new ModelNoFound(String.format("%s-%s-%s", request.getModel(), request.getLanguage(), request.getCorpus()));
         }
     }
 

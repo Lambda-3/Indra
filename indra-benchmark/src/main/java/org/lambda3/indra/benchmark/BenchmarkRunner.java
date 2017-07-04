@@ -126,13 +126,22 @@ public class BenchmarkRunner {
     }
 
     public static void main(String[] args) {
+        System.out.println("BenchmarkRunner v. 0.3");
+        
         String mongoServer = System.getProperty("indra.mongoURI");
         String annoyDir = System.getProperty("indra.annoyBaseDir");
+        int times = Integer.parseInt(System.getProperty("indra.benchmark.times", "3"));
 
         MongoVectorSpaceFactory mongoFactory = new MongoVectorSpaceFactory(mongoServer);
         AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(annoyDir);
 
         BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
-        System.out.println(runner.run());
+
+        for (int i = 0; i < times; i++) {
+            System.out.println(runner.run());
+        }
+
+
+        mongoFactory.close();
     }
 }
