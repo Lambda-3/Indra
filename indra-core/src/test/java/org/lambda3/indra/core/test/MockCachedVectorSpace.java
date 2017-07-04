@@ -34,7 +34,6 @@ import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 public class MockCachedVectorSpace extends CachedVectorSpace {
@@ -46,40 +45,38 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     public static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
     public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
-    private Map<String, RealVector> vectors = new HashMap<>();
-
     public MockCachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
         super(termComposer, translationComposer);
-        vectors.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
-        vectors.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
-        vectors.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
-        vectors.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
-        vectors.put("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
-        vectors.put("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
-        vectors.put("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
-        vectors.put("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
-        vectors.put("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
-        vectors.put("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
-        vectors.put("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
+        vectorsCache.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
+        vectorsCache.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
+        vectorsCache.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
+        vectorsCache.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
+        vectorsCache.put("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
+        vectorsCache.put("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
+        vectorsCache.put("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
+        vectorsCache.put("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
+        vectorsCache.put("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
+        vectorsCache.put("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
+        vectorsCache.put("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
 
-        vectors.put("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
-        vectors.put("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
-        vectors.put("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
+        vectorsCache.put("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
+        vectorsCache.put("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
+        vectorsCache.put("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
 
-        vectors.put("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
-        vectors.put("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
-        vectors.put("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
+        vectorsCache.put("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
+        vectorsCache.put("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
+        vectorsCache.put("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
 
-        vectors.put("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
-        vectors.put("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
+        vectorsCache.put("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
+        vectorsCache.put("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
 
-        vectors.put("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
-        vectors.put("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
+        vectorsCache.put("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
+        vectorsCache.put("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
 
         //stemmed
-        vectors.put("machin", vectors.get("machine"));
-        vectors.put("comput", vectors.get("computer"));
-        vectors.put("evalu", vectors.get("evaluation"));
+        vectorsCache.put("machin", vectorsCache.get("machine"));
+        vectorsCache.put("comput", vectorsCache.get("computer"));
+        vectorsCache.put("evalu", vectorsCache.get("evaluation"));
         this.metadata = loadMetadata();
     }
 
