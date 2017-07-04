@@ -27,6 +27,7 @@ package org.lambda3.indra.client;
  */
 
 import java.util.Map;
+import java.util.Objects;
 
 public final class DenseVectorResponse extends VectorResponse {
     private Map<String, double[]> terms;
@@ -37,7 +38,7 @@ public final class DenseVectorResponse extends VectorResponse {
 
     public DenseVectorResponse(VectorRequest request, Map<String, double[]> terms) {
         super(request);
-        this.terms = terms;
+        this.terms = Objects.requireNonNull(terms);
     }
 
     public Map<String, double[]> getTerms() {

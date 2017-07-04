@@ -12,10 +12,10 @@ package org.lambda3.indra.client;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,18 +26,35 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import java.util.List;
 import java.util.Objects;
 
-public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
+public class NeighborsVectorsRequest<T extends NeighborsVectorsRequest> extends AbstractBasicRequest<NeighborsVectorsRequest> {
 
-    protected ScoreFunction scoreFunction;
+    private List<String> terms;
+    private int topk;
 
-    public T scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
+    public T terms(List<String> terms) {
+        this.terms = Objects.requireNonNull(terms);
         return (T) this;
     }
 
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public T topk(int topk) {
+        this.topk = topk;
+        return (T) this;
+    }
+
+    public int getTopk() {
+        return topk;
+    }
+
+    @Override
+    protected boolean isValid() {
+        boolean valid = terms != null && !terms.isEmpty() && topk > 0;
+        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
     }
 }

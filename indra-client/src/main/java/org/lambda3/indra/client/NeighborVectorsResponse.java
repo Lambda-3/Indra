@@ -12,10 +12,10 @@ package org.lambda3.indra.client;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,18 +26,29 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import java.util.Map;
 import java.util.Objects;
 
-public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
+public class NeighborVectorsResponse extends AbstractBasicResponse {
+    private Map<String, float[]> terms;
 
-    protected ScoreFunction scoreFunction;
-
-    public T scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
-        return (T) this;
+    protected NeighborVectorsResponse() {
+        //jersey demands.
     }
 
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
+    public NeighborVectorsResponse(NeighborsVectorsRequest request, Map<String, float[]> terms) {
+        super(request);
+        this.terms = Objects.requireNonNull(terms);
+    }
+
+    public Map<String, float[]> getTerms() {
+        return terms;
+    }
+
+    @Override
+    public String toString() {
+        return "NeighborVectorsResponse{" + super.toString() +
+                "terms=" + terms +
+                '}';
     }
 }
