@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <artifactId>indra-annoy</artifactId>
+    <artifactId>indra-benchmark</artifactId>
 
     <parent>
         <artifactId>indra-parent</artifactId>
@@ -12,7 +12,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Indra Annoy Module</name>
+    <name>Indra Benchmark Module</name>
 
     <build>
         <plugins>
@@ -38,21 +38,14 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-core</artifactId>
+            <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.spotify</groupId>
-            <artifactId>annoy</artifactId>
-            <version>0.2.5</version>
+            <groupId>org.lambda3.indra</groupId>
+            <artifactId>indra-annoy</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
-
 
 </project>
