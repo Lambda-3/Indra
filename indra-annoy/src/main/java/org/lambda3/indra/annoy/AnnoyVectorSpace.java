@@ -31,6 +31,9 @@ import com.spotify.annoy.AnnoyIndex;
 import com.spotify.annoy.IndexType;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
@@ -48,7 +51,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     public static final String INDEX_TYPE = "index-type";
     public static final String TREE_FILE = "tree";
-    public static final String METADATA_FILE = "metadata.txt";
+    public static final String METADATA_FILE = "metadata.json";
     public static final String WORD_MAPPING_FILE = "mappings.txt";
 
     private AnnoyIndex index;
@@ -104,8 +107,6 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     protected void collectVectors(Collection<String> terms, int limit) {
-        //TODO is everything thread safe?
-
         terms.stream().parallel().forEach(term -> {
             if (!vectorsCache.containsKey(term)) {
                 float[] vector = getVector(term);
@@ -120,6 +121,17 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     protected ModelMetadata loadMetadata() {
+
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(new File(dataDir, METADATA_FILE)));
+            return ModelMetadata.createFromMap(jsonObject);
+
+        } catch (ParseException | IOException e) {
+            logger.error(String.format("problem reading the metadata file. dataDir=%s", dataDir));
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -135,7 +147,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
                 results.put(idToWord[id], index.getItemVector(id));
             }
         } else {
-            throw new IllegalArgumentException("Nearest is available only for single-token terms.");
+            String message = "NearestFunction is available only for single-token terms.";
+            logger.error(message);
+            throw new IllegalArgumentException(message);
         }
 
         return null;

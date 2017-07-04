@@ -27,26 +27,66 @@ package org.lambda3.indra.annoy;
  */
 
 import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.exception.ModelNoFound;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.LinkedList;
 
 
 public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
+    private String baseDir;
+
+    public AnnoyVectorSpaceFactory(String baseDir) {
+        this.baseDir = baseDir;
+    }
 
     @Override
     public Collection<String> getAvailableModels() {
-        return null;
+        File baseFile = new File(baseDir);
+        Collection<String> results = new LinkedList<>();
+
+        if (baseFile.exists() && baseFile.isDirectory()) {
+            File[] models = baseFile.listFiles(File::isDirectory);
+            for (File model : models) {
+                File[] langs = model.listFiles(File::isDirectory);
+                for (File lang : langs) {
+                    File[] corpora = lang.listFiles(File::isDirectory);
+                    for (File corpus : corpora) {
+                        results.add(String.format("%s-%s-%s", model.getName(), lang.getName(), corpus.getName()));
+                    }
+                }
+            }
+        }
+
+        return results;
     }
 
     @Override
     protected VectorSpace doCreate(AbstractBasicRequest request) {
-        return null;
+        File vsDirFile = createVSFile(request);
+
+        if (vsDirFile.exists() && vsDirFile.isDirectory()) {
+            VectorComposer termComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION);
+            VectorComposer translationComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION);
+            return new AnnoyVectorSpace(vsDirFile.getAbsolutePath(), termComposer, translationComposer);
+        } else {
+            throw new ModelNoFound(vsDirFile.getName());
+        }
     }
 
     @Override
     protected String createKey(AbstractBasicRequest request) {
-        return null;
+        return createVSFile(request).getAbsolutePath() + request.isMt();
+    }
+
+    protected File createVSFile(AbstractBasicRequest request) {
+        return Paths.get(baseDir, request.getModel().toLowerCase(),
+                request.getLanguage().toLowerCase(), request.getCorpus().toLowerCase()).toFile();
     }
 }
