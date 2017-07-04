@@ -34,12 +34,13 @@ import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.exception.ModelNoFound;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
+import java.io.Closeable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
+public final class MongoVectorSpaceFactory extends VectorSpaceFactory implements Closeable {
 
     private MongoClient mongoClient;
 
@@ -83,5 +84,10 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
             }
         }
         return availableModels;
+    }
+
+    @Override
+    public void close() {
+        mongoClient.close();
     }
 }
