@@ -29,6 +29,7 @@ package org.lambda3.indra.annoy;
 import com.spotify.annoy.ANNIndex;
 import com.spotify.annoy.AnnoyIndex;
 import com.spotify.annoy.IndexType;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
@@ -40,6 +41,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class AnnoyVectorSpace extends CachedVectorSpace {
@@ -52,7 +54,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     private AnnoyIndex index;
     private String dataDir;
     private String[] idToWord;
-    private Map<String, Integer> wordToId = new HashMap<>();
+    private Map<String, Integer> wordToId = new ConcurrentHashMap<>();
 
     public AnnoyVectorSpace(String dataDir, VectorComposer termComposer, VectorComposer translationComposer) {
         super(termComposer, translationComposer);
@@ -102,24 +104,45 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     protected void collectVectors(Collection<String> terms, int limit) {
+        //TODO is everything thread safe?
 
+        terms.stream().parallel().forEach(term -> {
+            if (!vectorsCache.containsKey(term)) {
+                float[] vector = getVector(term);
+                RealVector rVector = new ArrayRealVector(vector.length);
+                for (int i = 0; i < vector.length; i++) {
+                    rVector.append(vector[i]);
+                }
+                vectorsCache.put(term, rVector);
+            }
+        });
     }
 
     @Override
     protected ModelMetadata loadMetadata() {
-
-
         return null;
     }
 
     @Override
-    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+
+        if (term.getAnalyzedTokens().size() == 1) {
+            float[] vector = getVector(term.getAnalyzedTokens().get(0));
+            List<Integer> nearest = this.index.getNearest(vector, topk);
+
+            Map<String, float[]> results = new HashMap<>();
+            for (Integer id : nearest) {
+                results.put(idToWord[id], index.getItemVector(id));
+            }
+        } else {
+            throw new IllegalArgumentException("Nearest is available only for single-token terms.");
+        }
+
         return null;
     }
 
-    @Override
-    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
-
-        return null;
+    private float[] getVector(String term) {
+        int termId = this.wordToId.get(term);
+        return index.getItemVector(termId);
     }
 }
