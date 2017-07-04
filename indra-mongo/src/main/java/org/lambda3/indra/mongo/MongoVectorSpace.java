@@ -43,8 +43,9 @@ import org.lambda3.indra.core.exception.IndraError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MongoVectorSpace extends CachedVectorSpace {
@@ -85,13 +86,8 @@ public class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
-        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' functions.");
-    }
-
-    @Override
-    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
-        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' functions.");
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
     private MongoCollection<Document> getTermsColl() {
