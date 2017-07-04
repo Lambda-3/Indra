@@ -12,10 +12,10 @@ package org.lambda3.indra.client;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,18 +26,25 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
+@Path("neighbors")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public interface NeighborsResource {
 
-    protected ScoreFunction scoreFunction;
+    @POST
+    @Valid
+    @Path("/vectors")
+    NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request);
 
-    public T scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
-        return (T) this;
-    }
-
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
-    }
+    @POST
+    @Valid
+    @Path("/relatedness")
+    NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request);
 }
