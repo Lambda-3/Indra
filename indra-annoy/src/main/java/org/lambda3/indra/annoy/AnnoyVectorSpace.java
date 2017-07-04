@@ -107,7 +107,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     protected void collectVectors(Collection<String> terms, int limit) {
-        terms.stream().forEach(term -> {
+        terms.stream().parallel().forEach(term -> {
             if (!vectorsCache.containsKey(term)) {
                 float[] vector = getVector(term);
                 if (vector != null) {
