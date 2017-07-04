@@ -54,20 +54,19 @@ public class MongoVectorSpace extends CachedVectorSpace {
     private static final String METADATA_COLL_NAME = "metadata";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
-    private ModelMetadata metadata;
 
     MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
         super(composer, translationComposer);
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;
-        configure();
+        this.metadata = loadMetadata();
     }
 
-    private void configure() {
+    @Override
+    protected ModelMetadata loadMetadata() {
         MongoDatabase db = this.mongoClient.getDatabase(dbName);
         MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
 
@@ -78,13 +77,11 @@ public class MongoVectorSpace extends CachedVectorSpace {
         if (metadataColl.count() == 1) {
             logger.debug("Using stored metadata of {}", dbName);
             Document storedMetadata = metadataColl.find().first();
-            metadata = ModelMetadata.createFromMap(storedMetadata);
+            return ModelMetadata.createFromMap(storedMetadata);
         } else {
             logger.debug("No metadata found in {}, using defaults.", dbName);
-            metadata = ModelMetadata.createDefault();
+            return ModelMetadata.createDefault();
         }
-
-        logger.info("Model metadata: {}", metadata);
     }
 
     @Override
@@ -96,12 +93,6 @@ public class MongoVectorSpace extends CachedVectorSpace {
     public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' functions.");
     }
-
-    @Override
-    public ModelMetadata getMetadata() {
-        return metadata;
-    }
-
 
     private MongoCollection<Document> getTermsColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
@@ -126,16 +117,6 @@ public class MongoVectorSpace extends CachedVectorSpace {
                 }
             }
         }
-    }
-
-
-    @Override
-    protected List<RealVector> getFromCache(Collection<String> terms) {
-        List<RealVector> termVectors = new ArrayList<>();
-        terms.stream().
-                filter(t -> this.vectorsCache.containsKey(t)).
-                forEach((t) -> termVectors.add(this.vectorsCache.get(t)));
-        return termVectors;
     }
 
     private RealVector unmarshall(Document doc, int limit) {
