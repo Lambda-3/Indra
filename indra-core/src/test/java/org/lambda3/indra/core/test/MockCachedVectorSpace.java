@@ -33,7 +33,9 @@ import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MockCachedVectorSpace extends CachedVectorSpace {
 
@@ -78,21 +80,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
         vectors.put("machin", vectors.get("machine"));
         vectors.put("comput", vectors.get("computer"));
         vectors.put("evalu", vectors.get("evaluation"));
-    }
-
-    @Override
-    public LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk) {
-        throw new UnsupportedOperationException("not implemented yet.");
-    }
-
-    @Override
-    public LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk) {
-        throw new UnsupportedOperationException("not implemented yet.");
-    }
-
-    @Override
-    public ModelMetadata getMetadata() {
-        return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
+        this.metadata = loadMetadata();
     }
 
     @Override
@@ -100,13 +88,13 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
         //does nothing
     }
 
+    @Override
+    protected ModelMetadata loadMetadata() {
+        return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
+    }
 
     @Override
-    protected List<RealVector> getFromCache(Collection<String> terms) {
-        List<RealVector> termVectors = new ArrayList<>();
-        terms.stream().
-                filter(t -> this.vectors.containsKey(t)).
-                forEach((t) -> termVectors.add(this.vectors.get(t)));
-        return termVectors;
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
     }
 }

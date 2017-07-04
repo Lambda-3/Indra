@@ -27,14 +27,9 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.AnalyzedTranslatedPair;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,9 +43,7 @@ public interface VectorSpace {
 
     Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms);
 
-    LinkedHashMap<String, Double> getNearestNeighbors(AnalyzedTerm term, int topk);
-
-    LinkedHashMap<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk);
+    Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
 
     VectorComposer getTermComposer();
 
