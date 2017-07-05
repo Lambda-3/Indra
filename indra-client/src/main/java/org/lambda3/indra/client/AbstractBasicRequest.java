@@ -27,7 +27,9 @@ package org.lambda3.indra.client;
  */
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
@@ -114,20 +116,52 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return translationComposition;
     }
 
+    static void checkAndAppendErrorMessages(Object object, String fieldName, StringBuilder errorMessages) {
+        if (object == null) {
+            errorMessages.append(" - '");
+            errorMessages.append(fieldName);
+            errorMessages.append("' can't be null.\n");
+        } else if ((object instanceof String && ((String) object).isEmpty()) ||
+                (object instanceof List && ((List) object).isEmpty())) {
+            errorMessages.append(" - '");
+            errorMessages.append(fieldName);
+            errorMessages.append("' can't be empty.\n");
+        }
+    }
+
+    static void checkAndAppendErrorMessagesLists(List<String> terms, String fieldName, StringBuilder errorMessages) {
+        checkAndAppendErrorMessages(terms, fieldName, errorMessages);
+        if (terms != null) {
+            boolean valid = terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
+            if (!valid) {
+                errorMessages.append(" - '");
+                errorMessages.append(fieldName);
+                errorMessages.append("' can contain neither null nor empty strings.\n");
+            }
+        }
+    }
+
     /**
      * Throws an exception if this request is not in a safe state.
      *
      * @throws WebApplicationException
      */
     public final void validate() {
-        boolean invalid = corpus == null || corpus.isEmpty() || model == null || model.isEmpty() ||
-                language == null || language.isEmpty() || termComposition == null || termComposition.isEmpty() ||
-                translationComposition == null || translationComposition.isEmpty() || !isValid();
+        StringBuilder errorMessage = new StringBuilder();
+        checkAndAppendErrorMessages(corpus, "corpus", errorMessage);
+        checkAndAppendErrorMessages(model, "model", errorMessage);
+        checkAndAppendErrorMessages(language, "language", errorMessage);
+        checkAndAppendErrorMessages(termComposition, "termComposition", errorMessage);
+        checkAndAppendErrorMessages(translationComposition, "translationComposition", errorMessage);
 
-        if (invalid) {
-            throw new WebApplicationException("Invalid Indra Request", Response.Status.BAD_REQUEST);
+        errorMessage.append(isValid());
+
+        if (errorMessage.length() > 0) {
+            Response response = Response.status(Response.Status.BAD_REQUEST).entity(errorMessage.toString()).
+                    type(MediaType.TEXT_PLAIN).build();
+            throw new WebApplicationException("Invalid Indra Request " + errorMessage.toString(), response);
         }
     }
 
-    protected abstract boolean isValid();
+    protected abstract String isValid();
 }

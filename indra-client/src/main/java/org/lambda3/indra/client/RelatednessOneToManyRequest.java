@@ -63,7 +63,11 @@ public class RelatednessOneToManyRequest extends RelatednessRequest<RelatednessO
     }
 
     @Override
-    protected boolean isValid() {
-        return one != null && many != null && !many.isEmpty() && scoreFunction != null;
+    protected String isValid() {
+        String errors = super.isValid();
+        StringBuilder errorMessages = new StringBuilder(errors);
+        checkAndAppendErrorMessages(one, "one", errorMessages);
+        checkAndAppendErrorMessagesLists(many, "many", errorMessages);
+        return errorMessages.toString();
     }
 }

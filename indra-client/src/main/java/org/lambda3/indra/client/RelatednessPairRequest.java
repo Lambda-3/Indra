@@ -42,9 +42,16 @@ public class RelatednessPairRequest extends RelatednessRequest<RelatednessPairRe
     }
 
     @Override
-    protected boolean isValid() {
-        boolean valid = pairs != null && !pairs.isEmpty() && scoreFunction != null;
-        return valid &&
-                pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
+    protected String isValid() {
+        String errors = super.isValid();
+        StringBuilder errorMessages = new StringBuilder(errors);
+        checkAndAppendErrorMessages(pairs, "pairs", errorMessages);
+
+        boolean valid = pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
+        if (!valid) {
+            errorMessages.append("' - 't1' and 't2' in 'pairs' can contain neither null nor empty strings.\n");
+        }
+
+        return errorMessages.toString();
     }
 }
