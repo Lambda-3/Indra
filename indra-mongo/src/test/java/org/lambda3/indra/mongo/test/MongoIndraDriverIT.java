@@ -67,10 +67,10 @@ public final class MongoIndraDriverIT {
         request.pairs(Collections.singletonList(pair));
 
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
-        RelatednessPairResponse res = driver.getRelatedness(request);
+        List<ScoredTextPair> res = driver.getRelatedness(request);
         Assert.assertNotNull(res);
-        Assert.assertEquals(1, res.getPairs().size());
-        ScoredTextPair scoredPair = res.getPairs().iterator().next();
+        Assert.assertEquals(1, res.size());
+        ScoredTextPair scoredPair = res.iterator().next();
         Assert.assertEquals(pair.t1, scoredPair.t1);
         Assert.assertEquals(pair.t2, scoredPair.t2);
         Assert.assertTrue(Math.abs(scoredPair.score) > 0);
@@ -86,13 +86,13 @@ public final class MongoIndraDriverIT {
         Map<Integer, TextPair> mapPairs = new HashMap<>();
         pairs.forEach(p -> mapPairs.put(Objects.hash(p.t1, p.t2), p));
 
-        RelatednessPairResponse res = driver.getRelatedness(request);
+        List<ScoredTextPair> res = driver.getRelatedness(request);
 
         Assert.assertNotNull(res);
-        Assert.assertEquals(pairs.size(), res.getPairs().size());
+        Assert.assertEquals(pairs.size(), res.size());
 
 
-        for (ScoredTextPair scoredPair : res.getPairs()) {
+        for (ScoredTextPair scoredPair : res) {
             TextPair textPair = mapPairs.get(Objects.hash(scoredPair.t1, scoredPair.t2));
 
             Assert.assertNotNull(textPair);
@@ -111,11 +111,11 @@ public final class MongoIndraDriverIT {
         Map<Integer, TextPair> mapPairs = new HashMap<>();
         pairs.forEach(p -> mapPairs.put(Objects.hash(p.t1, p.t2), p));
 
-        RelatednessPairResponse res = driver.getRelatedness(request);
+        List<ScoredTextPair> res = driver.getRelatedness(request);
 
         Assert.assertNotNull(res);
-        Assert.assertEquals(pairs.size(), res.getPairs().size());
-        for (ScoredTextPair scoredPair : res.getPairs()) {
+        Assert.assertEquals(pairs.size(), res.size());
+        for (ScoredTextPair scoredPair : res) {
             TextPair textPair = mapPairs.get(Objects.hash(scoredPair.t1, scoredPair.t2));
 
             Assert.assertNotNull(textPair);
@@ -131,9 +131,9 @@ public final class MongoIndraDriverIT {
         List<TextPair> pairs = Collections.singletonList(new TextPair("love", "romance"));
         request.pairs(pairs);
 
-        RelatednessPairResponse res = driver.getRelatedness(request);
-        Assert.assertEquals(res.getPairs().size(), 1);
-        for (ScoredTextPair stp : res.getPairs()) {
+        List<ScoredTextPair> res = driver.getRelatedness(request);
+        Assert.assertEquals(res.size(), 1);
+        for (ScoredTextPair stp : res) {
             Assert.assertTrue(Math.abs(stp.score) > 0d);
         }
 
@@ -143,8 +143,8 @@ public final class MongoIndraDriverIT {
         request.pairs(pairs);
 
         res = driver.getRelatedness(request);
-        Assert.assertEquals(res.getPairs().size(), 1);
-        for (ScoredTextPair stp : res.getPairs()) {
+        Assert.assertEquals(res.size(), 1);
+        for (ScoredTextPair stp : res) {
             Assert.assertEquals(Math.abs(stp.score), 0d);
         }
 
@@ -152,6 +152,6 @@ public final class MongoIndraDriverIT {
 
     @Test(enabled = false)
     public void testApplyStopWordsParam() {
-        //TODO when a model generated without cutting stopwords.
+        //TODO to a model generated without removing stopwords.
     }
 }

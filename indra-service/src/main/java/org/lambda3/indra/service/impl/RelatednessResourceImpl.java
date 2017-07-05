@@ -31,22 +31,24 @@ import org.lambda3.indra.core.IndraDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
     RelatednessResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+        this.driver = Objects.requireNonNull(driver);
     }
 
     @Override
     public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
         request.validate();
-        RelatednessPairResponse response = this.driver.getRelatedness(request);
+        List<ScoredTextPair> relatedness = this.driver.getRelatedness(request);
+        RelatednessPairResponse response = new RelatednessPairResponse(request, relatedness);
         logger.trace("Response: {}", response);
 
         return response;
@@ -54,8 +56,10 @@ class RelatednessResourceImpl implements RelatednessResource {
 
     @Override
     public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
+        logger.trace("getRelatedness - User Request: {}", request);
         request.validate();
-        RelatednessOneToManyResponse response = this.driver.getRelatedness(request);
+        Map<String, Double> relatedness = this.driver.getRelatedness(request);
+        RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, relatedness);
         logger.trace("Response: {}", response);
 
         return response;
