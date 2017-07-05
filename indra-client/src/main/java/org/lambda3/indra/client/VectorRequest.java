@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
-
     private List<String> terms;
 
     public VectorRequest terms(List<String> terms) {
@@ -43,8 +42,10 @@ public class VectorRequest extends AbstractBasicRequest<VectorRequest> {
     }
 
     @Override
-    protected boolean isValid() {
-        boolean valid = terms != null && !terms.isEmpty();
-        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
+    protected String isValid() {
+        StringBuilder errorMessages = new StringBuilder();
+        checkAndAppendErrorMessagesLists(terms, "terms", errorMessages);
+
+        return errorMessages.toString();
     }
 }

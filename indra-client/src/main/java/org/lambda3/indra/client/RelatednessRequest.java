@@ -40,4 +40,12 @@ public abstract class RelatednessRequest<T extends RelatednessRequest> extends A
     public ScoreFunction getScoreFunction() {
         return scoreFunction;
     }
+
+    @Override
+    protected String isValid() {
+        StringBuilder stringBuilder = new StringBuilder();
+        checkAndAppendErrorMessages(scoreFunction, "scoreFunction", stringBuilder);
+
+        return stringBuilder.toString();
+    }
 }
