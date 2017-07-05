@@ -34,6 +34,7 @@ import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.composition.SumVectorComposer;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 
 import java.io.BufferedReader;
@@ -87,11 +88,11 @@ public class BenchmarkRunner {
         }
 
         double start1 = System.currentTimeMillis();
-        Map<String, RealVector> vectors1 = vs1.getVectors(analyzedTerms);
+        Map<String, RealVector> vectors1 = vs1.getVectors(analyzedTerms, new SumVectorComposer());
         double end1 = System.currentTimeMillis();
 
         double start2 = System.currentTimeMillis();
-        Map<String, RealVector> vectors2 = vs2.getVectors(analyzedTerms);
+        Map<String, RealVector> vectors2 = vs2.getVectors(analyzedTerms, new SumVectorComposer());
         double end2 = System.currentTimeMillis();
 
         this.report.addInfo(file, vs1.getClass().getSimpleName(), end1 - start1,

@@ -45,8 +45,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     public static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
     public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
-    public MockCachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
-        super(termComposer, translationComposer);
+    public MockCachedVectorSpace() {
         vectorsCache.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
         vectorsCache.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
         vectorsCache.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));

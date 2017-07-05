@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 public class CachedVectorSpaceTest {
 
-    private MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace(new SumVectorComposer(), new AveragedVectorComposer());
+    private MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace();
     private IndraAnalyzer analyzer = new IndraAnalyzer("EN", vectorSpace.getMetadata());
 
     @Test
@@ -53,7 +53,7 @@ public class CachedVectorSpaceTest {
         AnalyzedPair analyzedPair3 = analyzer.analyze(new TextPair("north", "south"), AnalyzedPair.class);
         List<AnalyzedPair> pairs = Arrays.asList(analyzedPair1, analyzedPair2, analyzedPair3);
 
-        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
+        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs, new SumVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 3);
 
         for (AnalyzedPair pair : vectorPairs.keySet()) {
@@ -70,7 +70,7 @@ public class CachedVectorSpaceTest {
         AnalyzedPair analyzedPair2 = analyzer.analyze(new TextPair("good north", "bad south"), AnalyzedPair.class);
         List<AnalyzedPair> pairs = Arrays.asList(analyzedPair1, analyzedPair2);
 
-        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs);
+        Map<AnalyzedPair, VectorPair> vectorPairs = vectorSpace.getVectorPairs(pairs, new SumVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 2);
 
         for (AnalyzedPair pair : vectorPairs.keySet()) {
@@ -88,7 +88,7 @@ public class CachedVectorSpaceTest {
         List<AnalyzedTerm> analyzedTerms = terms.stream().map(t -> new AnalyzedTerm(t, analyzer.analyze(t))).
                 collect(Collectors.toList());
 
-        Map<String, RealVector> vectorPairs = vectorSpace.getVectors(analyzedTerms);
+        Map<String, RealVector> vectorPairs = vectorSpace.getVectors(analyzedTerms, new SumVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 2);
 
         Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.ONE_VECTOR);
@@ -109,7 +109,8 @@ public class CachedVectorSpaceTest {
 
         List<AnalyzedTranslatedPair> pairs = Arrays.asList(analyzedPair1, analyzedPair2);
 
-        Map<AnalyzedTranslatedPair, VectorPair> vectorPairs = vectorSpace.getTranslatedVectorPairs(pairs);
+        Map<AnalyzedTranslatedPair, VectorPair> vectorPairs = vectorSpace.getTranslatedVectorPairs(pairs,
+                new SumVectorComposer(), new AveragedVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 2);
 
         for (AnalyzedPair pair : vectorPairs.keySet()) {
@@ -134,7 +135,8 @@ public class CachedVectorSpaceTest {
 
         List<AnalyzedTranslatedPair> pairs = Collections.singletonList(analyzedPair);
 
-        Map<AnalyzedTranslatedPair, VectorPair> vectorPairs = vectorSpace.getTranslatedVectorPairs(pairs);
+        Map<AnalyzedTranslatedPair, VectorPair> vectorPairs = vectorSpace.getTranslatedVectorPairs(pairs,
+                new SumVectorComposer(), new AveragedVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 1);
 
         for (AnalyzedPair pair : vectorPairs.keySet()) {
@@ -159,7 +161,9 @@ public class CachedVectorSpaceTest {
         analyzedTerms.get(1).putAnalyzedTranslatedTokens("pai", Arrays.asList("father", "dad", "patriarch"));
         analyzedTerms.get(1).putAnalyzedTranslatedTokens("avaliação", Arrays.asList("test", "evaluation"));
 
-        Map<String, RealVector> vectorPairs = vectorSpace.getTranslatedVectors(analyzedTerms);
+        Map<String, RealVector> vectorPairs = vectorSpace.getTranslatedVectors(analyzedTerms, new SumVectorComposer(),
+                new AveragedVectorComposer());
+
         Assert.assertEquals(vectorPairs.size(), 2);
 
         Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);

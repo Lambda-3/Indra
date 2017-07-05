@@ -29,7 +29,8 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposition;
+import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.slf4j.Logger;
@@ -40,14 +41,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class IndraDriver {
-    public static final VectorComposition DEFAULT_TERM_COMPOSTION = VectorComposition.UNIQUE_SUM;
-    public static final VectorComposition DEFAULT_TRANSLATION_COMPOSTION = VectorComposition.AVERAGE;
-
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory vectorSpaceFactory;
     private IndraTranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
+    private VectorComposerFactory vectorComposerFactory = new VectorComposerFactory();
 
     public IndraDriver(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
@@ -57,6 +56,8 @@ public class IndraDriver {
 
     public final List<ScoredTextPair> getRelatedness(RelatednessPairRequest request) {
         logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
+        VectorComposer termComposer = vectorComposerFactory.getComposer(
+                VectorComposition.valueOf(request.getTermComposition()));
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
@@ -73,13 +74,18 @@ public class IndraDriver {
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+        VectorComposer termComposer = vectorComposerFactory.getComposer(
+                VectorComposition.valueOf(request.getTermComposition()));
+        VectorComposer translationComposer = vectorComposerFactory.getComposer(
+                VectorComposition.valueOf(request.getTranslationComposition()));
 
         if (disableStemmer) {
             relatednessClient.getVectorSpace().getMetadata().applyStemmer(0);
             relatednessClient.getVectorSpace().getMetadata().minWordLength(0);
         }
 
-        Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(), request.isMt());
+        Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(),
+                request.isMt(), termComposer, translationComposer);
         logger.trace("done");
         return scores;
     }
@@ -92,6 +98,8 @@ public class IndraDriver {
         logger.trace("getting vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         ModelMetadata modelMetadata = vectorSpace.getMetadata();
+        VectorComposer termComposer = vectorComposerFactory.getComposer(
+                VectorComposition.valueOf(request.getTermComposition()));
 
         if (request.isMt()) {
             ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
@@ -118,8 +126,12 @@ public class IndraDriver {
                     term.putAnalyzedTranslatedTokens(token, translatedTokens);
                 }
             }
+
+            VectorComposer translationComposer = vectorComposerFactory.getComposer(
+                    VectorComposition.valueOf(request.getTranslationComposition()));
+
             logger.trace("done");
-            return vectorSpace.getTranslatedVectors(translatedTerms);
+            return vectorSpace.getTranslatedVectors(translatedTerms, termComposer, translationComposer);
 
         } else {
             IndraAnalyzer basicAnalyzer = new IndraAnalyzer(request.getLanguage(), modelMetadata);
@@ -128,7 +140,7 @@ public class IndraDriver {
                 analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
             }
             logger.trace("done");
-            return vectorSpace.getVectors(analyzedTerms);
+            return vectorSpace.getVectors(analyzedTerms, termComposer);
         }
     }
 

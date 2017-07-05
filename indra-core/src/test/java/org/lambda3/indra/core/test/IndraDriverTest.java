@@ -31,7 +31,6 @@ import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
 import org.testng.Assert;
@@ -60,7 +59,8 @@ public class IndraDriverTest {
     public void nonExistingTerms() {
         final String NON_EXISTENT_TERM = "yyyyyyyywywywywy";
         List<String> terms = Arrays.asList(NON_EXISTENT_TERM, "amor");
-        VectorRequest request = new VectorRequest().language("PT").terms(terms);
+        VectorRequest request = new VectorRequest().language("PT").terms(terms).termComposition("SUM").
+                translationComposition("AVERAGE");
         Map<String, RealVector> results = driver.getVectors(request);
         Assert.assertEquals(results.size(), terms.size());
         Assert.assertNull(results.get(NON_EXISTENT_TERM));
@@ -69,7 +69,8 @@ public class IndraDriverTest {
     @Test
     public void getTranslatedVectors() {
         List<String> terms = Arrays.asList("mãe", "pai");
-        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms);
+        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms).termComposition("SUM").
+                translationComposition("AVERAGE");
         Map<String, RealVector> res = driver.getVectors(request);
         Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
         Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
@@ -78,7 +79,9 @@ public class IndraDriverTest {
     @Test
     public void getComposedTranslatedVectors() {
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
-        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms);
+        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms).termComposition("SUM").
+                translationComposition("AVERAGE");
+
         Map<String, RealVector> res = driver.getVectors(request);
         Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
         Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
@@ -87,7 +90,7 @@ public class IndraDriverTest {
     @Test
     public void getRelatedness() {
         RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE)
-                .language("PT").mt(true);
+                .language("PT").mt(true).termComposition("SUM").translationComposition("AVERAGE");
         request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
         List<ScoredTextPair> relatedness = driver.getRelatedness(request);
 
@@ -98,7 +101,8 @@ public class IndraDriverTest {
 
     @Test
     public void getZeroRelatedness() {
-        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE).language("PT");
+        RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE).language("PT").termComposition("SUM").
+                translationComposition("AVERAGE");
         request.pairs(Arrays.asList(new TextPair("blabla", "ttt"),
                 new TextPair("these tokens are not in the vector model", "neither those")));
         List<ScoredTextPair> relatedness = driver.getRelatedness(request);
@@ -113,12 +117,12 @@ public class IndraDriverTest {
         String lang = "PT";
         boolean mt = true;
         RelatednessPairRequest pairRequest = new RelatednessPairRequest().scoreFunction(COSINE)
-                .language(lang).mt(mt);
+                .language(lang).mt(mt).termComposition("SUM").translationComposition("AVERAGE");
         pairRequest.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe", "mãe computador"),
                 new TextPair("mãe", "pai avaliação")));
 
         RelatednessOneToManyRequest otmRequest = new RelatednessOneToManyRequest().scoreFunction(COSINE)
-                .language(lang).mt(mt);
+                .language(lang).mt(mt).termComposition("SUM").translationComposition("AVERAGE");
         otmRequest.one("mãe").many(Arrays.asList("pai", "mãe computador", "pai avaliação"));
         oneToManyRelatedness(pairRequest, otmRequest);
     }
@@ -157,9 +161,7 @@ public class IndraDriverTest {
         return new VectorSpaceFactory() {
             @Override
             protected VectorSpace doCreate(AbstractBasicRequest request) {
-                VectorComposerFactory composerFactory = new VectorComposerFactory();
-                return new MockCachedVectorSpace(composerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION),
-                        composerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION));
+                return new MockCachedVectorSpace();
             }
 
             @Override

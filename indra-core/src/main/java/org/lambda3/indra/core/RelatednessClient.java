@@ -28,6 +28,7 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +41,16 @@ public abstract class RelatednessClient {
     protected VectorSpace vectorSpace;
     protected RelatednessRequest request;
     protected RelatednessFunction func;
+    protected VectorComposer termComposer;
+    protected VectorComposer translationComposer;
 
-    protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func) {
+    protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
+                                VectorComposer termComposer, VectorComposer translationComposer) {
         this.vectorSpace = Objects.requireNonNull(vectorSpace);
         this.request = Objects.requireNonNull(request);
         this.func = Objects.requireNonNull(func);
+        this.termComposer = Objects.requireNonNull(termComposer);
+        this.translationComposer = translationComposer;
     }
 
     protected abstract List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs);
@@ -76,14 +82,16 @@ public abstract class RelatednessClient {
         return compute(vectorsPairs);
     }
 
-    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
+    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated,
+                                              VectorComposer termComposer, VectorComposer translationComposer) {
         List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
 
         Map<String, RealVector> vectors;
         if (translated) {
-            vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms);
+            vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms,
+                    termComposer, translationComposer);
         } else {
-            vectors = vectorSpace.getVectors((List<AnalyzedTerm>) analyzedTerms);
+            vectors = vectorSpace.getVectors((List<AnalyzedTerm>) analyzedTerms, termComposer);
         }
         Map<String, Double> results = new LinkedHashMap<>();
 
