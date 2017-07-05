@@ -144,20 +144,37 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+        Collection<Integer> nearest = getNearestIds(term, topk);
 
+        Map<String, float[]> results = new HashMap<>();
+        for (Integer id : nearest) {
+            results.put(idToWord[id], index.getItemVector(id));
+        }
+
+        return results;
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
+        Collection<Integer> nearest = getNearestIds(term, topk);
+        Collection<String> terms = new LinkedList<>();
+
+        for (Integer id : nearest) {
+            terms.add(idToWord[id]);
+        }
+
+        return terms;
+    }
+
+    public Collection<Integer> getNearestIds(AnalyzedTerm term, int topk) {
         if (term.getAnalyzedTokens().size() == 1) {
-            float[] vector = getVector(term.getAnalyzedTokens().get(0));
-            Map<String, float[]> results = new HashMap<>();
+            float[] vector = getVector(term.getFirstToken());
 
             if (vector != null) {
-                List<Integer> nearest = this.index.getNearest(vector, topk);
-
-                for (Integer id : nearest) {
-                    results.put(idToWord[id], index.getItemVector(id));
-                }
+                return this.index.getNearest(vector, topk);
             }
 
-            return results;
+            return Collections.emptyList();
         } else {
             String message = "NearestFunction is available only for single-token terms.";
             logger.error(message);

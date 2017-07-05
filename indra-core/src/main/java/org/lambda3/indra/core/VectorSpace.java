@@ -30,6 +30,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public interface VectorSpace {
     Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer);
 
     Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs,
-                                                 VectorComposer termComposer, VectorComposer translationComposer);
+                                                                     VectorComposer termComposer, VectorComposer translationComposer);
 
     Map<String, RealVector> getVectors(List<AnalyzedTerm> terms, VectorComposer termComposer);
 
@@ -46,6 +47,8 @@ public interface VectorSpace {
                                                  VectorComposer translationComposer);
 
     Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
+
+    Collection<String> getNearestTerms(AnalyzedTerm term, int topk);
 
     ModelMetadata getMetadata();
 }

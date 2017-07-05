@@ -29,23 +29,23 @@ package org.lambda3.indra.client;
 import java.util.List;
 import java.util.Objects;
 
-public class NeighborsVectorsRequest<T extends NeighborsVectorsRequest> extends AbstractBasicRequest<NeighborsVectorsRequest> {
+public class NeighborsVectorsRequest extends AbstractBasicRequest<NeighborsVectorsRequest> {
 
     private List<String> terms;
     private int topk;
 
-    public T terms(List<String> terms) {
+    public NeighborsVectorsRequest terms(List<String> terms) {
         this.terms = Objects.requireNonNull(terms);
-        return (T) this;
+        return this;
     }
 
     public List<String> getTerms() {
         return terms;
     }
 
-    public T topk(int topk) {
+    public NeighborsVectorsRequest topk(int topk) {
         this.topk = topk;
-        return (T) this;
+        return this;
     }
 
     public int getTopk() {

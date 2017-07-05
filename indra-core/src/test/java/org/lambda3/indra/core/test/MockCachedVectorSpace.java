@@ -93,4 +93,9 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
         throw new UnsupportedOperationException("not implemented yet.");
     }
+
+    @Override
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
 }
