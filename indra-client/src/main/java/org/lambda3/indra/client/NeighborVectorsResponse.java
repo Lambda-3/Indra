@@ -30,19 +30,25 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NeighborVectorsResponse extends AbstractBasicResponse {
-    private Map<String, float[]> terms;
+    private Map<String, Map<String, float[]>> terms;
+    private int topk;
 
     protected NeighborVectorsResponse() {
         //jersey demands.
     }
 
-    public NeighborVectorsResponse(NeighborsVectorsRequest request, Map<String, float[]> terms) {
+    public NeighborVectorsResponse(NeighborsVectorsRequest request, Map<String, Map<String, float[]>> terms) {
         super(request);
+        this.topk = request.getTopk();
         this.terms = Objects.requireNonNull(terms);
     }
 
-    public Map<String, float[]> getTerms() {
+    public Map<String, Map<String, float[]>> getTerms() {
         return terms;
+    }
+
+    public int getTopk() {
+        return this.topk;
     }
 
     @Override

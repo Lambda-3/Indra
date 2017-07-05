@@ -58,28 +58,28 @@ public class IndraDriverTest {
 
     @Test
     public void nonExistingTerms() {
-        VectorRequest request = new VectorRequest().language("PT");
         final String NON_EXISTENT_TERM = "yyyyyyyywywywywy";
         List<String> terms = Arrays.asList(NON_EXISTENT_TERM, "amor");
-        Map<String, RealVector> results = driver.getVectors(terms, request);
+        VectorRequest request = new VectorRequest().language("PT").terms(terms);
+        Map<String, RealVector> results = driver.getVectors(request);
         Assert.assertEquals(results.size(), terms.size());
         Assert.assertNull(results.get(NON_EXISTENT_TERM));
     }
 
     @Test
     public void getTranslatedVectors() {
-        VectorRequest request = new VectorRequest().language("PT").mt(true);
         List<String> terms = Arrays.asList("mãe", "pai");
-        Map<String, RealVector> res = driver.getVectors(terms, request);
+        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms);
+        Map<String, RealVector> res = driver.getVectors(request);
         Assert.assertEquals(res.get("mãe"), MockCachedVectorSpace.ONE_VECTOR);
         Assert.assertEquals(res.get("pai"), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
     }
 
     @Test
     public void getComposedTranslatedVectors() {
-        VectorRequest request = new VectorRequest().language("PT").mt(true);
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
-        Map<String, RealVector> res = driver.getVectors(terms, request);
+        VectorRequest request = new VectorRequest().language("PT").mt(true).terms(terms);
+        Map<String, RealVector> res = driver.getVectors(request);
         Assert.assertEquals(res.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
         Assert.assertEquals(res.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
     }
@@ -89,9 +89,9 @@ public class IndraDriverTest {
         RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE)
                 .language("PT").mt(true);
         request.pairs(Arrays.asList(new TextPair("mãe", "pai"), new TextPair("mãe computador", "pai avaliação")));
-        RelatednessPairResponse res = driver.getRelatedness(request);
+        List<ScoredTextPair> relatedness = driver.getRelatedness(request);
 
-        for (ScoredTextPair pair : res.getPairs()) {
+        for (ScoredTextPair pair : relatedness) {
             Assert.assertEquals(Math.floor(pair.score), -1d);
         }
     }
@@ -101,9 +101,9 @@ public class IndraDriverTest {
         RelatednessPairRequest request = new RelatednessPairRequest().scoreFunction(COSINE).language("PT");
         request.pairs(Arrays.asList(new TextPair("blabla", "ttt"),
                 new TextPair("these tokens are not in the vector model", "neither those")));
-        RelatednessPairResponse res = driver.getRelatedness(request);
+        List<ScoredTextPair> relatedness = driver.getRelatedness(request);
 
-        for (ScoredTextPair pair : res.getPairs()) {
+        for (ScoredTextPair pair : relatedness) {
             Assert.assertEquals(pair.score, 0d);
         }
     }
@@ -142,13 +142,13 @@ public class IndraDriverTest {
     }
 
     public void oneToManyRelatedness(RelatednessPairRequest pairRequest, RelatednessOneToManyRequest otmRequest) {
-        RelatednessPairResponse pairRes = driver.getRelatedness(pairRequest);
-        Map<String, Double> pairResults = pairRes.getPairs().stream().collect(Collectors.toMap(p -> p.t2, p -> p.score));
+        List<ScoredTextPair> relatedness = driver.getRelatedness(pairRequest);
+        Map<String, Double> pairResults = relatedness.stream().collect(Collectors.toMap(p -> p.t2, p -> p.score));
 
-        RelatednessOneToManyResponse otmRes = driver.getRelatedness(otmRequest);
+        Map<String, Double> otmRelatedness = driver.getRelatedness(otmRequest);
 
-        for (String m : otmRes.getMany().keySet()) {
-            Assert.assertEquals(otmRes.getMany().get(m), pairResults.get(m));
+        for (String m : otmRelatedness.keySet()) {
+            Assert.assertEquals(otmRelatedness.get(m), pairResults.get(m));
         }
     }
 

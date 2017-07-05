@@ -80,7 +80,7 @@ public abstract class RelatednessClient {
         List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
 
         Map<String, RealVector> vectors;
-        if(translated) {
+        if (translated) {
             vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms);
         } else {
             vectors = vectorSpace.getVectors((List<AnalyzedTerm>) analyzedTerms);
@@ -100,5 +100,9 @@ public abstract class RelatednessClient {
         }
 
         return results;
+    }
+
+    public VectorSpace getVectorSpace() {
+        return this.vectorSpace;
     }
 }
