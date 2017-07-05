@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class IndraDriver {
@@ -54,33 +55,41 @@ public class IndraDriver {
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public final RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
+    public final List<ScoredTextPair> getRelatedness(RelatednessPairRequest request) {
         logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
-        RelatednessPairResponse response = new RelatednessPairResponse(request, scoredPairs);
         logger.trace("done");
-        return response;
+        return scoredPairs;
     }
 
-    public final RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request) {
+        return getRelatedness(request, false);
+    }
+
+    private final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request, boolean disableStemmer) {
         logger.trace("getting relatedness for one {} to many (size){} (request={})", request.getOne(),
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+
+        if (disableStemmer) {
+            relatednessClient.getVectorSpace().getMetadata().applyStemmer(0);
+            relatednessClient.getVectorSpace().getMetadata().minWordLength(0);
+        }
+
         Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(), request.isMt());
-        RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, scores);
         logger.trace("done");
-        return response;
+        return scores;
     }
 
     public final boolean isSparseModel(VectorRequest request) {
         return vectorSpaceFactory.create(request).getMetadata().isSparse();
     }
 
-    public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {
-        logger.trace("getting vectors for {} terms (params={})", terms.size(), request);
+    public final Map<String, RealVector> getVectors(VectorRequest request) {
+        logger.trace("getting vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         ModelMetadata modelMetadata = vectorSpace.getMetadata();
 
@@ -90,7 +99,7 @@ public class IndraDriver {
 
             logger.trace("applying translation");
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
-            for (String term : terms) {
+            for (String term : request.getTerms()) {
                 List<String> analyzedTokens = nativeLangAnalyzer.analyze(term);
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
@@ -115,7 +124,7 @@ public class IndraDriver {
         } else {
             IndraAnalyzer basicAnalyzer = new IndraAnalyzer(request.getLanguage(), modelMetadata);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
-            for (String term : terms) {
+            for (String term : request.getTerms()) {
                 analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
             }
             logger.trace("done");
@@ -123,8 +132,8 @@ public class IndraDriver {
         }
     }
 
-    public final Map<String, double[]> getVectorsAsArray(List<String> terms, VectorRequest request) {
-        Map<String, RealVector> inVectors = getVectors(terms, request);
+    public final Map<String, double[]> getVectorsAsArray(VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(request);
 
         Map<String, double[]> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
@@ -136,8 +145,8 @@ public class IndraDriver {
         return outVectors;
     }
 
-    public final Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, VectorRequest request) {
-        Map<String, RealVector> inVectors = getVectors(terms, request);
+    public final Map<String, Map<Integer, Double>> getVectorsAsMap(VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(request);
 
         Map<String, Map<Integer, Double>> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
@@ -149,5 +158,43 @@ public class IndraDriver {
         return outVectors;
     }
 
+    public final Map<String, Map<String, float[]>> getNeighborsVectors(NeighborsVectorsRequest request) {
+        logger.trace("getting neighbors vectors for {} terms (request={})", request.getTerms().size(), request);
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
 
+        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+        List<String> terms = request.getTerms();
+        for (String term : terms) {
+            analyzedTerms.add(new AnalyzedTerm(term, analyzer.analyze(term)));
+        }
+
+        Map<String, Map<String, float[]>> results = new ConcurrentHashMap<>();
+        analyzedTerms.stream().parallel().forEach(at -> {
+            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk());
+            results.put(at.getTerm(), vectors);
+        });
+
+        logger.trace("done");
+        return results;
+    }
+
+    public final Map<String, Map<String, Double>> getNeighborRelatedness(NeighborRelatednessRequest request) {
+        logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
+        Map<String, Map<String, float[]>> vectors = getNeighborsVectors(request);
+
+        Map<String, Map<String, Double>> results = new ConcurrentHashMap<>();
+        vectors.keySet().stream().parallel().forEach(term -> {
+            RelatednessOneToManyRequest termRequest = new RelatednessOneToManyRequest().one(term)
+                    .many(new LinkedList<>(vectors.get(term).keySet())).language(request.getLanguage()).
+                            scoreFunction(request.getScoreFunction()).corpus(request.getCorpus()).model(request.getModel()).
+                            applyStopWords(false).mt(request.isMt());
+
+            Map<String, Double> relatedness = getRelatedness(termRequest, true);
+            results.put(term, relatedness);
+        });
+
+        logger.trace("done");
+        return results;
+    }
 }

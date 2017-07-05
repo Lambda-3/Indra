@@ -64,8 +64,7 @@ public final class ModelMetadata {
     private Set<String> stopWords = Collections.emptySet();
 
     public static final String MORE_PARAM = "more";
-    private Map<String, String> more = new HashMap<>();
-    //TODO more here.
+    private Map<String, String> more = Collections.emptyMap();
 
     private ModelMetadata() {
         //

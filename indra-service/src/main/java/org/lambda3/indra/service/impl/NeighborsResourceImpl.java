@@ -1,8 +1,8 @@
-package org.lambda3.indra.client;
+package org.lambda3.indra.service.impl;
 
 /*-
  * ==========================License-Start=============================
- * Indra Client Module
+ * Indra Web Service Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,38 +26,17 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.Map;
-import java.util.Objects;
+import org.lambda3.indra.client.*;
 
-public class NeighborRelatednessResponse extends AbstractBasicResponse {
-    private ScoreFunction scoreFunction;
-    private int topk;
-    private Map<String, Map<String, Double>> terms;
+public class NeighborsResourceImpl implements NeighborsResource {
 
-    protected NeighborRelatednessResponse() {
-        //jersey demands.
-    }
-
-    public NeighborRelatednessResponse(NeighborRelatednessRequest request, Map<String, Map<String, Double>> terms) {
-        super(request);
-        this.scoreFunction = request.getScoreFunction();
-        this.topk = request.getTopk();
-        this.terms = Objects.requireNonNull(terms);
-    }
-
-    public Map<String, Map<String, Double>> getTerms() {
-        return terms;
-    }
-
-    public int getTopk() {
-        return this.topk;
+    @Override
+    public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
+        return null;
     }
 
     @Override
-    public String toString() {
-        return "NeighborRelatednessResponse{" +
-                "scoreFunction=" + scoreFunction +
-                ", terms size=" + terms.size() +
-                '}';
+    public NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request) {
+        return null;
     }
 }

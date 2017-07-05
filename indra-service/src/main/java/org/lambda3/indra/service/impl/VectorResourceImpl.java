@@ -32,16 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
     public VectorResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+        this.driver = Objects.requireNonNull(driver);
     }
 
     @Override
@@ -50,10 +48,10 @@ public class VectorResourceImpl implements VectorResource {
         VectorResponse response;
 
         if (this.driver.isSparseModel(request)) {
-            Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
+            Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request);
             response = new SparseVectorResponse(request, results);
         } else {
-            Map<String, double[]> results = this.driver.getVectorsAsArray(request.getTerms(), request);
+            Map<String, double[]> results = this.driver.getVectorsAsArray(request);
             response = new DenseVectorResponse(request, results);
         }
 
