@@ -100,7 +100,9 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
         List analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
                 .collect(Collectors.toList());
-        analyzedTerms.add(new MutableTranslatedTerm(one, analyzer.analyze(one)));
+        if (one != null) {
+            analyzedTerms.add(new MutableTranslatedTerm(one, analyzer.analyze(one)));
+        }
 
         translate((List<MutableTranslatedTerm>) analyzedTerms);
         return (List<AnalyzedTerm>) analyzedTerms;

@@ -56,8 +56,6 @@ public class IndraDriver {
 
     public final List<ScoredTextPair> getRelatedness(RelatednessPairRequest request) {
         logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
-        VectorComposer termComposer = vectorComposerFactory.getComposer(
-                VectorComposition.valueOf(request.getTermComposition()));
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
@@ -66,26 +64,12 @@ public class IndraDriver {
     }
 
     public final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request) {
-        return getRelatedness(request, false);
-    }
-
-    private final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request, boolean disableStemmer) {
         logger.trace("getting relatedness for one {} to many (size){} (request={})", request.getOne(),
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        VectorComposer termComposer = vectorComposerFactory.getComposer(
-                VectorComposition.valueOf(request.getTermComposition()));
-        VectorComposer translationComposer = vectorComposerFactory.getComposer(
-                VectorComposition.valueOf(request.getTranslationComposition()));
-
-        if (disableStemmer) {
-            relatednessClient.getVectorSpace().getMetadata().applyStemmer(0);
-            relatednessClient.getVectorSpace().getMetadata().minWordLength(0);
-        }
-
         Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(),
-                request.isMt(), termComposer, translationComposer);
+                request.isMt());
         logger.trace("done");
         return scores;
     }
@@ -176,8 +160,8 @@ public class IndraDriver {
 
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
-        List<String> terms = request.getTerms();
-        for (String term : terms) {
+
+        for (String term : request.getTerms()) {
             analyzedTerms.add(new AnalyzedTerm(term, analyzer.analyze(term)));
         }
 
@@ -193,20 +177,11 @@ public class IndraDriver {
 
     public final Map<String, Map<String, Double>> getNeighborRelatedness(NeighborRelatednessRequest request) {
         logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
-        Map<String, Map<String, float[]>> vectors = getNeighborsVectors(request);
-
-        Map<String, Map<String, Double>> results = new ConcurrentHashMap<>();
-        vectors.keySet().stream().parallel().forEach(term -> {
-            RelatednessOneToManyRequest termRequest = new RelatednessOneToManyRequest().one(term)
-                    .many(new LinkedList<>(vectors.get(term).keySet())).language(request.getLanguage()).
-                            scoreFunction(request.getScoreFunction()).corpus(request.getCorpus()).model(request.getModel()).
-                            applyStopWords(false).mt(request.isMt());
-
-            Map<String, Double> relatedness = getRelatedness(termRequest, true);
-            results.put(term, relatedness);
-        });
+        RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+        Map<String, Map<String, Double>> relatedness = relatednessClient.getNeighborRelatedness(request.getTerms(),
+                request.getTopk());
 
         logger.trace("done");
-        return results;
+        return relatedness;
     }
 }

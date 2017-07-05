@@ -26,23 +26,36 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import java.util.List;
 import java.util.Objects;
 
-public class NeighborRelatednessRequest extends NeighborsVectorsRequest<NeighborRelatednessRequest> {
-    private ScoreFunction scoreFunction;
+public class NeighborRelatednessRequest extends RelatednessRequest<NeighborRelatednessRequest> {
+    private List<String> terms;
+    private int topk;
 
-    public NeighborRelatednessRequest scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
+    public NeighborRelatednessRequest terms(List<String> terms) {
+        this.terms = Objects.requireNonNull(terms);
         return this;
     }
 
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public NeighborRelatednessRequest topk(int topk) {
+        this.topk = topk;
+        return this;
+    }
+
+    public int getTopk() {
+        return topk;
     }
 
     @Override
     protected boolean isValid() {
-        return super.isValid() && Objects.nonNull(scoreFunction);
+        //TODO error message.
+        boolean valid = terms != null && !terms.isEmpty() && topk > 0 && scoreFunction != null && isMt() == false;
+        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
     }
 
 }

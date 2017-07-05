@@ -66,7 +66,9 @@ public class StandardRelatednessClient extends RelatednessClient {
     protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
         List<AnalyzedTerm> ats = terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
-        ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));
+        if (one != null) {
+            ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));
+        }
 
         return ats;
     }
