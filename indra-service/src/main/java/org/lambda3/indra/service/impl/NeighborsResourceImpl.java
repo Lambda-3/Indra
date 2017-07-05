@@ -27,16 +27,40 @@ package org.lambda3.indra.service.impl;
  */
 
 import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.IndraDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Objects;
 
 public class NeighborsResourceImpl implements NeighborsResource {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private IndraDriver driver;
+
+    public NeighborsResourceImpl(IndraDriver driver) {
+        this.driver = Objects.requireNonNull(driver);
+    }
 
     @Override
     public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
-        return null;
+        logger.trace("getNeighborsVectors - User Request: {}", request);
+        request.validate();
+        Map<String, Map<String, float[]>> vectors = this.driver.getNeighborsVectors(request);
+        NeighborVectorsResponse response = new NeighborVectorsResponse(request, vectors);
+        logger.trace("Response: {}", response);
+
+        return response;
     }
 
     @Override
     public NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request) {
-        return null;
+        logger.trace("getNeighborRelatedness - User Request: {}", request);
+        request.validate();
+        Map<String, Map<String, Double>> relatedness = this.driver.getNeighborRelatedness(request);
+        NeighborRelatednessResponse response = new NeighborRelatednessResponse(request, relatedness);
+        logger.trace("Response: {}", response);
+
+        return response;
     }
 }

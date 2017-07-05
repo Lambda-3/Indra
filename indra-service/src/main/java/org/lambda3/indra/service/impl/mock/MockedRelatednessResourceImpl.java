@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.service.impl.mock;
 
 /*-
  * ==========================License-Start=============================
@@ -26,15 +26,39 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.InfoResource;
-import org.lambda3.indra.client.ResourceResponse;
+import org.lambda3.indra.client.*;
 
-import java.util.Collections;
+import java.util.*;
 
-public final class MockedInfoResourceImpl extends InfoResource {
+/**
+ * RelatednessResource implementation that randomly assigns a relatedness value.
+ * For testing puporses.
+ */
+public class MockedRelatednessResourceImpl implements RelatednessResource {
+
+    private static Random rnd = new Random();
 
     @Override
-    public ResourceResponse getResources() {
-        return new ResourceResponse(Collections.emptyList(), Collections.emptyList());
+    public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
+        Collection<ScoredTextPair> scored = new ArrayList<>();
+
+        for (TextPair pair : request.getPairs()) {
+            AnalyzedPair analyzedPair = new AnalyzedPair(pair);
+            ScoredTextPair stp = new ScoredTextPair(analyzedPair, rnd.nextDouble());
+            scored.add(stp);
+        }
+
+        return new RelatednessPairResponse(request, scored);
+    }
+
+    @Override
+    public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
+        Map<String, Double> results = new LinkedHashMap<>();
+
+        for (String m : request.getMany()) {
+            results.put(m, rnd.nextDouble());
+        }
+
+        return new RelatednessOneToManyResponse(request, results);
     }
 }
