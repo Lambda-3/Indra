@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class NeighborsVectorsRequest extends AbstractBasicRequest<NeighborsVectorsRequest> {
-
     private List<String> terms;
     private int topk;
 
@@ -53,8 +52,14 @@ public class NeighborsVectorsRequest extends AbstractBasicRequest<NeighborsVecto
     }
 
     @Override
-    protected boolean isValid() {
-        boolean valid = terms != null && !terms.isEmpty() && topk > 0;
-        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
+    protected String isValid() {
+        StringBuilder errorMessages = new StringBuilder();
+        checkAndAppendErrorMessagesLists(terms, "terms", errorMessages);
+
+        if (topk <= 0) {
+            errorMessages.append(" - 'topk' must be greater than 0\n");
+        }
+
+        return errorMessages.toString();
     }
 }

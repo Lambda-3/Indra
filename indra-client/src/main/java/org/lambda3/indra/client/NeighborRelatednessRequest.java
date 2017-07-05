@@ -52,10 +52,20 @@ public class NeighborRelatednessRequest extends RelatednessRequest<NeighborRelat
     }
 
     @Override
-    protected boolean isValid() {
-        //TODO error message.
-        boolean valid = terms != null && !terms.isEmpty() && topk > 0 && scoreFunction != null && isMt() == false;
-        return valid && terms.parallelStream().allMatch(s -> s != null && !s.isEmpty());
+    protected String isValid() {
+        String errors = super.isValid();
+        StringBuilder errorMessages = new StringBuilder(errors);
+        checkAndAppendErrorMessagesLists(terms, "terms", errorMessages);
+
+        if(topk <= 0) {
+            errorMessages.append(" - 'topk' must be greater than 0\n");
+        }
+
+        if(isMt()) {
+            errorMessages.append(" - function does not support machine-translation based execution. 'mt' must be false\n");
+        }
+
+        return errorMessages.toString();
     }
 
 }
