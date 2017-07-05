@@ -166,6 +166,11 @@
             <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.lambda3.indra</groupId>
+            <artifactId>indra-annoy</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>

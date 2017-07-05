@@ -40,18 +40,10 @@ public abstract class CachedVectorSpace implements VectorSpace {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     protected ModelMetadata metadata;
-    private VectorComposer termComposer;
-    private VectorComposer translationComposer;
 
     protected abstract void collectVectors(Collection<String> terms, int limit);
 
     protected abstract ModelMetadata loadMetadata();
-
-    public CachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
-        this.termComposer = termComposer;
-        this.translationComposer = translationComposer;
-        logger.info("Model metadata: {}", metadata);
-    }
 
     protected List<RealVector> getFromCache(Collection<String> terms) {
         List<RealVector> termVectors = new ArrayList<>();
@@ -62,22 +54,16 @@ public abstract class CachedVectorSpace implements VectorSpace {
     }
 
     @Override
-    public VectorComposer getTermComposer() {
-        return this.termComposer;
-    }
-
-    @Override
-    public VectorComposer getTranslationComposer() {
-        return this.translationComposer;
-    }
-
-    @Override
     public ModelMetadata getMetadata() {
+        if (metadata == null) {
+            metadata = loadMetadata();
+        }
+
         return metadata;
     }
 
     @Override
-    public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs) {
+    public Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer) {
         if (pairs == null || pairs.isEmpty()) {
             throw new IllegalArgumentException("pairs can't be null");
         }
@@ -94,15 +80,16 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
-            vectorPair.v1 = composeVectors(p.getAnalyzedT1().getAnalyzedTokens(), getTermComposer());
-            vectorPair.v2 = composeVectors(p.getAnalyzedT2().getAnalyzedTokens(), getTermComposer());
+            vectorPair.v1 = composeVectors(p.getAnalyzedT1().getAnalyzedTokens(), termComposer);
+            vectorPair.v2 = composeVectors(p.getAnalyzedT2().getAnalyzedTokens(), termComposer);
             res.put(p, vectorPair);
         }
         return res;
     }
 
     @Override
-    public Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs) {
+    public Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs,
+                                                                            VectorComposer termComposer, VectorComposer translationComposer) {
         if (pairs == null) {
             throw new IllegalArgumentException("pairs can't be null");
         }
@@ -131,7 +118,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             List<RealVector> t1Vectors = new LinkedList<>();
             MutableTranslatedTerm tt1 = p.getTranslatedT1();
             for (String token : tt1.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(tt1.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
+                RealVector tokenVector = composeVectors(tt1.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     t1Vectors.add(tokenVector);
                 }
@@ -140,14 +127,14 @@ public abstract class CachedVectorSpace implements VectorSpace {
             List<RealVector> t2Vectors = new LinkedList<>();
             MutableTranslatedTerm tt2 = p.getTranslatedT2();
             for (String token : tt2.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(tt2.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
+                RealVector tokenVector = composeVectors(tt2.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     t2Vectors.add(tokenVector);
                 }
             }
 
-            vectorPair.v1 = t1Vectors.isEmpty() ? null : getTermComposer().compose(t1Vectors);
-            vectorPair.v2 = t2Vectors.isEmpty() ? null : getTermComposer().compose(t2Vectors);
+            vectorPair.v1 = t1Vectors.isEmpty() ? null : termComposer.compose(t1Vectors);
+            vectorPair.v2 = t2Vectors.isEmpty() ? null : termComposer.compose(t2Vectors);
             res.put(p, vectorPair);
         }
 
@@ -155,7 +142,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<String, RealVector> getVectors(List<AnalyzedTerm> terms) {
+    public Map<String, RealVector> getVectors(List<AnalyzedTerm> terms, VectorComposer termComposer) {
         if (terms == null) {
             throw new IllegalArgumentException("terms can't be null");
         }
@@ -168,7 +155,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
         Map<String, RealVector> vectors = new HashMap<>();
 
         for (AnalyzedTerm term : terms) {
-            RealVector vector = composeVectors(term.getAnalyzedTokens(), getTermComposer());
+            RealVector vector = composeVectors(term.getAnalyzedTokens(), termComposer);
             vectors.put(term.getTerm(), vector);
         }
 
@@ -176,7 +163,8 @@ public abstract class CachedVectorSpace implements VectorSpace {
     }
 
     @Override
-    public Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms) {
+    public Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms,
+                                                        VectorComposer termComposer, VectorComposer translationComposer) {
         if (terms == null) {
             throw new IllegalArgumentException("terms can't be null");
         }
@@ -196,13 +184,13 @@ public abstract class CachedVectorSpace implements VectorSpace {
         for (MutableTranslatedTerm mtt : terms) {
             List<RealVector> tokenVectors = new LinkedList<>();
             for (String token : mtt.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(mtt.getAnalyzedTranslatedTokens().get(token), getTranslationComposer());
+                RealVector tokenVector = composeVectors(mtt.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     tokenVectors.add(tokenVector);
                 }
             }
 
-            RealVector vector = tokenVectors.isEmpty() ? null : getTermComposer().compose(tokenVectors);
+            RealVector vector = tokenVectors.isEmpty() ? null : termComposer.compose(tokenVectors);
             vectors.put(mtt.getTerm(), vector);
         }
 

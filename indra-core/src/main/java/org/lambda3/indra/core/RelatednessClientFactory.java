@@ -27,6 +27,9 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.client.VectorComposition;
+import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.IndraTranslatorFactory;
@@ -37,6 +40,7 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
     private IndraTranslatorFactory translatorFactory;
+    private VectorComposerFactory composerFactory = new VectorComposerFactory();
 
 
     public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
@@ -49,15 +53,17 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
     protected RelatednessClient doCreate(RelatednessRequest request) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(request.getScoreFunction());
+        VectorComposer termComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTermComposition()));
 
         if (request.isMt()) {
             if (translatorFactory == null) {
                 throw new IllegalStateException("Translation-based relatedness not activated.");
             }
-            return new TranslationBasedRelatednessClient(request, vectorSpace, relatednessFunction,
-                    translatorFactory.create(request));
+            VectorComposer transComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTranslationComposition()));
+            return new TranslationBasedRelatednessClient(translatorFactory.create(request), request, vectorSpace,
+                    relatednessFunction, termComp, transComp);
         } else {
-            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction);
+            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction, termComp);
         }
     }
 

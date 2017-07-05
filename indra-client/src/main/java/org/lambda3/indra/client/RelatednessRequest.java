@@ -31,6 +31,7 @@ import java.util.Objects;
 public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
 
     protected ScoreFunction scoreFunction;
+    protected VectorComposition vectorComposition;
 
     public T scoreFunction(ScoreFunction scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);

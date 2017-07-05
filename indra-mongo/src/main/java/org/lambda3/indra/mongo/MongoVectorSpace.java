@@ -38,7 +38,6 @@ import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.exception.IndraError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +57,10 @@ public class MongoVectorSpace extends CachedVectorSpace {
     private MongoClient mongoClient;
     private final String dbName;
 
-    MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
-        super(composer, translationComposer);
+    MongoVectorSpace(MongoClient client, String dbName) {
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;
-        this.metadata = loadMetadata();
     }
 
     @Override

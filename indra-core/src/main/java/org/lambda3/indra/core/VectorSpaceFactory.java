@@ -33,11 +33,6 @@ import org.lambda3.indra.core.composition.VectorComposerFactory;
 import java.util.Collection;
 
 public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> {
-    protected VectorComposerFactory vectorComposerFactory;
-
-    public VectorSpaceFactory() {
-        this.vectorComposerFactory = new VectorComposerFactory();
-    }
 
     @Override
     public VectorSpace create(AbstractBasicRequest request) {

@@ -35,19 +35,17 @@ import java.util.Map;
 
 public interface VectorSpace {
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs);
+    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer);
 
-    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs);
+    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs,
+                                                 VectorComposer termComposer, VectorComposer translationComposer);
 
-    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms);
+    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms, VectorComposer termComposer);
 
-    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms);
+    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms, VectorComposer termComposer,
+                                                 VectorComposer translationComposer);
 
     Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
-
-    VectorComposer getTermComposer();
-
-    VectorComposer getTranslationComposer();
 
     ModelMetadata getMetadata();
 }

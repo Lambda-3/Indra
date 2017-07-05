@@ -38,6 +38,8 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
     private boolean mt = false;
     private Boolean applyStopWords;
     private int minWordLength = -1; // flags user did not override the defaults
+    private String termComposition = VectorComposition.UNIT_NORMALIZATION.toString();
+    private String translationComposition = VectorComposition.UNIT_NORMALIZATION.toString();
 
     public T corpus(String corpusName) {
         this.corpus = Objects.requireNonNull(corpusName);
@@ -74,6 +76,16 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return (T) this;
     }
 
+    public T termComposition(String termComposition) {
+        this.termComposition = termComposition;
+        return (T) this;
+    }
+
+    public T translationComposition(String translationComposition) {
+        this.translationComposition = translationComposition;
+        return (T) this;
+    }
+
     public String getCorpus() {
         return corpus;
     }
@@ -86,13 +98,20 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         return language;
     }
 
-
     public Boolean getApplyStopWords() {
         return applyStopWords;
     }
 
     public Integer getMinWordLength() {
         return minWordLength;
+    }
+
+    public String getTermComposition() {
+        return termComposition;
+    }
+
+    public String getTranslationComposition() {
+        return translationComposition;
     }
 
     /**
@@ -102,7 +121,8 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
      */
     public final void validate() {
         boolean invalid = corpus == null || corpus.isEmpty() || model == null || model.isEmpty() ||
-                language == null || language.isEmpty() || !isValid();
+                language == null || language.isEmpty() || termComposition == null || termComposition.isEmpty() ||
+                translationComposition == null || translationComposition.isEmpty() || !isValid();
 
         if (invalid) {
             throw new WebApplicationException("Invalid Indra Request", Response.Status.BAD_REQUEST);

@@ -31,7 +31,9 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.lambda3.indra.mongo.MongoIndraDriver;
+import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
+import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.lambda3.indra.service.impl.mock.MockedInfoResourceImpl;
@@ -51,6 +53,7 @@ public final class Server {
     private static final String port;
     private static final boolean mockMode;
     private static final String mongoURI;
+    private static final String annoyBaseDir;
 
     static {
         protocol = "http://";
@@ -59,6 +62,7 @@ public final class Server {
         BASE_URI = protocol + host + ":" + port;
         mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));
         mongoURI = System.getProperty("indra.mongoURI", "localhost:27017");
+        annoyBaseDir = System.getProperty("indra.annoyBaseDir");
     }
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -80,14 +84,21 @@ public final class Server {
             rc.register(new MockedInfoResourceImpl());
             rc.register(new MockedNeighborsResourceImpl());
         } else {
-            MongoVectorSpaceFactory spaceFactory = new MongoVectorSpaceFactory(mongoURI);
+            VectorSpaceFactory spaceFactory;
+
+            if (annoyBaseDir != null) {
+                spaceFactory = new AnnoyVectorSpaceFactory(annoyBaseDir);
+            } else {
+                spaceFactory = new MongoVectorSpaceFactory(mongoURI);
+            }
+
             MongoTranslatorFactory translatorFactory = new MongoTranslatorFactory(mongoURI);
-            MongoIndraDriver driver = new MongoIndraDriver(spaceFactory, translatorFactory);
+            IndraDriver driver = new IndraDriver(spaceFactory, translatorFactory);
 
             rc.register(new RelatednessResourceImpl(driver));
             rc.register(new VectorResourceImpl(driver));
+            rc.register(new NeighborsResourceImpl(driver));
             rc.register(new InfoResourceImpl(spaceFactory, translatorFactory));
-
         }
 
         httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);

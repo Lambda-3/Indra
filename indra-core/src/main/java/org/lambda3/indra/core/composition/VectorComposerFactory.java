@@ -26,6 +26,7 @@ package org.lambda3.indra.core.composition;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.client.VectorComposition;
 import org.lambda3.indra.core.exception.IndraError;
 
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class VectorComposerFactory {
         this.statelessComposers.put(VectorComposition.SUM, new SumVectorComposer());
         this.statelessComposers.put(VectorComposition.UNIQUE_SUM, new UniqueSumVectorComposer());
         this.statelessComposers.put(VectorComposition.AVERAGE, new AveragedVectorComposer());
+        this.statelessComposers.put(VectorComposition.UNIT_NORMALIZATION, new UnitNormalizationVectorComposer());
     }
 
     public VectorComposer getComposer(VectorComposition name) {

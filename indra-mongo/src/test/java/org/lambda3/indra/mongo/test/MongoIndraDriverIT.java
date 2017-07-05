@@ -127,7 +127,8 @@ public final class MongoIndraDriverIT {
     @Test
     public void testMinWordLengthParam() {
         MongoIndraDriver driver = new MongoIndraDriver(vectorSpaceFactory, translatorFactory);
-        RelatednessPairRequest request = buildDefaulRequest().minWordLength(3);
+        RelatednessPairRequest request = buildDefaulRequest().minWordLength(3).termComposition("SUM").
+                translationComposition("AVERAGE");
         List<TextPair> pairs = Collections.singletonList(new TextPair("love", "romance"));
         request.pairs(pairs);
 
