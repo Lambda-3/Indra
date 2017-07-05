@@ -36,7 +36,6 @@ import org.json.simple.parser.ParseException;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,8 +58,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     private String[] idToWord;
     private Map<String, Integer> wordToId = new ConcurrentHashMap<>();
 
-    public AnnoyVectorSpace(String dataDir, VectorComposer termComposer, VectorComposer translationComposer) {
-        super(termComposer, translationComposer);
+    public AnnoyVectorSpace(String dataDir) {
         Objects.nonNull(dataDir);
         this.dataDir = dataDir;
         this.metadata = loadMetadata();

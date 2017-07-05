@@ -44,9 +44,8 @@ public class RelatednessDummyClient extends RelatednessClient {
     private static Random rnd = new Random();
 
     protected RelatednessDummyClient() {
-        super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"),
-                new MockCachedVectorSpace(new UniqueSumVectorComposer(), new AveragedVectorComposer()),
-                new CosineRelatednessFunction());
+        super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"), new MockCachedVectorSpace(),
+                new CosineRelatednessFunction(), new UniqueSumVectorComposer(), new AveragedVectorComposer());
     }
 
     @Override
