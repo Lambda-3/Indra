@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class RelatednessClient {
 
@@ -82,10 +83,13 @@ public abstract class RelatednessClient {
         return compute(vectorsPairs);
     }
 
-    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated,
-                                              VectorComposer termComposer, VectorComposer translationComposer) {
+    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
         List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
+        return getRelatedness(one, many, analyzedTerms, translated);
+    }
 
+    private Map<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
+                                               boolean translated) {
         Map<String, RealVector> vectors;
         if (translated) {
             vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms,
@@ -110,7 +114,24 @@ public abstract class RelatednessClient {
         return results;
     }
 
-    public VectorSpace getVectorSpace() {
-        return this.vectorSpace;
+    public Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk) {
+        logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
+        List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);
+
+        Map<String, Map<String, Double>> results = new HashMap<>();
+        analyzedTerms.stream().parallel().forEach(at -> {
+            Collection<String> nearestTerms = vectorSpace.getNearestTerms(at, topk);
+
+            List<AnalyzedTerm> analyzedNeighbors = nearestTerms.stream().map(
+                    t -> new AnalyzedTerm(t, Collections.singletonList(t))).collect(Collectors.toList());
+
+            Map<String, Double> relatedness = getRelatedness(at.getFirstToken(), nearestTerms,
+                    analyzedNeighbors, false);
+
+            results.put(at.getTerm(), relatedness);
+        });
+
+        logger.trace("done");
+        return results;
     }
 }

@@ -46,4 +46,8 @@ public class AnalyzedTerm {
     public List<String> getAnalyzedTokens() {
         return analyzedTokens;
     }
+
+    public String getFirstToken() {
+        return analyzedTokens.get(0);
+    }
 }
