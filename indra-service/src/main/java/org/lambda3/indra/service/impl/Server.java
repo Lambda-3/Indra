@@ -34,6 +34,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.mongo.MongoIndraDriver;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
+import org.lambda3.indra.service.impl.mock.MockedInfoResourceImpl;
+import org.lambda3.indra.service.impl.mock.MockedNeighborsResourceImpl;
+import org.lambda3.indra.service.impl.mock.MockedRelatednessResourceImpl;
+import org.lambda3.indra.service.impl.mock.MockedVectorResourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +78,7 @@ public final class Server {
             rc.register(new MockedRelatednessResourceImpl());
             rc.register(new MockedVectorResourceImpl());
             rc.register(new MockedInfoResourceImpl());
+            rc.register(new MockedNeighborsResourceImpl());
         } else {
             MongoVectorSpaceFactory spaceFactory = new MongoVectorSpaceFactory(mongoURI);
             MongoTranslatorFactory translatorFactory = new MongoTranslatorFactory(mongoURI);
