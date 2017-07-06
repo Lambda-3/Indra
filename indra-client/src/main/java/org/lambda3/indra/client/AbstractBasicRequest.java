@@ -26,9 +26,6 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,12 +117,12 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         if (object == null) {
             errorMessages.append(" - '");
             errorMessages.append(fieldName);
-            errorMessages.append("' can't be null.\n");
+            errorMessages.append("' can't be null;\n");
         } else if ((object instanceof String && ((String) object).isEmpty()) ||
                 (object instanceof List && ((List) object).isEmpty())) {
             errorMessages.append(" - '");
             errorMessages.append(fieldName);
-            errorMessages.append("' can't be empty.\n");
+            errorMessages.append("' can't be empty;\n");
         }
     }
 
@@ -136,7 +133,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
             if (!valid) {
                 errorMessages.append(" - '");
                 errorMessages.append(fieldName);
-                errorMessages.append("' can contain neither null nor empty strings.\n");
+                errorMessages.append("' can contain neither null nor empty strings;\n");
             }
         }
     }
@@ -144,7 +141,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
     /**
      * Throws an exception if this request is not in a safe state.
      *
-     * @throws WebApplicationException
+     * @throws IndraBadRequestException
      */
     public final void validate() {
         StringBuilder errorMessage = new StringBuilder();
@@ -157,9 +154,8 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         errorMessage.append(isValid());
 
         if (errorMessage.length() > 0) {
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(errorMessage.toString()).
-                    type(MediaType.TEXT_PLAIN).build();
-            throw new WebApplicationException("Invalid Indra Request " + errorMessage.toString(), response);
+            String head = "This request contains one or more errors:\n";
+            throw new IndraBadRequestException(head + errorMessage.toString());
         }
     }
 

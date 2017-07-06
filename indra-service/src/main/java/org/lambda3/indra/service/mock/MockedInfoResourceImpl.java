@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.service.mock;
 
 /*-
  * ==========================License-Start=============================
@@ -26,31 +26,15 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.exception.IndraError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.lambda3.indra.client.InfoResource;
+import org.lambda3.indra.client.ResourceResponse;
 
-import javax.inject.Singleton;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-import java.util.HashMap;
+import java.util.Collections;
 
-@Provider
-@Singleton
-public final class CatchAllExceptionMapper implements ExceptionMapper<Exception> {
-    private static Logger logger = LoggerFactory.getLogger(CatchAllExceptionMapper.class);
+public final class MockedInfoResourceImpl extends InfoResource {
 
     @Override
-    public Response toResponse(Exception exception) {
-        logger.error("Oops!", exception);
-
-        if (exception instanceof IndraError) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
-                put("msg", exception.getLocalizedMessage());
-            }}).build();
-        }
-
-        return Response.status(500).build();
+    public ResourceResponse getResources() {
+        return new ResourceResponse(Collections.emptyList(), Collections.emptyList());
     }
 }

@@ -49,7 +49,7 @@ public class RelatednessPairRequest extends RelatednessRequest<RelatednessPairRe
 
         boolean valid = pairs.parallelStream().allMatch(p -> p.t1 != null && !p.t1.isEmpty() && p.t2 != null && !p.t2.isEmpty());
         if (!valid) {
-            errorMessages.append("' - 't1' and 't2' in 'pairs' can contain neither null nor empty strings.\n");
+            errorMessages.append("' - 't1' and 't2' in 'pairs' can contain neither null nor empty strings;\n");
         }
 
         return errorMessages.toString();
