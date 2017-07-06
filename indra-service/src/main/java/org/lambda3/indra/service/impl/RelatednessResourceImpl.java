@@ -35,11 +35,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-class RelatednessResourceImpl implements RelatednessResource {
+public class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
-    RelatednessResourceImpl(IndraDriver driver) {
+    public RelatednessResourceImpl(IndraDriver driver) {
         this.driver = Objects.requireNonNull(driver);
     }
 

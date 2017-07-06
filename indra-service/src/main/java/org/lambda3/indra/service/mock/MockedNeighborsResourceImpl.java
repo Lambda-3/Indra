@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.impl.mock;
+package org.lambda3.indra.service.mock;
 
 /*-
  * ==========================License-Start=============================
