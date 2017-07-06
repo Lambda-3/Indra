@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.service;
 
 /*-
  * ==========================License-Start=============================
@@ -36,10 +36,16 @@ import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
-import org.lambda3.indra.service.impl.mock.MockedInfoResourceImpl;
-import org.lambda3.indra.service.impl.mock.MockedNeighborsResourceImpl;
-import org.lambda3.indra.service.impl.mock.MockedRelatednessResourceImpl;
-import org.lambda3.indra.service.impl.mock.MockedVectorResourceImpl;
+import org.lambda3.indra.service.impl.InfoResourceImpl;
+import org.lambda3.indra.service.impl.NeighborsResourceImpl;
+import org.lambda3.indra.service.impl.RelatednessResourceImpl;
+import org.lambda3.indra.service.impl.VectorResourceImpl;
+import org.lambda3.indra.service.mock.MockedInfoResourceImpl;
+import org.lambda3.indra.service.mock.MockedNeighborsResourceImpl;
+import org.lambda3.indra.service.mock.MockedRelatednessResourceImpl;
+import org.lambda3.indra.service.mock.MockedVectorResourceImpl;
+import org.lambda3.indra.service.mapper.CatchAllExceptionMapper;
+import org.lambda3.indra.service.mapper.SerializationExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +81,6 @@ public final class Server {
         rc.register(JacksonFeature.class);
         rc.register(CatchAllExceptionMapper.class);
         rc.register(SerializationExceptionMapper.class);
-        rc.register(ErrorMapper.class);
 
         if (mockMode) {
             logger.warn("MOCK mode.");

@@ -1,4 +1,4 @@
-package org.lambda3.indra.service.impl;
+package org.lambda3.indra.service.mapper;
 
 /*-
  * ==========================License-Start=============================
@@ -26,23 +26,44 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.lambda3.indra.client.IndraBadRequestException;
+import org.lambda3.indra.core.exception.IndraError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.HashMap;
 
 @Provider
 @Singleton
-public class SerializationExceptionMapper implements ExceptionMapper<JsonProcessingException> {
-    private static Logger logger = LoggerFactory.getLogger(SerializationExceptionMapper.class);
+public final class CatchAllExceptionMapper implements ExceptionMapper<Exception> {
+    private static Logger logger = LoggerFactory.getLogger(CatchAllExceptionMapper.class);
 
     @Override
-    public Response toResponse(JsonProcessingException exception) {
-        logger.error("Serialization Error", exception);
-        return Response.status(Response.Status.BAD_REQUEST).build();
+    public Response toResponse(Exception exception) {
+        if (exception instanceof IndraError) {
+            logger.error("Oops!", exception);
+            return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
+                put("msg", exception.getLocalizedMessage());
+            }}).build();
+        }
+
+        if (exception instanceof WebApplicationException) {
+            logger.error("Web App Error!", exception);
+            return ((WebApplicationException) exception).getResponse();
+        }
+
+        if (exception instanceof IndraBadRequestException) {
+            logger.error("Bad request!", exception);
+            return Response.status(Response.Status.BAD_REQUEST).entity(exception.getMessage()).
+                    type(MediaType.TEXT_PLAIN).build();
+        }
+
+        return Response.status(500).build();
     }
 }

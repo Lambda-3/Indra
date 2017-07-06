@@ -1,8 +1,8 @@
-package org.lambda3.indra.service.impl.mock;
+package org.lambda3.indra.client;
 
 /*-
  * ==========================License-Start=============================
- * Indra Web Service Module
+ * Indra Client Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -12,10 +12,10 @@ package org.lambda3.indra.service.impl.mock;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,15 +26,9 @@ package org.lambda3.indra.service.impl.mock;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.InfoResource;
-import org.lambda3.indra.client.ResourceResponse;
+public class IndraBadRequestException extends RuntimeException {
 
-import java.util.Collections;
-
-public final class MockedInfoResourceImpl extends InfoResource {
-
-    @Override
-    public ResourceResponse getResources() {
-        return new ResourceResponse(Collections.emptyList(), Collections.emptyList());
+    IndraBadRequestException(String s) {
+        super(s);
     }
 }
