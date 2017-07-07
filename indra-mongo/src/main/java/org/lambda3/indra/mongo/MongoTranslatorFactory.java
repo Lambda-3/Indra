@@ -30,14 +30,15 @@ import com.mongodb.MongoClient;
 import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.exception.ModelNoFound;
 import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class MongoTranslatorFactory extends IndraTranslatorFactory {
+public final class MongoTranslatorFactory extends TranslatorFactory {
 
     private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
 
@@ -85,5 +86,10 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
             }
         }
         return availableModels;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.mongoClient.close();
     }
 }

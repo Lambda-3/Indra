@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class IndraCachedFactory<T, R> {
-    private final Map<String, T> cache = new ConcurrentHashMap<>();
+    protected final Map<String, T> cache = new ConcurrentHashMap<>();
 
     protected abstract T doCreate(R request);
 

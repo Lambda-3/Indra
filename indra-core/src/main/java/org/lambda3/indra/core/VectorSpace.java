@@ -30,11 +30,12 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 
+import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public interface VectorSpace {
+public interface VectorSpace extends Closeable {
 
     Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer);
 

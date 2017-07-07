@@ -34,6 +34,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.lambda3.indra.service.impl.InfoResourceImpl;
@@ -73,6 +74,8 @@ public final class Server {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private HttpServer httpServer;
+    private VectorSpaceFactory spaceFactory;
+    private TranslatorFactory translatorFactory;
 
     public Server() {
         logger.info("Initializing Indra Service.");
@@ -89,7 +92,6 @@ public final class Server {
             rc.register(new MockedInfoResourceImpl());
             rc.register(new MockedNeighborsResourceImpl());
         } else {
-            VectorSpaceFactory spaceFactory;
 
             if (annoyBaseDir != null) {
                 spaceFactory = new AnnoyVectorSpaceFactory(annoyBaseDir);
@@ -97,7 +99,7 @@ public final class Server {
                 spaceFactory = new MongoVectorSpaceFactory(mongoURI);
             }
 
-            MongoTranslatorFactory translatorFactory = new MongoTranslatorFactory(mongoURI);
+            translatorFactory = new MongoTranslatorFactory(mongoURI);
             IndraDriver driver = new IndraDriver(spaceFactory, translatorFactory);
 
             rc.register(new RelatednessResourceImpl(driver));
@@ -117,6 +119,19 @@ public final class Server {
     public synchronized void stop() {
         logger.info("Terminating Indra Service.");
         httpServer.shutdownNow();
+        try {
+            spaceFactory.close();
+        } catch (IOException e) {
+            logger.error("error closing the vector space factory.");
+            e.printStackTrace();
+        } finally {
+            try {
+                translatorFactory.close();
+            } catch (IOException e) {
+                logger.error("error closing the translator factory.");
+                e.printStackTrace();
+            }
+        }
     }
 
 

@@ -64,6 +64,7 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Exception>
                     type(MediaType.TEXT_PLAIN).build();
         }
 
-        return Response.status(500).build();
+        logger.error("Internal error!", exception);
+        return Response.status(500).entity("Internal error: " + exception.toString()).type(MediaType.TEXT_PLAIN).build();
     }
 }

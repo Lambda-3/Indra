@@ -32,7 +32,7 @@ import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +44,11 @@ public class IndraDriver {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory vectorSpaceFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private TranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private VectorComposerFactory vectorComposerFactory = new VectorComposerFactory();
 
-    public IndraDriver(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+    public IndraDriver(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);

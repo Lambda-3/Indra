@@ -33,6 +33,7 @@ import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.composition.VectorComposer;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -97,5 +98,10 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     @Override
     public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
         throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
+    public void close() throws IOException {
+        //do nothing.
     }
 }

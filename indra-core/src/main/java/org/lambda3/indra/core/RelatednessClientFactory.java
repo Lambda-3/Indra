@@ -32,18 +32,18 @@ import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 
 import java.util.Objects;
 
 public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient, RelatednessRequest> {
     private VectorSpaceFactory vectorSpaceFactory;
     private RelatednessFunctionFactory relatednessFunctionFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private TranslatorFactory translatorFactory;
     private VectorComposerFactory composerFactory = new VectorComposerFactory();
 
 
-    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
         this.relatednessFunctionFactory = new RelatednessFunctionFactory();
