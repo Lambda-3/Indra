@@ -42,6 +42,7 @@ import org.lambda3.indra.core.exception.IndraError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -136,5 +137,10 @@ public class MongoVectorSpace extends CachedVectorSpace {
         }
 
         return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+        //do nothing. don't close the mongo client here because it is a shared instance.
     }
 }

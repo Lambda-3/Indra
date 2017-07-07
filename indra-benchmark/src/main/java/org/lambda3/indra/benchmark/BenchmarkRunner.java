@@ -140,7 +140,11 @@ public class BenchmarkRunner {
             BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
             System.out.println(runner.run());
 
-            mongoFactory.close();
+            try {
+                mongoFactory.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

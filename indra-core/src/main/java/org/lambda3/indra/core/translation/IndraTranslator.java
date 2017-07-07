@@ -28,6 +28,7 @@ package org.lambda3.indra.core.translation;
 
 import org.lambda3.indra.client.MutableTranslatedTerm;
 
+import java.io.Closeable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
