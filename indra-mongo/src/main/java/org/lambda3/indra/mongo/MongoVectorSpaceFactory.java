@@ -33,12 +33,13 @@ import org.lambda3.indra.core.exception.ModelNoFound;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class MongoVectorSpaceFactory extends VectorSpaceFactory implements Closeable {
+public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
 
     private MongoClient mongoClient;
 
@@ -83,7 +84,8 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory implements
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
+        super.close();
         mongoClient.close();
     }
 }

@@ -33,7 +33,7 @@ import org.lambda3.indra.client.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.test.IndraDriverTest;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.service.impl.VectorResourceImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -47,7 +47,7 @@ public class VectorResourceImplTest {
     @Test
     public void generalTest() {
         VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactor();
-        IndraTranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
+        TranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
         IndraDriver driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
         VectorResourceImpl impl = new VectorResourceImpl(driver);
 

@@ -30,9 +30,13 @@ import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
-public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> {
+public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> implements Closeable {
 
     @Override
     public VectorSpace create(AbstractBasicRequest request) {
@@ -51,4 +55,12 @@ public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace,
 
     public abstract Collection<String> getAvailableModels();
 
+    @Override
+    public void close() throws IOException {
+        for (String key : this.cache.keySet()) {
+            this.cache.get(key).close();
+        }
+
+        this.cache.clear();
+    }
 }

@@ -32,11 +32,12 @@ import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +52,7 @@ public class IndraDriverTest {
     @BeforeClass
     public void beforeClass() {
         VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
-        IndraTranslatorFactory translatorFactory = createIndraTranslatorFactory();
+        TranslatorFactory translatorFactory = createIndraTranslatorFactory();
         this.driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
     }
 
@@ -176,9 +177,14 @@ public class IndraDriverTest {
         };
     }
 
-    public static IndraTranslatorFactory createIndraTranslatorFactory() {
+    public static TranslatorFactory createIndraTranslatorFactory() {
 
-        return new IndraTranslatorFactory() {
+        return new TranslatorFactory() {
+            @Override
+            public void close() throws IOException {
+                //do nothing
+            }
+
             @Override
             public Collection<String> getAvailableModels() {
                 return null;

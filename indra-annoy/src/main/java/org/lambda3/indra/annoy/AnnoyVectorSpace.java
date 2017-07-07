@@ -59,8 +59,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     private Map<String, Integer> wordToId = new ConcurrentHashMap<>();
 
     public AnnoyVectorSpace(String dataDir) {
-        Objects.nonNull(dataDir);
-        this.dataDir = dataDir;
+        this.dataDir = Objects.requireNonNull(dataDir);
         this.metadata = loadMetadata();
         loadMappings();
 
@@ -69,8 +68,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
         try {
             this.index = new ANNIndex(metadata.getDimensions(), new File(dataDir, TREE_FILE).getAbsolutePath(), type);
         } catch (IOException e) {
-            logger.error("problem instantiating an ANNIndex.");
-            e.printStackTrace();
+            String msg = "problem instantiating an ANNIndex.";
+            logger.error(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -91,7 +91,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
                 this.wordToId.put(parts[1], id);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            String msg = "errors when loading mappings.";
+            logger.error(msg);
+            throw new RuntimeException(msg, e);
         } finally {
             if (reader != null) {
                 try {
@@ -131,10 +133,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
                 return ModelMetadata.createFromMap(jsonObject);
 
             } catch (ParseException | IOException e) {
-                logger.error(String.format("problem reading the metadata file. dataDir=%s", dataDir));
-                e.printStackTrace();
-
-                return null;
+                String msg = String.format("problem reading the metadata file. dataDir=%s", dataDir);
+                logger.error(msg);
+                throw new RuntimeException(msg, e);
             }
 
         } else {
@@ -190,5 +191,10 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
             return null;
         }
 
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.index.close();
     }
 }
