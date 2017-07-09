@@ -27,7 +27,7 @@ package org.lambda3.indra.core.composition;
  */
 
 import org.lambda3.indra.client.VectorComposition;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.exception.IndraException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class VectorComposerFactory {
     public VectorComposer getComposer(VectorComposition name) {
         VectorComposer composer = statelessComposers.get(name);
         if (composer == null) {
-            throw new IndraError("Unsupported vector composition.");
+            throw new IndraException("Unsupported vector composition.");
         }
 
         return composer;

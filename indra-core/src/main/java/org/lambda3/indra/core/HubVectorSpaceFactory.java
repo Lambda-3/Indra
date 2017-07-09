@@ -1,8 +1,8 @@
-package org.lambda3.indra.mongo;
+package org.lambda3.indra.core;
 
 /*-
  * ==========================License-Start=============================
- * Indra Mongo Module
+ * Indra Core Module
  * --------------------------------------------------------------------
  * Copyright (C) 2016 - 2017 Lambda^3
  * --------------------------------------------------------------------
@@ -26,65 +26,51 @@ package org.lambda3.indra.mongo;
  * ==========================License-End===============================
  */
 
-import com.mongodb.MongoClient;
 import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.ModelNotFoundException;
-import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
+public class HubVectorSpaceFactory extends VectorSpaceFactory {
+    private List<VectorSpaceFactory> factories = new LinkedList<>();
 
-    private MongoClient mongoClient;
-
-    public MongoVectorSpaceFactory(String mongoURI) {
-        this(new MongoClient(mongoURI));
+    public void addFactory(VectorSpaceFactory factory) {
+        this.factories.add(factory);
     }
-
-    public MongoVectorSpaceFactory(MongoClient mongoClient) {
-        this.mongoClient = Objects.requireNonNull(mongoClient);
-    }
-
+    
     @Override
-    public MongoVectorSpace doCreate(AbstractBasicRequest request) throws ModelNotFoundException {
-        if (getAvailableModels().contains(getDBName(request))) {
-            return new MongoVectorSpace(mongoClient, getDBName(request));
+    protected VectorSpace doCreate(AbstractBasicRequest request) {
+        ModelNotFoundException last = null;
+        for (VectorSpaceFactory factory : factories) {
+            try {
+                return factory.doCreate(request);
+            } catch (ModelNotFoundException e) {
+                last = e;
+            }
         }
-
-        throw new ModelNotFoundException(getDBName(request));
+        throw last;
     }
 
     @Override
-    public String createKey(AbstractBasicRequest request) {
-        return getDBName(request) + request.isMt();
-    }
-
-    private String getDBName(AbstractBasicRequest<?> request) {
-        return String.format("%s-%s-%s",
-                request.getModel().toLowerCase(),
-                request.isMt() ? IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE.toLowerCase() : request.getLanguage().toLowerCase(),
-                request.getCorpus().toLowerCase());
+    protected String createKey(AbstractBasicRequest request) {
+        return String.format("%s-%s-%s-%b", request.getModel(),
+                request.getLanguage(), request.getCorpus(), request.isMt());
     }
 
     @Override
     public Collection<String> getAvailableModels() {
-        Set<String> availableModels = new HashSet<>();
-        for (String s : mongoClient.listDatabaseNames()) {
-            if (!s.equalsIgnoreCase("admin") || s.equalsIgnoreCase("local")) {
-                availableModels.add(s);
-            }
-        }
-        return availableModels;
+        return factories.stream().map(VectorSpaceFactory::getAvailableModels)
+                .flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
     public void close() throws IOException {
-        super.close();
-        mongoClient.close();
+        for (VectorSpaceFactory factory : factories) {
+            factory.close();
+        }
     }
 }

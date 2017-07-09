@@ -27,11 +27,9 @@ package org.lambda3.indra.annoy;
  */
 
 import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.exception.ModelNoFound;
+import org.lambda3.indra.core.exception.ModelNotFoundException;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -74,7 +72,7 @@ public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
         if (vsDirFile.exists() && vsDirFile.isDirectory()) {
             return new AnnoyVectorSpace(vsDirFile.getAbsolutePath());
         } else {
-            throw new ModelNoFound(String.format("%s-%s-%s", request.getModel(), request.getLanguage(), request.getCorpus()));
+            throw new ModelNotFoundException(String.format("%s-%s-%s", request.getModel(), request.getLanguage(), request.getCorpus()));
         }
     }
 

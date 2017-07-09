@@ -38,7 +38,7 @@ import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.exception.IndraException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class MongoVectorSpace extends CachedVectorSpace {
         MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
 
         if (metadataColl.count() > 1) {
-            throw new IndraError("Model metadata must have only one entry!");
+            throw new IndraException("Model metadata must have only one entry!");
         }
 
         if (metadataColl.count() == 1) {
