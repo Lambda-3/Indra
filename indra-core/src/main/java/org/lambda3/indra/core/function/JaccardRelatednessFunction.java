@@ -27,12 +27,12 @@ package org.lambda3.indra.core.function;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.exception.IndraException;
 
 public class JaccardRelatednessFunction implements RelatednessFunction {
 
     @Override
     public double sim(RealVector r1, RealVector r2, boolean sparse) {
-        throw new IndraError("Score function not implemented yet!");
+        throw new IndraException("Score function not implemented yet!");
     }
 }

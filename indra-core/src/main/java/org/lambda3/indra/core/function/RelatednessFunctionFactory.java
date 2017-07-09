@@ -27,7 +27,7 @@ package org.lambda3.indra.core.function;
  */
 
 import org.lambda3.indra.client.ScoreFunction;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.exception.IndraException;
 
 public final class RelatednessFunctionFactory {
 
@@ -59,7 +59,7 @@ public final class RelatednessFunctionFactory {
             case JENSENSHANNON:
                 return new JensenShannonRelatednessFunction();
             default:
-                throw new IndraError("Unsupported Score Function.");
+                throw new IndraException("Unsupported Score Function.");
         }
     }
 }
