@@ -32,8 +32,8 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
+import org.lambda3.indra.core.HubVectorSpaceFactory;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
@@ -41,12 +41,12 @@ import org.lambda3.indra.service.impl.InfoResourceImpl;
 import org.lambda3.indra.service.impl.NeighborsResourceImpl;
 import org.lambda3.indra.service.impl.RelatednessResourceImpl;
 import org.lambda3.indra.service.impl.VectorResourceImpl;
+import org.lambda3.indra.service.mapper.CatchAllExceptionMapper;
+import org.lambda3.indra.service.mapper.SerializationExceptionMapper;
 import org.lambda3.indra.service.mock.MockedInfoResourceImpl;
 import org.lambda3.indra.service.mock.MockedNeighborsResourceImpl;
 import org.lambda3.indra.service.mock.MockedRelatednessResourceImpl;
 import org.lambda3.indra.service.mock.MockedVectorResourceImpl;
-import org.lambda3.indra.service.mapper.CatchAllExceptionMapper;
-import org.lambda3.indra.service.mapper.SerializationExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public final class Server {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private HttpServer httpServer;
-    private VectorSpaceFactory spaceFactory;
+    private HubVectorSpaceFactory spaceFactory = new HubVectorSpaceFactory();
     private TranslatorFactory translatorFactory;
 
     public Server() {
@@ -94,10 +94,10 @@ public final class Server {
         } else {
 
             if (annoyBaseDir != null) {
-                spaceFactory = new AnnoyVectorSpaceFactory(annoyBaseDir);
-            } else {
-                spaceFactory = new MongoVectorSpaceFactory(mongoURI);
+                spaceFactory.addFactory(new AnnoyVectorSpaceFactory(annoyBaseDir));
             }
+
+            spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
 
             translatorFactory = new MongoTranslatorFactory(mongoURI);
             IndraDriver driver = new IndraDriver(spaceFactory, translatorFactory);

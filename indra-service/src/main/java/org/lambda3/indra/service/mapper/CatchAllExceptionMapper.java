@@ -27,7 +27,7 @@ package org.lambda3.indra.service.mapper;
  */
 
 import org.lambda3.indra.client.IndraBadRequestException;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.core.exception.IndraException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Exception>
 
     @Override
     public Response toResponse(Exception exception) {
-        if (exception instanceof IndraError) {
+        if (exception instanceof IndraException) {
             logger.error("Oops!", exception);
             return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
                 put("msg", exception.getLocalizedMessage());
