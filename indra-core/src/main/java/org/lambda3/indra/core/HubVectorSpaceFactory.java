@@ -41,7 +41,7 @@ public class HubVectorSpaceFactory extends VectorSpaceFactory {
     public void addFactory(VectorSpaceFactory factory) {
         this.factories.add(factory);
     }
-    
+
     @Override
     protected VectorSpace doCreate(AbstractBasicRequest request) {
         ModelNotFoundException last = null;

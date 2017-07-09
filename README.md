@@ -8,7 +8,7 @@ Table of Contents
 
    * [What is Indra?](#what-is-indra)
    * [Features](#features)
-   * [Supported Models](#supported-models)
+   * [Pre-build Models](#supported-models)
    * [Word Embeddings](#word-embeddings)
       * [Request data model (POST /vectors)](#request-data-model-post-vectors)
          * [Field <em>corpus</em>](#field-corpus)
@@ -28,26 +28,25 @@ Table of Contents
 
 # What is Indra?
 
-The creation of real-world Artificial Intelligence (AI) applications is dependent on leveraging a large volume of commonsense knowledge. Simple semantic interpretation tasks such as understanding that if 'A is married to B' then 'A is the spouse of B' or that 'car, vehicle, auto' have very similar meanings are examples of semantic approximation operations/inferences that are present in practically all applications of AI that interpret natural language.
+Indra is an entreprise solution for real-world appplications supported by machine learning and natural language processing.
 
-Many AI applications depend on being semantically flexible, i.e. coping with the large vocabulary variation that is permited by natural language. Sentiment Analysis, Question Answering, Information Extraction, Semantic Search and Classification tasks are examples of tasks in which the ability to do semantic approximation is a central requirement.
+Indra offers a ready-to-use library and web service to serve word-embbedings and semantic relatedness for 15 languages in 5 different distributional models.
 
-[Distributional Semantics Models](https://en.wikipedia.org/wiki/Distributional_semantics) and Word Vector models emerged as successful approaches for supporting semantic approximations due to their ability to build comprehensive semantic approximation models and also to their simplicity of representation.
-
-Indra is a distributional semantics engine which facilitates the deployment of robust distributional semantic models for industry-level applications.
+Indra is powered by spotify-annoy delivering an efficient approximative nearest neughbors function, outperforming gensim.
 
 # Features
 
-* Supports multiple distributional semantic models and distance measures;
-* No strings attached: permissive license for commercial and academic use;
-* Access to the semantic models as a service;
+* Efficient approximative nearest neughbors (powered by spotify-annoy);
+* Pre-build models in 15 languages;
+* Permissive license for commercial and academic use;
+* Provides translated distributional relatedness;
 * High performance vector computation;
 * Easy deploy: Deploy the infrastructure in 3 steps;
 * Intrinsically multi-lingual;
-* Pre-build models from different languages;
-* Provides translated distributional relatedness.
+* Access to the semantic models as a service;
+* Supports multiple distributional semantic models and distance measures.
 
-# Supported Models
+# Pre-build Models
 
 * [Latent Semantic Analysis (LSA)](https://en.wikipedia.org/wiki/Latent_semantic_analysis)
 * [Explicit Semantic Analysis (ESA)](https://en.wikipedia.org/wiki/Explicit_semantic_analysis)
@@ -98,7 +97,7 @@ Two-letter-code [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_code
 * NL - Dutch
 * RU - Russian
 * KO - Korean
-* JP - Japanese
+* JA - Japanese
 * AR - Arabic
 * FA - Persian
 
@@ -130,7 +129,7 @@ Currently, only the __ESA__ model is sparse.
 
 # Semantic Similarity
 
-This is the payload consumed by Indra to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
+Payload to compute [Semantic Similarity](https://en.wikipedia.org/wiki/Semantic_similarity) between words or phrase pairs.
 
 ## Request data model `(POST /relatedness)`
 
