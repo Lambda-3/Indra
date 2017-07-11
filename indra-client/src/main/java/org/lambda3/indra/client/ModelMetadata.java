@@ -222,6 +222,23 @@ public final class ModelMetadata {
         return more;
     }
 
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(LOADER_ID_PARAM, loaderId);
+        map.put(SPARSE_PARAM, sparse);
+        map.put(BINARY_PARAM, binary);
+        map.put(APPLY_STEMMER_PARAM, applyStemmer);
+        map.put(REMOVE_ACCENTS_PARAM, removeAccents);
+        map.put(APPLY_LOWERCASE_PARAM, applyLowercase);
+        map.put(APPLY_STOP_WORDS_PARAM, applyStopWords);
+        map.put(MIN_WORD_LENGTH_PARAM, minWordLength);
+        map.put(MAX_WORD_LENGTH_PARAM, maxWordLength);
+        map.put(DIMENSIONS_PARAM, dimensions);
+        map.put(STOP_WORDS_PARAM, stopWords);
+        map.put(MORE_PARAM, more);
+        return map;
+    }
+
     @Override
     public String toString() {
         return "Metadata{" +
