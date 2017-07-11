@@ -5,7 +5,7 @@
 
 # What is Indra?
 
-Indra is an efficient library and service to delivery word-embeddings and semantic relatedness to real-world appplications in the domains of machine learning and natural language processing. It offers 60+ pre-build word-embbedings dataset in 14 languages and several model algorithms and corpora.
+Indra is an efficient library and service to deliver word-embeddings and semantic relatedness to real-world appplications in the domains of machine learning and natural language processing. It offers 60+ pre-build models in 14 languages and several model algorithms and corpora.
 
 Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering an efficient [approximative nearest neughbors](http://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximate_nearest_neighbor) function.
 
