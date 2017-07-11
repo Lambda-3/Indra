@@ -30,18 +30,23 @@ import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.ModelNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
 
 public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private String baseDir;
 
     public AnnoyVectorSpaceFactory(String baseDir) {
         this.baseDir = baseDir;
+        logger.info("Setting baseDir to {}", this.baseDir);
     }
 
     @Override
