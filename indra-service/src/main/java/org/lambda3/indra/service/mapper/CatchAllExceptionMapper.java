@@ -60,11 +60,14 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Throwable>
 
         if (exception instanceof IndraBadRequestException) {
             logger.error("Bad request!", exception);
-            return Response.status(Response.Status.BAD_REQUEST).entity(exception.getMessage()).
-                    type(MediaType.TEXT_PLAIN).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
+                put("msg", exception.getMessage());
+            }}).build();
         }
 
         logger.error("Internal error!", exception);
-        return Response.status(500).entity("Internal error: " + exception.toString()).type(MediaType.TEXT_PLAIN).build();
+        return Response.status(500).entity(new HashMap<String, String>() {{
+            put("msg", exception.getLocalizedMessage());
+        }}).build();
     }
 }
