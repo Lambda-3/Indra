@@ -94,11 +94,16 @@ public final class Server {
         } else {
 
             if (annoyBaseDir != null) {
+                logger.info("Initializing AnnoyVectorSpaceFactory from {}.", annoyBaseDir);
                 spaceFactory.addFactory(new AnnoyVectorSpaceFactory(annoyBaseDir));
+            } {
+                logger.info("No AnnoyVectorSpaceFactory.");
             }
 
+            logger.info("Initializing MongoVectorSpaceFactory from {}.", mongoURI);
             spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
 
+            logger.info("Initializing MongoTranslatorFactory from {}.", mongoURI);
             translatorFactory = new MongoTranslatorFactory(mongoURI);
             IndraDriver driver = new IndraDriver(spaceFactory, translatorFactory);
 
