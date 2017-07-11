@@ -27,6 +27,8 @@ package org.lambda3.indra.service.mock;
  */
 
 import org.lambda3.indra.client.InfoResource;
+import org.lambda3.indra.client.MetadataResponse;
+import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.client.ResourceResponse;
 
 import java.util.Collections;
@@ -36,5 +38,10 @@ public final class MockedInfoResourceImpl extends InfoResource {
     @Override
     public ResourceResponse getResources() {
         return new ResourceResponse(Collections.emptyList(), Collections.emptyList());
+    }
+
+    @Override
+    public MetadataResponse getMetadata(String model) {
+        return new MetadataResponse(ModelMetadata.createDefault().asMap());
     }
 }

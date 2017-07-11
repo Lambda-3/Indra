@@ -27,10 +27,15 @@ package org.lambda3.indra.service.impl;
  */
 
 import org.lambda3.indra.client.InfoResource;
+import org.lambda3.indra.client.MetadataResponse;
+import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ResourceResponse;
+import org.lambda3.indra.core.VectorSpace;
 import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -58,6 +63,21 @@ public final class InfoResourceImpl extends InfoResource {
                 .collect(Collectors.toList());
 
         return new ResourceResponse(filteredSpaceModels, filteredTranslationModels);
+    }
+
+    @Override
+    public MetadataResponse getMetadata(String model) {
+        String parts[] = model.split("-");
+        if (parts.length >= 3) {
+            RelatednessPairRequest request = new RelatednessPairRequest().model(parts[0]).
+                    language(parts[1]).corpus(String.join("-",
+                    Arrays.copyOfRange(parts, 2, parts.length)));
+
+            VectorSpace vm = spaceFactory.create(request);
+            return new MetadataResponse(vm.getMetadata().asMap());
+        }
+
+        throw new ModelNotFoundException(model);
     }
 
 }

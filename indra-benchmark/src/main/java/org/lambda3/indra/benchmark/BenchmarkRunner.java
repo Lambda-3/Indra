@@ -45,9 +45,9 @@ import java.util.*;
 
 public class BenchmarkRunner {
 
-    private static final String WORD_SET_1_FILE = "wordSet1-pt.txt";
-    private static final String WORD_SET_2_FILE = "wordSet2-pt.txt";
-    private static final String WORD_SET_3_FILE = "wordSet3-pt.txt";
+    private static final String WORD_SET_1_FILE = "wordSet1-%s.txt";
+    private static final String WORD_SET_2_FILE = "wordSet2-%s.txt";
+    private static final String WORD_SET_3_FILE = "wordSet3-%s.txt";
 
     private VectorSpaceFactory factory1;
     private VectorSpaceFactory factory2;
@@ -105,6 +105,7 @@ public class BenchmarkRunner {
 
                 if (!((v1 == null && v2 == null) || v1.equals(v2))) {
                     System.out.println(String.format("ERROR: %s - %s", v1, v2));
+                    System.exit(-7);
                 }
             }
         } else {
@@ -112,38 +113,41 @@ public class BenchmarkRunner {
         }
     }
 
-    public Report run() {
+    public Report run(String lang) {
         VectorRequest request = new VectorRequest();
-        request.model("W2V").language("PT").corpus("wiki-2014").mt(false);
+        request.model("W2V").language(lang).corpus("wiki-2014").mt(false);
 
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), ModelMetadata.createDefault());
         String[] files = {WORD_SET_1_FILE, WORD_SET_2_FILE, WORD_SET_3_FILE};
 
         for (String file : files) {
-            run(file, analyzer, factory1.create(request), factory2.create(request));
+            run(String.format(file, lang.toLowerCase()), analyzer, factory1.create(request), factory2.create(request));
         }
 
         return report;
     }
 
     public static void main(String[] args) {
-        System.out.println("BenchmarkRunner v. 0.5");
+        System.out.println("BenchmarkRunner v. 0.6");
 
         String mongoServer = System.getProperty("indra.mongoURI");
         String annoyDir = System.getProperty("indra.annoyBaseDir");
         int times = Integer.parseInt(System.getProperty("indra.benchmark.times", "3"));
 
-        for (int i = 0; i < times; i++) {
-            MongoVectorSpaceFactory mongoFactory = new MongoVectorSpaceFactory(mongoServer);
-            AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(annoyDir);
+        String[] langs = {"EN", "PT"};
+        for (String lang : langs) {
+            for (int i = 0; i < times; i++) {
+                MongoVectorSpaceFactory mongoFactory = new MongoVectorSpaceFactory(mongoServer);
+                AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(annoyDir);
 
-            BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
-            System.out.println(runner.run());
+                BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
+                System.out.println(runner.run(lang));
 
-            try {
-                mongoFactory.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    mongoFactory.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
