@@ -28,13 +28,13 @@ package org.lambda3.indra.client;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("info")
 @Produces(MediaType.APPLICATION_JSON)
 public abstract class InfoResource {
-
 
     @GET
     @Path("/version")
@@ -45,4 +45,8 @@ public abstract class InfoResource {
     @GET
     @Path("/resources")
     public abstract ResourceResponse getResources();
+
+    @GET
+    @Path("/resources/{model}")
+    public abstract MetadataResponse getMetadata(@PathParam("model") String model);
 }

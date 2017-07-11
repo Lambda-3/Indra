@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.spotify</groupId>
             <artifactId>annoy</artifactId>
-            <version>0.2.9-SNAPSHOT</version>
+            <version>0.2.6</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -58,6 +58,4 @@
         </dependency>
 
     </dependencies>
-
-
 </project>

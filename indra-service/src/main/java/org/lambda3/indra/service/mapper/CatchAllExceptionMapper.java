@@ -41,11 +41,11 @@ import java.util.HashMap;
 
 @Provider
 @Singleton
-public final class CatchAllExceptionMapper implements ExceptionMapper<Exception> {
+public final class CatchAllExceptionMapper implements ExceptionMapper<Throwable> {
     private static Logger logger = LoggerFactory.getLogger(CatchAllExceptionMapper.class);
 
     @Override
-    public Response toResponse(Exception exception) {
+    public Response toResponse(Throwable exception) {
         if (exception instanceof IndraException) {
             logger.error("Oops!", exception);
             return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
