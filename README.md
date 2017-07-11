@@ -14,7 +14,7 @@ Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering
 * Efficient approximative nearest neughbors (powered by [spotify-annoy](https://github.com/spotify/annoy));
 * 60+ pre-build models in 14 languages;
 * Permissive license for commercial use (MIT License);
-* Translated distributional relatedness;
+* Support to [translated distributional relatedness](http://andrefreitas.org/papers/preprint_eakw_mt_2016.pdf);
 * Easy deploy: Deploy the infrastructure in 3 steps;
 * Access to the semantic models as a service;
 * Supports multiple distributional semantic models and distance measures.
@@ -55,7 +55,7 @@ To install, please use the 3-step tool [Indra-Composed](https://github.com/Lambd
 
 # Getting Started
 
-This guide provides the basic instructions to get you started using Indra. For further details, including the response format, additional parameters and all available models and language, please check the Wiki.
+This guide provides the basic instructions to get you started using Indra. For further details, including the response format, additional parameters and the list of available models and language, please check the [Wiki](https://github.com/Lambda-3/Indra/wiki).
 
 ## Requesting Word Embeddings `(POST /vectors)`
 
@@ -76,7 +76,8 @@ For further details, check the [Word Embeddings documentation](https://github.co
 	"corpus": "googlenews300neg",
 	"model": "W2V",
 	"language": "EN",
-	"terms": ["love", "mother", "santa claus"]
+	"topk": 10,
+	"terms": ["love", "mother", "santa"]
 }
 ```
 For further details, check the [Nearest Neighbors documentation](https://github.com/Lambda-3/Indra/wiki/Documentation).
@@ -88,7 +89,9 @@ For further details, check the [Nearest Neighbors documentation](https://github.
 	"corpus": "googlenews300neg",
 	"model": "W2V",
 	"language": "EN",
-	"terms": ["love", "mother", "santa claus"]
+	"topk": 10,
+	"scoreFunction": "COSINE",
+	"terms": ["love", "mother", "santa"]
 }
 ```
 For further details, check the [Nearest Neighbors documentation](https://github.com/Lambda-3/Indra/wiki/Documentation).
@@ -119,11 +122,11 @@ For further details, check the [Semantic Similarity documentation](https://githu
 
 ```json
 {
-        "corpus": "wiki-2014",
-        "model": "W2V",
-        "language": "EN",
-        "scoreFunction": "COSINE",
-        "one" : "love",
+	"corpus": "wiki-2014",
+	"model": "W2V",
+	"language": "EN",
+	"scoreFunction": "COSINE",
+	"one" : "love",
 	"many" : ["mother", "father", "child"]
 }
 ```
