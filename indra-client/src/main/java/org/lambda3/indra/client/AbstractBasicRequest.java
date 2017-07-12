@@ -26,6 +26,10 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,10 +142,16 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         }
     }
 
+    static WebApplicationException createClientError(String msg) {
+        return new BadRequestException(Response.status(400).entity(new HashMap<String, String>() {{
+            put("msg", "This request contains one or more errors:\\n" + msg);
+        }}).build());
+    }
+
     /**
      * Throws an exception if this request is not in a safe state.
      *
-     * @throws IndraBadRequestException
+     * @throws BadRequestException
      */
     public final void validate() {
         StringBuilder errorMessage = new StringBuilder();
@@ -154,8 +164,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         errorMessage.append(isValid());
 
         if (errorMessage.length() > 0) {
-            String head = "This request contains one or more errors:\\n";
-            throw new IndraBadRequestException(head + errorMessage.toString());
+            throw createClientError(errorMessage.toString());
         }
     }
 

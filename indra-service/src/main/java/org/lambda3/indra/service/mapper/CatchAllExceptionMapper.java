@@ -26,8 +26,7 @@ package org.lambda3.indra.service.mapper;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.IndraBadRequestException;
-import org.lambda3.indra.core.exception.IndraException;
+import org.lambda3.indra.core.exception.ModelNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Throwable>
 
     @Override
     public Response toResponse(Throwable exception) {
-        if (exception instanceof IndraException) {
+        if (exception instanceof ModelNotFoundException) {
             logger.error("Oops!", exception);
             return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
                 put("msg", exception.getLocalizedMessage());
@@ -57,16 +56,9 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Throwable>
             return ((WebApplicationException) exception).getResponse();
         }
 
-        if (exception instanceof IndraBadRequestException) {
-            logger.error("Bad request!", exception);
-            return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
-                put("msg", exception.getMessage());
-            }}).build();
-        }
-
         logger.error("Internal error!", exception);
         return Response.status(500).entity(new HashMap<String, String>() {{
-            put("msg", exception.getLocalizedMessage());
+            put("msg", "Something went wrong. Contact support.");
         }}).build();
     }
 }
