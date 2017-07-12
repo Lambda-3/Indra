@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -86,7 +85,7 @@ public final class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
         return createVSFile(request).getAbsolutePath() + request.isMt();
     }
 
-    protected File createVSFile(AbstractBasicRequest request) {
+    private File createVSFile(AbstractBasicRequest request) {
         return Paths.get(baseDir, request.getModel().toLowerCase(),
                 request.getLanguage().toLowerCase(), request.getCorpus().toLowerCase()).toFile();
     }
