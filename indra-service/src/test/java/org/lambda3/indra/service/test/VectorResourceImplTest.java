@@ -27,7 +27,6 @@ package org.lambda3.indra.service.test;
  */
 
 import org.lambda3.indra.client.DenseVectorResponse;
-import org.lambda3.indra.client.SparseVectorResponse;
 import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.client.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
@@ -46,7 +45,7 @@ public class VectorResourceImplTest {
 
     @Test
     public void generalTest() {
-        VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactor();
+        VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactory();
         TranslatorFactory translatorFactory = IndraDriverTest.createIndraTranslatorFactory();
         IndraDriver driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
         VectorResourceImpl impl = new VectorResourceImpl(driver);
@@ -64,7 +63,5 @@ public class VectorResourceImplTest {
         for (double[] array : vectors.values()) {
             Assert.assertTrue(array.length > 0);
         }
-
-        Assert.assertFalse(response instanceof SparseVectorResponse);
     }
 }

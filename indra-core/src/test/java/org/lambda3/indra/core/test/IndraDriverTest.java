@@ -51,7 +51,7 @@ public class IndraDriverTest {
 
     @BeforeClass
     public void beforeClass() {
-        VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactor();
+        VectorSpaceFactory vectorSpaceFactory = createVectorSpaceFactory();
         TranslatorFactory translatorFactory = createIndraTranslatorFactory();
         this.driver = new IndraDriver(vectorSpaceFactory, translatorFactory);
     }
@@ -157,7 +157,7 @@ public class IndraDriverTest {
         }
     }
 
-    public static VectorSpaceFactory createVectorSpaceFactor() {
+    public static VectorSpaceFactory createVectorSpaceFactory() {
 
         return new VectorSpaceFactory() {
             @Override
