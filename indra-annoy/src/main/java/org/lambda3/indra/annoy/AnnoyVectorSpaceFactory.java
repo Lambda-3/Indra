@@ -41,20 +41,22 @@ import java.util.LinkedList;
 
 public final class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private String baseDir;
+    private File baseDir;
 
-    public AnnoyVectorSpaceFactory(String baseDir) {
+    public AnnoyVectorSpaceFactory(File baseDir) {
         this.baseDir = baseDir;
+        if (!baseDir.canRead()) {
+            throw new RuntimeException("Can't read data from " + baseDir);
+        }
         logger.debug("Setting baseDir to {}", this.baseDir);
     }
 
     @Override
     public Collection<String> getAvailableModels() {
-        File baseFile = new File(baseDir);
         Collection<String> results = new LinkedList<>();
 
-        if (baseFile.exists() && baseFile.isDirectory()) {
-            File[] models = baseFile.listFiles(File::isDirectory);
+        if (baseDir.exists() && baseDir.isDirectory()) {
+            File[] models = baseDir.listFiles(File::isDirectory);
             for (File model : models) {
                 File[] langs = model.listFiles(File::isDirectory);
                 for (File lang : langs) {
@@ -86,7 +88,7 @@ public final class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
     }
 
     private File createVSFile(AbstractBasicRequest request) {
-        return Paths.get(baseDir, request.getModel().toLowerCase(),
+        return Paths.get(baseDir.getAbsolutePath(), request.getModel().toLowerCase(),
                 request.getLanguage().toLowerCase(), request.getCorpus().toLowerCase()).toFile();
     }
 }

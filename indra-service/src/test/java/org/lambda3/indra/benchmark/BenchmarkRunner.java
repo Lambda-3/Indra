@@ -37,10 +37,7 @@ import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.composition.SumVectorComposer;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 final class BenchmarkRunner {
@@ -138,7 +135,7 @@ final class BenchmarkRunner {
         for (String lang : langs) {
             for (int i = 0; i < times; i++) {
                 MongoVectorSpaceFactory mongoFactory = new MongoVectorSpaceFactory(mongoServer);
-                AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(annoyDir);
+                AnnoyVectorSpaceFactory annoyFactory = new AnnoyVectorSpaceFactory(new File(annoyDir));
 
                 BenchmarkRunner runner = new BenchmarkRunner(mongoFactory, annoyFactory);
                 System.out.println(runner.run(lang));
