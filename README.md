@@ -5,13 +5,13 @@
 
 # What is Indra?
 
-Indra is an efficient library and service to deliver word-embeddings and semantic relatedness to real-world appplications in the domains of machine learning and natural language processing. It offers 60+ pre-build models in 14 languages and several model algorithms and corpora.
+Indra is an efficient library and service to deliver word-embeddings and semantic relatedness to real-world applications in the domains of machine learning and natural language processing. It offers 60+ pre-build models in 14 languages and several model algorithms and corpora.
 
-Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering an efficient [approximative nearest neughbors](http://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximate_nearest_neighbor) function.
+Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering an efficient [approximate nearest neighbors](http://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximate_nearest_neighbor) function.
 
 # Features
 
-* Efficient approximative nearest neughbors (powered by [spotify-annoy](https://github.com/spotify/annoy));
+* Efficient approximate nearest neighbors (powered by [spotify-annoy](https://github.com/spotify/annoy));
 * 60+ pre-build models in 14 languages;
 * Permissive license for commercial use (MIT License);
 * Support to [translated distributional relatedness](http://andrefreitas.org/papers/preprint_eakw_mt_2016.pdf);
@@ -21,7 +21,7 @@ Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering
 
 # Pre-build Models
 
-Indra delivers ready-to-use pre-build models using different algorithms, dataset corpora and languages.
+Indra delivers ready-to-use pre-build models using different algorithms, data set corpora and languages.
 For a full list of pre-build models, please check the [Wiki](https://github.com/Lambda-3/Indra/wiki).
 
 ## Model Algorithms
@@ -51,7 +51,7 @@ For a full list of pre-build models, please check the [Wiki](https://github.com/
 
 # Install
 
-To install, please use the 3-step tool [Indra-Composed](https://github.com/Lambda-3/indra-composed).
+To install, please use the 3-step tool [IndraComposed](https://github.com/Lambda-3/IndraComposed).
 
 # Getting Started
 
