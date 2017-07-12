@@ -41,7 +41,7 @@ import java.util.Map;
  * MockedVectorResourceImpl implementation that returns random vectors.
  * For testing puporses.
  */
-public class MockedVectorResourceImpl implements VectorResource {
+public final class MockedVectorResourceImpl implements VectorResource {
 
     private static final int NUM_DIMENSIONS = 300;
     private static final UnitSphereRandomVectorGenerator rvg = new UnitSphereRandomVectorGenerator(NUM_DIMENSIONS);

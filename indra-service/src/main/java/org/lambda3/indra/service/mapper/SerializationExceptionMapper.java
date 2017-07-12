@@ -37,7 +37,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 @Singleton
-public class SerializationExceptionMapper implements ExceptionMapper<JsonProcessingException> {
+public final class SerializationExceptionMapper implements ExceptionMapper<JsonProcessingException> {
     private static Logger logger = LoggerFactory.getLogger(SerializationExceptionMapper.class);
 
     @Override

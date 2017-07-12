@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 
-public class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
+public final class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private String baseDir;
 

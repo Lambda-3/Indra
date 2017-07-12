@@ -35,7 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class HubVectorSpaceFactory extends VectorSpaceFactory {
+public final class HubVectorSpaceFactory extends VectorSpaceFactory {
     private List<VectorSpaceFactory> factories = new LinkedList<>();
 
     public void addFactory(VectorSpaceFactory factory) {

@@ -43,7 +43,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class BenchmarkRunner {
+final class BenchmarkRunner {
 
     private static final String WORD_SET_1_FILE = "wordSet1-%s.txt";
     private static final String WORD_SET_2_FILE = "wordSet2-%s.txt";

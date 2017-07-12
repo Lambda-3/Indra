@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 
-public class VectorResourceImpl implements VectorResource {
+public final class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 

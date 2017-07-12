@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class RelatednessResourceImpl implements RelatednessResource {
+public final class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
