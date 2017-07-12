@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MongoVectorSpace extends CachedVectorSpace {
+public final class MongoVectorSpace extends CachedVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
     private static final String TERMS_COLL_NAME = "terms";

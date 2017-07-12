@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 
-public class NeighborsResourceImpl implements NeighborsResource {
+public final class NeighborsResourceImpl implements NeighborsResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 

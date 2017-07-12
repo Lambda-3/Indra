@@ -32,7 +32,7 @@ import org.lambda3.indra.core.exception.IndraException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VectorComposerFactory {
+public final class VectorComposerFactory {
 
     private Map<VectorComposition, VectorComposer> statelessComposers = new HashMap<>();
 

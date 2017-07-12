@@ -29,7 +29,7 @@ package org.lambda3.indra.client;
 import java.util.Map;
 import java.util.Objects;
 
-public class NeighborVectorsResponse extends AbstractBasicResponse {
+public final class NeighborVectorsResponse extends AbstractBasicResponse {
     private Map<String, Map<String, float[]>> terms;
     private int topk;
 

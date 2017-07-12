@@ -34,7 +34,7 @@ import java.util.*;
  * RelatednessResource implementation that randomly assigns a relatedness value.
  * For testing puporses.
  */
-public class MockedRelatednessResourceImpl implements RelatednessResource {
+public final class MockedRelatednessResourceImpl implements RelatednessResource {
 
     private static Random rnd = new Random();
 

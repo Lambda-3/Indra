@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-public class MockedNeighborsResourceImpl implements NeighborsResource {
+public final class MockedNeighborsResourceImpl implements NeighborsResource {
 
     private static final int NUM_DIMENSIONS = 300;
     private static final UnitSphereRandomVectorGenerator RVG = new UnitSphereRandomVectorGenerator(NUM_DIMENSIONS);

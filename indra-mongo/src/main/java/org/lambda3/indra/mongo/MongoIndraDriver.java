@@ -28,7 +28,7 @@ package org.lambda3.indra.mongo;
 
 import org.lambda3.indra.core.IndraDriver;
 
-public class MongoIndraDriver extends IndraDriver {
+public final class MongoIndraDriver extends IndraDriver {
 
     public MongoIndraDriver(MongoVectorSpaceFactory spaceFactory, MongoTranslatorFactory translatorFactory) {
         super(spaceFactory, translatorFactory);
