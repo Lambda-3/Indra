@@ -97,7 +97,7 @@ public final class Server {
                 logger.info("Initializing AnnoyVectorSpaceFactory from {}.", annoyBaseDir);
                 spaceFactory.addFactory(new AnnoyVectorSpaceFactory(annoyBaseDir));
             } else {
-                logger.info("No AnnoyVectorSpaceFactory.");
+                logger.warn("No AnnoyVectorSpaceFactory.");
             }
 
             logger.info("Initializing MongoVectorSpaceFactory from {}.", mongoURI);
