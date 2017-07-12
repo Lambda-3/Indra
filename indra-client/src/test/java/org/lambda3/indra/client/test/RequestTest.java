@@ -1,6 +1,6 @@
 package org.lambda3.indra.client.test;
 
-import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.testng.annotations.Test;
@@ -12,12 +12,12 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError1Test() {
-        new RelatednessRequest().validate();
+        new RelatednessPairRequest().validate();
     }
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError2Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
                 .model("w2v")
@@ -27,7 +27,7 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError3Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .language("en")
                 .model("w2v")
                 .scoreFunction(ScoreFunction.COSINE)
@@ -37,7 +37,7 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError4Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .model("w2v")
                 .scoreFunction(ScoreFunction.COSINE)
@@ -47,7 +47,7 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError5Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
                 .scoreFunction(ScoreFunction.COSINE)
@@ -57,7 +57,7 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError6Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
                 .model("w2v")
@@ -67,7 +67,7 @@ public final class RequestTest {
 
     @Test(expectedExceptions = WebApplicationException.class)
     public void clientError7Test() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
                 .model("w2v")
@@ -76,7 +76,7 @@ public final class RequestTest {
 
     @Test
     public void clientRequestWitouhtErrorTest() {
-        new RelatednessRequest()
+        new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
                 .model("w2v")
