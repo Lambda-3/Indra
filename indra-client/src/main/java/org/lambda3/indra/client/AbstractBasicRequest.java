@@ -117,12 +117,12 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         if (object == null) {
             errorMessages.append(" - '");
             errorMessages.append(fieldName);
-            errorMessages.append("' can't be null;\n");
+            errorMessages.append("' can't be null;\\n");
         } else if ((object instanceof String && ((String) object).isEmpty()) ||
                 (object instanceof List && ((List) object).isEmpty())) {
             errorMessages.append(" - '");
             errorMessages.append(fieldName);
-            errorMessages.append("' can't be empty;\n");
+            errorMessages.append("' can't be empty;\\n");
         }
     }
 
@@ -133,7 +133,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
             if (!valid) {
                 errorMessages.append(" - '");
                 errorMessages.append(fieldName);
-                errorMessages.append("' can contain neither null nor empty strings;\n");
+                errorMessages.append("' can contain neither null nor empty strings;\\n");
             }
         }
     }
@@ -154,7 +154,7 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         errorMessage.append(isValid());
 
         if (errorMessage.length() > 0) {
-            String head = "This request contains one or more errors:\n";
+            String head = "This request contains one or more errors:\\n";
             throw new IndraBadRequestException(head + errorMessage.toString());
         }
     }

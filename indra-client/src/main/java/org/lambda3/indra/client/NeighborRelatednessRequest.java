@@ -58,11 +58,11 @@ public class NeighborRelatednessRequest extends RelatednessRequest<NeighborRelat
         checkAndAppendErrorMessagesLists(terms, "terms", errorMessages);
 
         if(topk <= 0) {
-            errorMessages.append(" - 'topk' must be greater than 0;\n");
+            errorMessages.append(" - 'topk' must be greater than 0;\\n");
         }
 
         if(isMt()) {
-            errorMessages.append(" - machine translation not supported in this function. 'mt' can't be true;\n");
+            errorMessages.append(" - machine translation not supported in this function. 'mt' can't be true;\\n");
         }
 
         return errorMessages.toString();
