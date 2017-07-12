@@ -3,7 +3,7 @@ package org.lambda3.indra.client;
 
 import java.util.Map;
 
-public class MetadataResponse {
+public final class MetadataResponse {
     private Map<String, Object> metadata;
 
     public MetadataResponse(Map<String, Object> metadata) {

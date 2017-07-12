@@ -26,7 +26,7 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-public class IndraBadRequestException extends RuntimeException {
+public final class IndraBadRequestException extends RuntimeException {
 
     IndraBadRequestException(String s) {
         super(s);
