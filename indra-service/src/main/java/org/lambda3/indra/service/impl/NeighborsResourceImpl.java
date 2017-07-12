@@ -44,7 +44,7 @@ public final class NeighborsResourceImpl implements NeighborsResource {
 
     @Override
     public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
-        logger.trace("getNeighborsVectors - User Request: {}", request);
+        logger.trace("User Request: {}", request);
         request.validate();
         Map<String, Map<String, float[]>> vectors = this.driver.getNeighborsVectors(request);
         NeighborVectorsResponse response = new NeighborVectorsResponse(request, vectors);
@@ -55,7 +55,7 @@ public final class NeighborsResourceImpl implements NeighborsResource {
 
     @Override
     public NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request) {
-        logger.trace("getNeighborRelatedness - User Request: {}", request);
+        logger.trace("User Request: {}", request);
         request.validate();
         Map<String, Map<String, Double>> relatedness = this.driver.getNeighborRelatedness(request);
         NeighborRelatednessResponse response = new NeighborRelatednessResponse(request, relatedness);
