@@ -35,6 +35,7 @@ import org.lambda3.indra.core.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -53,8 +54,7 @@ public final class InfoResourceImpl extends InfoResource {
     @Override
     public ResourceResponse getResources() {
         Collection<String> translationModels = translatorFactory.getAvailableModels();
-        Collection<String> filteredTranslationModels = translationModels.stream()
-                .collect(Collectors.toList());
+        Collection<String> filteredTranslationModels = new ArrayList<>(translationModels);
 
         Collection<String> spaceModels = spaceFactory.getAvailableModels();
         Collection<String> filteredSpaceModels = spaceModels.stream()
