@@ -6,7 +6,6 @@ import org.lambda3.indra.client.TextPair;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.WebApplicationException;
 import java.util.Collections;
 
 public final class RequestTest {
