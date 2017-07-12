@@ -45,7 +45,7 @@ public final class AnnoyVectorSpaceFactory extends VectorSpaceFactory {
 
     public AnnoyVectorSpaceFactory(String baseDir) {
         this.baseDir = baseDir;
-        logger.info("Setting baseDir to {}", this.baseDir);
+        logger.debug("Setting baseDir to {}", this.baseDir);
     }
 
     @Override
