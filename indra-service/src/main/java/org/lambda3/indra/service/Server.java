@@ -50,6 +50,7 @@ import org.lambda3.indra.service.mock.MockedVectorResourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -95,7 +96,7 @@ public final class Server {
 
             if (annoyBaseDir != null) {
                 logger.info("Initializing AnnoyVectorSpaceFactory from {}.", annoyBaseDir);
-                spaceFactory.addFactory(new AnnoyVectorSpaceFactory(annoyBaseDir));
+                spaceFactory.addFactory(new AnnoyVectorSpaceFactory(new File(annoyBaseDir)));
             } else {
                 logger.warn("No AnnoyVectorSpaceFactory.");
             }
