@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 public abstract class RelatednessClient {
@@ -61,10 +63,11 @@ public abstract class RelatednessClient {
     protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
 
     protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
-        List<ScoredTextPair> scoredTextPairs = new ArrayList<>();
+        Queue<ScoredTextPair> scoredTextPairs = new ConcurrentLinkedQueue<>();
 
-        for (AnalyzedPair pair : vectorPairs.keySet()) {
-            VectorPair vectorPair = vectorPairs.get(pair);
+        vectorPairs.entrySet().stream().parallel().forEach(entry -> {
+            AnalyzedPair pair = entry.getKey();
+            VectorPair vectorPair = entry.getValue();
 
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
                 scoredTextPairs.add(new ScoredTextPair(pair,
@@ -72,9 +75,10 @@ public abstract class RelatednessClient {
             } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
-        }
+        });
 
-        return scoredTextPairs;
+        //TODO REVIEW HERE
+        return new LinkedList<>(scoredTextPairs);
     }
 
     public final List<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
@@ -97,11 +101,11 @@ public abstract class RelatednessClient {
         } else {
             vectors = vectorSpace.getVectors((List<AnalyzedTerm>) analyzedTerms, termComposer);
         }
-        Map<String, Double> results = new LinkedHashMap<>();
+        Map<String, Double> results = new ConcurrentHashMap<>();
 
         RealVector oneVector = vectors.get(one);
 
-        for (String m : many) {
+        many.stream().parallel().forEach(m -> {
             RealVector mVector = vectors.get(m);
             if (oneVector != null && mVector != null) {
                 double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse());
@@ -109,7 +113,7 @@ public abstract class RelatednessClient {
             } else {
                 results.put(m, 0d);
             }
-        }
+        });
 
         return results;
     }
