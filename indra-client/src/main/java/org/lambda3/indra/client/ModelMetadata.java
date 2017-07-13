@@ -95,15 +95,15 @@ public final class ModelMetadata {
         ModelMetadata metaDefault = new ModelMetadata();
         return metaDefault
                 .loaderId((String) doc.getOrDefault(LOADER_ID_PARAM, metaDefault.loaderId))
-                .applyStemmer((int) doc.getOrDefault(APPLY_STEMMER_PARAM, metaDefault.applyStemmer))
+                .applyStemmer((int) ((long) doc.getOrDefault(APPLY_STEMMER_PARAM, metaDefault.applyStemmer)))
                 .removeAccents((boolean) doc.getOrDefault(REMOVE_ACCENTS_PARAM, metaDefault.removeAccents))
                 .applyLowercase((boolean) doc.getOrDefault(APPLY_LOWERCASE_PARAM, metaDefault.applyLowercase))
                 .applyStopWords((boolean) doc.getOrDefault(APPLY_STOP_WORDS_PARAM, metaDefault.applyStopWords))
-                .minWordLength((int) doc.getOrDefault(MIN_WORD_LENGTH_PARAM, metaDefault.minWordLength))
-                .maxWordLength((int) doc.getOrDefault(MAX_WORD_LENGTH_PARAM, metaDefault.maxWordLength))
+                .minWordLength((int) ((long) doc.getOrDefault(MIN_WORD_LENGTH_PARAM, metaDefault.minWordLength)))
+                .maxWordLength((int) ((long) doc.getOrDefault(MAX_WORD_LENGTH_PARAM, metaDefault.maxWordLength)))
                 .sparse((boolean) doc.getOrDefault(SPARSE_PARAM, metaDefault.sparse))
                 .binary((boolean) doc.getOrDefault(BINARY_PARAM, metaDefault.binary))
-                .dimensions((int) doc.getOrDefault(DIMENSIONS_PARAM, metaDefault.dimensions))
+                .dimensions((int) ((long) doc.getOrDefault(DIMENSIONS_PARAM, metaDefault.dimensions)))
                 .stopWords(new HashSet<>((Collection<String>) doc.getOrDefault(STOP_WORDS_PARAM, metaDefault.stopWords)))
                 .more((Map<String, String>) doc.getOrDefault(MORE_PARAM, metaDefault.more));
 
