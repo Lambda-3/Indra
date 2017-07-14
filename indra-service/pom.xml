@@ -151,7 +151,7 @@
                         </goals>
                         <configuration>
                             <image>lambdacube/indra:${project.version}-${buildNumber}</image>
-                            <newName>lambdacube/indra:latest</newName>
+                            <newName>lambdacube/indra:${project.version}</newName>
                         </configuration>
                     </execution>
                 </executions>
