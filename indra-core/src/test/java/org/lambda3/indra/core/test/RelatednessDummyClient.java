@@ -45,7 +45,7 @@ public class RelatednessDummyClient extends RelatednessClient {
 
     protected RelatednessDummyClient() {
         super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"), new MockCachedVectorSpace(),
-                new CosineRelatednessFunction(), new UniqueSumVectorComposer(), new AveragedVectorComposer());
+                new CosineRelatednessFunction(), new UniqueSumVectorComposer(), new AveragedVectorComposer(), null);
     }
 
     @Override
