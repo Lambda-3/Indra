@@ -33,7 +33,6 @@ public class RelatednessOneToManyRequest extends RelatednessRequest<RelatednessO
 
     private String one;
     private List<String> many;
-    private ScoreFunction scoreFunction;
 
     public RelatednessOneToManyRequest one(String one) {
         this.one = one;
@@ -45,21 +44,12 @@ public class RelatednessOneToManyRequest extends RelatednessRequest<RelatednessO
         return this;
     }
 
-    public RelatednessOneToManyRequest scoreFunction(ScoreFunction scoreFunction) {
-        this.scoreFunction = Objects.requireNonNull(scoreFunction);
-        return this;
-    }
-
     public String getOne() {
         return one;
     }
 
     public List<String> getMany() {
         return many;
-    }
-
-    public ScoreFunction getScoreFunction() {
-        return scoreFunction;
     }
 
     @Override
