@@ -28,6 +28,7 @@ package org.lambda3.indra.core;
 
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
@@ -41,8 +42,9 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
 
     TranslationBasedRelatednessClient(IndraTranslator translator, RelatednessRequest request, VectorSpace vectorSpace,
-                                      RelatednessFunction func, VectorComposer termComposer, VectorComposer translationComposer) {
-        super(request, vectorSpace, func, termComposer, translationComposer);
+                                      RelatednessFunction func, VectorComposer termComposer,
+                                      VectorComposer translationComposer, Filter relatednessFilter) {
+        super(request, vectorSpace, func, termComposer, translationComposer, relatednessFilter);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
         }

@@ -30,6 +30,8 @@ import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.VectorComposition;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
+import org.lambda3.indra.core.filter.Filter;
+import org.lambda3.indra.core.filter.FilterFactory;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.TranslatorFactory;
@@ -54,16 +56,18 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(request.getScoreFunction());
         VectorComposer termComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTermComposition()));
+        Filter filter = request.getFilter() != null ? FilterFactory.create(request.getFilter(), request.getFilterParam()) : null;
 
         if (request.isMt()) {
             if (translatorFactory == null) {
                 throw new IllegalStateException("Translation-based relatedness not activated.");
             }
             VectorComposer transComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTranslationComposition()));
+
             return new TranslationBasedRelatednessClient(translatorFactory.create(request), request, vectorSpace,
-                    relatednessFunction, termComp, transComp);
+                    relatednessFunction, termComp, transComp, filter);
         } else {
-            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction, termComp);
+            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction, termComp, filter);
         }
     }
 
