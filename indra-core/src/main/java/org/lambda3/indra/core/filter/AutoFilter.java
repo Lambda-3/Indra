@@ -24,8 +24,13 @@ public class AutoFilter implements Filter {
             int pos = relatedness.size();
             Iterator<Map.Entry<String, Double>> iter = relatedness.entrySet().iterator();
             Map.Entry<String, Double> previous = iter.next();
-
             int count = 0;
+
+            while (previous.getValue() > 0.9 && iter.hasNext()) {
+                previous = iter.next();
+                count++;
+            }
+
             while (iter.hasNext()) {
                 Map.Entry<String, Double> curr = iter.next();
                 count++;
