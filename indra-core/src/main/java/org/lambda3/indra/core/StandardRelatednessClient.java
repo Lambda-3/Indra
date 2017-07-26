@@ -31,6 +31,7 @@ import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
 
 import java.util.ArrayList;
@@ -41,8 +42,8 @@ import java.util.stream.Collectors;
 public class StandardRelatednessClient extends RelatednessClient {
 
     protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
-                                        VectorComposer termComposer) {
-        super(request, vectorSpace, func, termComposer, null);
+                                        VectorComposer termComposer, Filter relatednessFilter) {
+        super(request, vectorSpace, func, termComposer, null, relatednessFilter);
     }
 
     @Override

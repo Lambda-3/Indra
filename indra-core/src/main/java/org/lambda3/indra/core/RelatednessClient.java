@@ -29,7 +29,9 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.core.utils.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,14 +48,17 @@ public abstract class RelatednessClient {
     protected RelatednessFunction func;
     protected VectorComposer termComposer;
     protected VectorComposer translationComposer;
+    protected Filter relatednessFilter;
 
     protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
-                                VectorComposer termComposer, VectorComposer translationComposer) {
+                                VectorComposer termComposer, VectorComposer translationComposer,
+                                Filter relatednessFilter) {
         this.vectorSpace = Objects.requireNonNull(vectorSpace);
         this.request = Objects.requireNonNull(request);
         this.func = Objects.requireNonNull(func);
         this.termComposer = Objects.requireNonNull(termComposer);
         this.translationComposer = translationComposer;
+        this.relatednessFilter = relatednessFilter;
     }
 
     protected abstract List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs);
@@ -87,13 +92,13 @@ public abstract class RelatednessClient {
         return compute(vectorsPairs);
     }
 
-    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
+    LinkedHashMap<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
         List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
         return getRelatedness(one, many, analyzedTerms, translated);
     }
 
-    private Map<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
-                                               boolean translated) {
+    private LinkedHashMap<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
+                                                         boolean translated) {
         Map<String, RealVector> vectors;
         if (translated) {
             vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms,
@@ -115,10 +120,12 @@ public abstract class RelatednessClient {
             }
         });
 
-        return results;
+        LinkedHashMap<String, Double> sortedResults = MapUtils.entriesSortedByValues(results);
+        relatednessFilter.filtrateRelatedness(sortedResults);
+        return sortedResults;
     }
 
-    public Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk) {
+    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk) {
         logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
         List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);
 
