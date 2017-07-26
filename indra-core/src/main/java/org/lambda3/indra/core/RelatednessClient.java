@@ -121,7 +121,9 @@ public abstract class RelatednessClient {
         });
 
         LinkedHashMap<String, Double> sortedResults = MapUtils.entriesSortedByValues(results);
-        relatednessFilter.filtrateRelatedness(sortedResults);
+        if (relatednessFilter != null) {
+            relatednessFilter.filtrateRelatedness(sortedResults);
+        }
         return sortedResults;
     }
 
