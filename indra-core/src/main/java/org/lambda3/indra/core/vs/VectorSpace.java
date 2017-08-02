@@ -1,4 +1,4 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.core.vs;
 
 /*-
  * ==========================License-Start=============================
@@ -26,41 +26,31 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.composition.VectorComposerFactory;
+import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.VectorPair;
+import org.lambda3.indra.core.composition.VectorComposer;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> implements Closeable {
+public interface VectorSpace extends Closeable {
 
-    @Override
-    public VectorSpace create(AbstractBasicRequest request) {
-        VectorSpace vectorSpace = super.create(request);
-        ModelMetadata metadata = vectorSpace.getMetadata();
-        if (request.getApplyStopWords() != null) {
-            metadata.applyStopWords(request.getApplyStopWords());
-        }
+    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer);
 
-        if (request.getMinWordLength() >= 0) {
-            metadata.minWordLength(request.getMinWordLength());
-        }
+    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs,
+                                                                     VectorComposer termComposer, VectorComposer translationComposer);
 
-        return vectorSpace;
-    }
+    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms, VectorComposer termComposer);
 
-    public abstract Collection<String> getAvailableModels();
+    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms, VectorComposer termComposer,
+                                                 VectorComposer translationComposer);
 
-    @Override
-    public void close() throws IOException {
-        for (String key : this.cache.keySet()) {
-            this.cache.get(key).close();
-        }
+    Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
 
-        this.cache.clear();
-    }
+    Collection<String> getNearestTerms(AnalyzedTerm term, int topk);
+
+    ModelMetadata getMetadata();
 }

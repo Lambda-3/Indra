@@ -33,6 +33,7 @@ import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.core.vs.VectorSpace;
 
 import java.util.ArrayList;
 import java.util.List;

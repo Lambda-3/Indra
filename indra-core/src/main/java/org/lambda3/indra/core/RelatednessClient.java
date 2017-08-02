@@ -32,6 +32,7 @@ import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.utils.MapUtils;
+import org.lambda3.indra.core.vs.VectorSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
