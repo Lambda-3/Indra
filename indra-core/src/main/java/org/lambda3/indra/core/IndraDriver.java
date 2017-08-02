@@ -33,6 +33,8 @@ import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

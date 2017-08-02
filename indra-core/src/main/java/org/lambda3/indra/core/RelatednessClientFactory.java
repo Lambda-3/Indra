@@ -35,6 +35,8 @@ import org.lambda3.indra.core.filter.FilterFactory;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
 
 import java.util.Objects;
 

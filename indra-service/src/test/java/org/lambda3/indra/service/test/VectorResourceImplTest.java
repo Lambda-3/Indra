@@ -30,7 +30,7 @@ import org.lambda3.indra.client.DenseVectorResponse;
 import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.client.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.core.test.IndraDriverTest;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.service.impl.VectorResourceImpl;

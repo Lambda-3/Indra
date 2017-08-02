@@ -1,4 +1,4 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.core.vs;
 
 /*-
  * ==========================License-Start=============================
@@ -12,10 +12,10 @@ package org.lambda3.indra.core;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,30 +26,51 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.core.exception.ModelNotFoundException;
 
-import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-public interface VectorSpace extends Closeable {
+public final class HubVectorSpaceFactory extends VectorSpaceFactory {
+    private List<VectorSpaceFactory> factories = new LinkedList<>();
 
-    Map<AnalyzedPair, VectorPair> getVectorPairs(List<AnalyzedPair> pairs, VectorComposer termComposer);
+    public void addFactory(VectorSpaceFactory factory) {
+        this.factories.add(factory);
+    }
 
-    Map<AnalyzedTranslatedPair, VectorPair> getTranslatedVectorPairs(List<AnalyzedTranslatedPair> pairs,
-                                                                     VectorComposer termComposer, VectorComposer translationComposer);
+    @Override
+    protected VectorSpace doCreate(AbstractBasicRequest request) {
+        ModelNotFoundException last = null;
+        for (VectorSpaceFactory factory : factories) {
+            try {
+                return factory.create(request);
+            } catch (ModelNotFoundException e) {
+                last = e;
+            }
+        }
+        throw last;
+    }
 
-    Map<String, RealVector> getVectors(List<AnalyzedTerm> terms, VectorComposer termComposer);
+    @Override
+    protected String createKey(AbstractBasicRequest request) {
+        return String.format("%s-%s-%s-%b", request.getModel(),
+                request.getLanguage(), request.getCorpus(), request.isMt());
+    }
 
-    Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms, VectorComposer termComposer,
-                                                 VectorComposer translationComposer);
+    @Override
+    public Collection<String> getAvailableModels() {
+        return factories.stream().map(VectorSpaceFactory::getAvailableModels)
+                .flatMap(Collection::stream).collect(Collectors.toList());
+    }
 
-    Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
-
-    Collection<String> getNearestTerms(AnalyzedTerm term, int topk);
-
-    ModelMetadata getMetadata();
+    @Override
+    public void close() throws IOException {
+        for (VectorSpaceFactory factory : factories) {
+            factory.close();
+        }
+    }
 }

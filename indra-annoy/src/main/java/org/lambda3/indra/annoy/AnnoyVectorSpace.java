@@ -30,12 +30,13 @@ import com.spotify.annoy.ANNIndex;
 import com.spotify.annoy.AnnoyIndex;
 import com.spotify.annoy.IndexType;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.CachedVectorSpace;
+import org.lambda3.indra.core.vs.CachedVectorSpace;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +45,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 public class AnnoyVectorSpace extends CachedVectorSpace {
@@ -106,19 +109,22 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    protected void collectVectors(Collection<String> terms, int limit) {
-        terms.stream().parallel().forEach(term -> {
-            if (!vectorsCache.containsKey(term)) {
-                float[] vector = getVector(term);
-                if (vector != null) {
-                    ArrayRealVector rVector = new ArrayRealVector(vector.length);
-                    for (int i = 0; i < vector.length; i++) {
-                        rVector.addToEntry(i, vector[i]);
-                    }
-                    vectorsCache.put(term, rVector);
+    public Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception {
+        Map<String, RealVector> results = new HashMap<>();
+        Stream<? extends String> stream = StreamSupport.stream(keys.spliterator(), true);
+
+        stream.forEach(key -> {
+            float[] vector = getVector(key);
+            if (vector != null) {
+                ArrayRealVector rVector = new ArrayRealVector(vector.length);
+                for (int i = 0; i < vector.length; i++) {
+                    rVector.addToEntry(i, vector[i]);
                 }
+                results.put(key, rVector);
             }
         });
+
+        return results;
     }
 
     @Override
