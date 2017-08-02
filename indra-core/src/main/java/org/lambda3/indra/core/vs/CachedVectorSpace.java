@@ -1,4 +1,4 @@
-package org.lambda3.indra.core;
+package org.lambda3.indra.core.vs;
 
 /*-
  * ==========================License-Start=============================
@@ -26,32 +26,37 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
+import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-public abstract class CachedVectorSpace implements VectorSpace {
+public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> implements VectorSpace {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     protected ModelMetadata metadata;
+    protected LoadingCache<String, RealVector> cache = CacheBuilder.newBuilder().maximumSize(10000).
+            expireAfterWrite(5, TimeUnit.MINUTES).build(this);
 
-    protected abstract void collectVectors(Collection<String> terms, int limit);
+    @Override
+    public abstract Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception;
+
+    @Override
+    public RealVector load(String s) throws Exception {
+        return loadAll(Collections.singleton(s)).get(s);
+    }
 
     protected abstract ModelMetadata loadMetadata();
-
-    protected List<RealVector> getFromCache(Collection<String> terms) {
-        List<RealVector> termVectors = new ArrayList<>();
-        terms.stream().
-                filter(t -> this.vectorsCache.containsKey(t)).
-                forEach((t) -> termVectors.add(this.vectorsCache.get(t)));
-        return termVectors;
-    }
 
     @Override
     public ModelMetadata getMetadata() {
@@ -76,12 +81,12 @@ public abstract class CachedVectorSpace implements VectorSpace {
             allTerms.addAll(p.getAnalyzedT2().getAnalyzedTokens());
         }
 
-        collectVectors(allTerms, getMetadata().getDimensions());
+        Map<String, RealVector> vectors = collectVectors(allTerms);
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
-            vectorPair.v1 = composeVectors(p.getAnalyzedT1().getAnalyzedTokens(), termComposer);
-            vectorPair.v2 = composeVectors(p.getAnalyzedT2().getAnalyzedTokens(), termComposer);
+            vectorPair.v1 = composeVectors(vectors, p.getAnalyzedT1().getAnalyzedTokens(), termComposer);
+            vectorPair.v2 = composeVectors(vectors, p.getAnalyzedT2().getAnalyzedTokens(), termComposer);
             res.put(p, vectorPair);
         }
         return res;
@@ -109,8 +114,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             }
         }
 
-        collectVectors(allTerms, getMetadata().getDimensions());
-
+        Map<String, RealVector> vectors = collectVectors(allTerms);
 
         for (AnalyzedTranslatedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
@@ -118,7 +122,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             List<RealVector> t1Vectors = new LinkedList<>();
             MutableTranslatedTerm tt1 = p.getTranslatedT1();
             for (String token : tt1.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(tt1.getAnalyzedTranslatedTokens().get(token), translationComposer);
+                RealVector tokenVector = composeVectors(vectors, tt1.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     t1Vectors.add(tokenVector);
                 }
@@ -127,7 +131,7 @@ public abstract class CachedVectorSpace implements VectorSpace {
             List<RealVector> t2Vectors = new LinkedList<>();
             MutableTranslatedTerm tt2 = p.getTranslatedT2();
             for (String token : tt2.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(tt2.getAnalyzedTranslatedTokens().get(token), translationComposer);
+                RealVector tokenVector = composeVectors(vectors, tt2.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     t2Vectors.add(tokenVector);
                 }
@@ -149,17 +153,15 @@ public abstract class CachedVectorSpace implements VectorSpace {
 
         Set<String> allTerms = new HashSet<>();
         terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
+        Map<String, RealVector> allVectors = collectVectors(allTerms);
 
-        collectVectors(allTerms, getMetadata().getDimensions());
-
-        Map<String, RealVector> vectors = new HashMap<>();
-
+        Map<String, RealVector> results = new HashMap<>();
         for (AnalyzedTerm term : terms) {
-            RealVector vector = composeVectors(term.getAnalyzedTokens(), termComposer);
-            vectors.put(term.getTerm(), vector);
+            RealVector vector = composeVectors(allVectors, term.getAnalyzedTokens(), termComposer);
+            results.put(term.getTerm(), vector);
         }
 
-        return vectors;
+        return results;
     }
 
     @Override
@@ -177,30 +179,41 @@ public abstract class CachedVectorSpace implements VectorSpace {
             }
         }
 
-        collectVectors(allTerms, getMetadata().getDimensions());
+        Map<String, RealVector> AllVectors = collectVectors(allTerms);
 
-        Map<String, RealVector> vectors = new HashMap<>();
+        Map<String, RealVector> results = new HashMap<>();
 
         for (MutableTranslatedTerm mtt : terms) {
             List<RealVector> tokenVectors = new LinkedList<>();
             for (String token : mtt.getAnalyzedTranslatedTokens().keySet()) {
-                RealVector tokenVector = composeVectors(mtt.getAnalyzedTranslatedTokens().get(token), translationComposer);
+                RealVector tokenVector = composeVectors(AllVectors, mtt.getAnalyzedTranslatedTokens().get(token), translationComposer);
                 if (tokenVector != null) {
                     tokenVectors.add(tokenVector);
                 }
             }
 
             RealVector vector = tokenVectors.isEmpty() ? null : termComposer.compose(tokenVectors);
-            vectors.put(mtt.getTerm(), vector);
+            results.put(mtt.getTerm(), vector);
         }
 
-        return vectors;
+        return results;
     }
 
-    private RealVector composeVectors(List<String> terms, VectorComposer composer) {
+    private Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        try {
+            return cache.getAll(terms);
+        } catch (ExecutionException e) {
+            logger.error("Error loading vector", e);
+            throw new RuntimeException("Error loading vector");
+        }
+    }
+
+    private RealVector composeVectors(Map<String, RealVector> allVectors, List<String> terms, VectorComposer composer) {
         logger.trace("Composing {} vectors", terms.size());
 
-        List<RealVector> vectors = getFromCache(composer.filter(terms));
+        List<RealVector> vectors = allVectors.entrySet().stream().filter(e -> terms.contains(e.getKey())).
+                map(Map.Entry::getValue).collect(Collectors.toList());
+
         return composer.compose(vectors);
     }
 }

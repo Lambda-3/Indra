@@ -36,17 +36,16 @@ import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.exception.IndraException;
+import org.lambda3.indra.core.vs.CachedVectorSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class MongoVectorSpace extends CachedVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
@@ -98,24 +97,17 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    protected void collectVectors(Collection<String> terms, int limit) {
-        Set<String> toFetch = terms.stream()
-                .filter(t -> !this.vectorsCache.containsKey(t))
-                .collect(Collectors.toSet());
-
-        logger.debug("Cache has {} vectors, need to fetch more {}",
-                terms.size() - toFetch.size(), toFetch.size());
-
-        if (!toFetch.isEmpty()) {
-            logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
-            FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
-            if (docs != null) {
-                docs.batchSize(toFetch.size());
-                for (Document doc : docs) {
-                    this.vectorsCache.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, limit));
-                }
+    public Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception {
+        logger.info("Collecting term vectors from {}", dbName);
+        FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, keys));
+        Map<String, RealVector> vectors = new HashMap<>();
+        if (docs != null) {
+            for (Document doc : docs) {
+                vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
             }
         }
+
+        return vectors;
     }
 
     private RealVector unmarshall(Document doc, int limit) {

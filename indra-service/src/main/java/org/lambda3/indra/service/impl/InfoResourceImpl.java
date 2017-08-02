@@ -30,8 +30,8 @@ import org.lambda3.indra.client.InfoResource;
 import org.lambda3.indra.client.MetadataResponse;
 import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ResourceResponse;
-import org.lambda3.indra.core.VectorSpace;
-import org.lambda3.indra.core.VectorSpaceFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.core.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 
