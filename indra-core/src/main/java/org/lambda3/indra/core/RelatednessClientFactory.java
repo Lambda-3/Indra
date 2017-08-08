@@ -30,10 +30,9 @@ import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.VectorComposition;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
-import org.lambda3.indra.core.filter.Filter;
-import org.lambda3.indra.core.filter.FilterFactory;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.function.RelatednessFunctionFactory;
+import org.lambda3.indra.core.threshold.Threshold;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
@@ -46,7 +45,6 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
     private TranslatorFactory translatorFactory;
     private VectorComposerFactory composerFactory = new VectorComposerFactory();
 
-
     public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
         this.translatorFactory = Objects.requireNonNull(translatorFactory);
@@ -58,7 +56,6 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(request.getScoreFunction());
         VectorComposer termComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTermComposition()));
-        Filter filter = request.getFilter() != null ? FilterFactory.create(request.getFilter(), request.getFilterParam()) : null;
 
         if (request.isMt()) {
             if (translatorFactory == null) {
@@ -67,14 +64,15 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
             VectorComposer transComp = composerFactory.getComposer(VectorComposition.valueOf(request.getTranslationComposition()));
 
             return new TranslationBasedRelatednessClient(translatorFactory.create(request), request, vectorSpace,
-                    relatednessFunction, termComp, transComp, filter);
+                    relatednessFunction, termComp, transComp);
         } else {
-            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction, termComp, filter);
+            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction, termComp);
         }
     }
 
     @Override
     protected String createKey(RelatednessRequest request) {
-        return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt() + request.getFilter() + request.getFilterParam();
+        //todo threshold is stateless should not be into the relatedness client.
+        return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt() + request.getThreshold();
     }
 }

@@ -109,8 +109,8 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception {
-        Map<String, RealVector> results = new HashMap<>();
+    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
+        Map<String, Optional<RealVector>> results = new HashMap<>();
         Stream<? extends String> stream = StreamSupport.stream(keys.spliterator(), true);
 
         stream.forEach(key -> {
@@ -120,7 +120,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
                 for (int i = 0; i < vector.length; i++) {
                     rVector.addToEntry(i, vector[i]);
                 }
-                results.put(key, rVector);
+                results.put(key, Optional.of(rVector));
+            } else {
+                results.put(key, Optional.empty());
             }
         });
 
