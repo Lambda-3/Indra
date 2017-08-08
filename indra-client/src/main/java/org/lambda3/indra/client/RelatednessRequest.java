@@ -31,21 +31,15 @@ import java.util.Objects;
 public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
 
     protected ScoreFunction scoreFunction;
-    protected FilterType filter;
-    protected float filterParam;
+    protected String threshold;
 
     public T scoreFunction(ScoreFunction scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);
         return (T) this;
     }
 
-    public T filter(FilterType filter) {
-        this.filter = filter;
-        return (T) this;
-    }
-
-    public T filterParam(float param) {
-        this.filterParam = filterParam;
+    public T threshold(String threshold) {
+        this.threshold = threshold;
         return (T) this;
     }
 
@@ -53,12 +47,8 @@ public abstract class RelatednessRequest<T extends RelatednessRequest> extends A
         return scoreFunction;
     }
 
-    public FilterType getFilter() {
-        return filter;
-    }
-
-    public float getFilterParam() {
-        return filterParam;
+    public String getThreshold() {
+        return threshold;
     }
 
     @Override

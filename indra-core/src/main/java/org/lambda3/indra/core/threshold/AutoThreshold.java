@@ -1,22 +1,13 @@
-package org.lambda3.indra.core.filter;
-
-import org.apache.commons.math3.linear.RealVector;
+package org.lambda3.indra.core.threshold;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-//TODO call them threshold. and the uppercase filter. better.
-public class AutoFilter implements Filter {
+public class AutoThreshold implements Threshold {
 
     @Override
-    public void filtrateVectors(Map<String, RealVector> vectors) {
-        throw new RuntimeException(String.format("%s does not implement filtrateVectors",
-                this.getClass().getSimpleName()));
-    }
-
-    @Override
-    public void filtrateRelatedness(LinkedHashMap<String, Double> relatedness) {
+    public void apply(LinkedHashMap<String, Double> relatedness) {
 
         if (relatedness.size() > 2) {
 
@@ -56,5 +47,10 @@ public class AutoFilter implements Filter {
                 }
             }
         }
+    }
+
+    @Override
+    public void configure(String... params) {
+        //do nothing
     }
 }

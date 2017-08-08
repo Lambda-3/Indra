@@ -44,8 +44,8 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
     TranslationBasedRelatednessClient(IndraTranslator translator, RelatednessRequest request, VectorSpace vectorSpace,
                                       RelatednessFunction func, VectorComposer termComposer,
-                                      VectorComposer translationComposer, Filter relatednessFilter) {
-        super(request, vectorSpace, func, termComposer, translationComposer, relatednessFilter);
+                                      VectorComposer translationComposer) {
+        super(request, vectorSpace, func, termComposer, translationComposer);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
         }

@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class MongoVectorSpace extends CachedVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
@@ -97,10 +98,10 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception {
+    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
         logger.info("Collecting term vectors from {}", dbName);
         FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, keys));
-        Map<String, RealVector> vectors = new HashMap<>();
+        Map<String, Optional<RealVector>> vectors = new HashMap<>();
         if (docs != null) {
             for (Document doc : docs) {
                 vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
@@ -110,7 +111,9 @@ public final class MongoVectorSpace extends CachedVectorSpace {
         return vectors;
     }
 
-    private RealVector unmarshall(Document doc, int limit) {
+    private Optional<RealVector> unmarshall(Document doc, int limit) {
+        RealVector vector = null;
+
         if (!metadata.isBinary()) {
             throw new UnsupportedOperationException("Can't consume non-binary models.");
         }
@@ -120,15 +123,15 @@ public final class MongoVectorSpace extends CachedVectorSpace {
             final byte[] b = binary.getData();
 
             if (metadata.getLoaderId().equalsIgnoreCase("legacy")) {
-                return BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
+                vector = BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
             } else {
-                return BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
+                vector = BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
             }
         } catch (Exception e) {
             logger.error("Error unmarshalling vector", e);
         }
 
-        return null;
+        return Optional.ofNullable(vector);
     }
 
     @Override
