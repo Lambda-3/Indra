@@ -34,8 +34,9 @@ import org.lambda3.indra.core.vs.CachedVectorSpace;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class MockCachedVectorSpace extends CachedVectorSpace {
 
@@ -47,31 +48,31 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
     public MockCachedVectorSpace() {
-        cache.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
-        cache.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
-        cache.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
-        cache.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
-        cache.put("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
-        cache.put("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
-        cache.put("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
-        cache.put("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
-        cache.put("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
-        cache.put("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
-        cache.put("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
+        cachePut("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
+        cachePut("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
+        cachePut("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
+        cachePut("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
+        cachePut("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
+        cachePut("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
+        cachePut("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
+        cachePut("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
+        cachePut("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
+        cachePut("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
+        cachePut("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
 
-        cache.put("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
-        cache.put("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
-        cache.put("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
+        cachePut("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
+        cachePut("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
+        cachePut("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
 
-        cache.put("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
-        cache.put("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
-        cache.put("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
+        cachePut("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
+        cachePut("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
+        cachePut("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
 
-        cache.put("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
-        cache.put("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
+        cachePut("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
+        cachePut("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
 
-        cache.put("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
-        cache.put("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
+        cachePut("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
+        cachePut("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
 
         //stemmed
         try {
@@ -85,9 +86,15 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
         this.metadata = loadMetadata();
     }
 
+    public void cachePut(String term, RealVector vector) {
+        cache.put(term, Optional.of(vector));
+    }
+
     @Override
-    public Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception {
-        return Collections.EMPTY_MAP;
+    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
+        Map<String, Optional<RealVector>> vectors = new HashMap<>();
+        keys.forEach(k -> vectors.put(k, Optional.empty()));
+        return vectors;
     }
 
     @Override

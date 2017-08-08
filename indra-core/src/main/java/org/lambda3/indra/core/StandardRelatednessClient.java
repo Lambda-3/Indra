@@ -43,8 +43,8 @@ import java.util.stream.Collectors;
 public class StandardRelatednessClient extends RelatednessClient {
 
     protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
-                                        VectorComposer termComposer, Filter relatednessFilter) {
-        super(request, vectorSpace, func, termComposer, null, relatednessFilter);
+                                        VectorComposer termComposer) {
+        super(request, vectorSpace, func, termComposer, null);
     }
 
     @Override

@@ -41,18 +41,29 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> implements VectorSpace {
+public abstract class CachedVectorSpace extends CacheLoader<String, Optional<RealVector>> implements VectorSpace {
+
+    //make this parameter visible for the server startup process toguether with the others cache params.
+    private static final int DEFAULT_MAX_CACHE_SIZE = 10000;
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected final LoadingCache<String, Optional<RealVector>> cache;
     protected ModelMetadata metadata;
-    protected LoadingCache<String, RealVector> cache = CacheBuilder.newBuilder().maximumSize(10000).
-            expireAfterWrite(5, TimeUnit.MINUTES).build(this);
+
+    public CachedVectorSpace() {
+        this(DEFAULT_MAX_CACHE_SIZE);
+    }
+
+    public CachedVectorSpace(int maximumCacheSize) {
+        cache = CacheBuilder.newBuilder().maximumSize(maximumCacheSize).
+                expireAfterWrite(5, TimeUnit.MINUTES).build(this);
+    }
 
     @Override
-    public abstract Map<String, RealVector> loadAll(Iterable<? extends String> keys) throws Exception;
+    public abstract Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception;
 
     @Override
-    public RealVector load(String s) throws Exception {
+    public Optional<RealVector> load(String s) throws Exception {
         return loadAll(Collections.singleton(s)).get(s);
     }
 
@@ -81,7 +92,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
             allTerms.addAll(p.getAnalyzedT2().getAnalyzedTokens());
         }
 
-        Map<String, RealVector> vectors = collectVectors(allTerms);
+        Map<String, Optional<RealVector>> vectors = collectVectors(allTerms);
 
         for (AnalyzedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
@@ -114,7 +125,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
             }
         }
 
-        Map<String, RealVector> vectors = collectVectors(allTerms);
+        Map<String, Optional<RealVector>> vectors = collectVectors(allTerms);
 
         for (AnalyzedTranslatedPair p : pairs) {
             VectorPair vectorPair = new VectorPair();
@@ -153,7 +164,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
 
         Set<String> allTerms = new HashSet<>();
         terms.forEach(t -> allTerms.addAll(t.getAnalyzedTokens()));
-        Map<String, RealVector> allVectors = collectVectors(allTerms);
+        Map<String, Optional<RealVector>> allVectors = collectVectors(allTerms);
 
         Map<String, RealVector> results = new HashMap<>();
         for (AnalyzedTerm term : terms) {
@@ -179,7 +190,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
             }
         }
 
-        Map<String, RealVector> AllVectors = collectVectors(allTerms);
+        Map<String, Optional<RealVector>> AllVectors = collectVectors(allTerms);
 
         Map<String, RealVector> results = new HashMap<>();
 
@@ -199,7 +210,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
         return results;
     }
 
-    private Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+    protected Map<String, Optional<RealVector>> collectVectors(Iterable<? extends String> terms) {
         try {
             return cache.getAll(terms);
         } catch (ExecutionException e) {
@@ -208,11 +219,11 @@ public abstract class CachedVectorSpace extends CacheLoader<String, RealVector> 
         }
     }
 
-    private RealVector composeVectors(Map<String, RealVector> allVectors, List<String> terms, VectorComposer composer) {
+    private RealVector composeVectors(Map<String, Optional<RealVector>> allVectors, List<String> terms, VectorComposer composer) {
         logger.trace("Composing {} vectors", terms.size());
 
         List<RealVector> vectors = allVectors.entrySet().stream().filter(e -> terms.contains(e.getKey())).
-                map(Map.Entry::getValue).collect(Collectors.toList());
+                filter(e -> e.getValue().isPresent()).map(e -> e.getValue().get()).collect(Collectors.toList());
 
         return composer.compose(vectors);
     }
