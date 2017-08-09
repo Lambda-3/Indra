@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public abstract class CachedVectorSpace extends CacheLoader<String, Optional<RealVector>> implements VectorSpace {
 
     //make this parameter visible for the server startup process toguether with the others cache params.
-    private static final int DEFAULT_MAX_CACHE_SIZE = 10000;
+    private static final int DEFAULT_MAX_CACHE_SIZE = 10_000;
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected final LoadingCache<String, Optional<RealVector>> cache;

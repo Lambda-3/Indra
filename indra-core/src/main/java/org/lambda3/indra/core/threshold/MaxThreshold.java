@@ -24,6 +24,6 @@ public class MaxThreshold implements Threshold {
 
     @Override
     public void configure(String... params) {
-        max = Integer.parseInt(params[0]);
+        max = Float.parseFloat(params[0]);
     }
 }
