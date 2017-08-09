@@ -81,6 +81,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     private void loadMappings() {
+        logger.trace("loading mappings from {}", dataDir);
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(new File(dataDir, WORD_MAPPING_FILE)));
@@ -113,6 +114,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
 
     @Override
     public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
+        logger.trace("loading all terms ...");
         Map<String, Optional<RealVector>> results = new HashMap<>();
         Stream<? extends String> stream = StreamSupport.stream(keys.spliterator(), true);
 
