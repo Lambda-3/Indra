@@ -20,6 +20,6 @@ public class MinThreshold implements Threshold {
 
     @Override
     public void configure(String... params) {
-        min = Integer.parseInt(params[0]);
+        min = Float.parseFloat(params[0]);
     }
 }
