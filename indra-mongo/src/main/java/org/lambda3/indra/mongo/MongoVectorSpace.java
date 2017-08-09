@@ -37,8 +37,9 @@ import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.exception.IndraRuntimeException;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.vs.CachedVectorSpace;
+import org.lambda3.indra.exception.IndraRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,12 +85,12 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
     @Override
-    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 

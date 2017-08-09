@@ -36,6 +36,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.vs.CachedVectorSpace;
 
 import java.io.BufferedReader;
@@ -55,6 +56,8 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     public static final String TREE_FILE = "trees.ann";
     public static final String METADATA_FILE = "metadata.json";
     public static final String WORD_MAPPING_FILE = "mappings.txt";
+
+    private static final float TOP_FILTER_FACTOR = 2.5f;
 
     private AnnoyIndex index;
     private String dataDir;
@@ -152,8 +155,8 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
-        Collection<Integer> nearest = getNearestIds(term, topk);
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+        Collection<Integer> nearest = getNearestIds(term, topk, filter);
 
         Map<String, float[]> results = new HashMap<>();
         for (Integer id : nearest) {
@@ -164,8 +167,8 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
-        Collection<Integer> nearest = getNearestIds(term, topk);
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
+        Collection<Integer> nearest = getNearestIds(term, topk, filter);
         Collection<String> terms = new LinkedList<>();
 
         for (Integer id : nearest) {
@@ -175,12 +178,32 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
         return terms;
     }
 
-    public Collection<Integer> getNearestIds(AnalyzedTerm term, int topk) {
+    private Collection<Integer> getNearestIds(AnalyzedTerm term, int topk, Filter filter) {
         if (term.getAnalyzedTokens().size() == 1) {
             float[] vector = getVector(term.getFirstToken());
 
             if (vector != null) {
-                return this.index.getNearest(vector, topk);
+                if (filter == null) {
+                    return this.index.getNearest(vector, topk);
+                } else {
+                    List<Integer> nearest = this.index.getNearest(vector, (int) (topk * TOP_FILTER_FACTOR));
+                    int counter = 0;
+                    Iterator<Integer> iter = nearest.iterator();
+                    while (iter.hasNext()) {
+                        int i = iter.next();
+                        if (filter.matches(term.getFirstToken(), idToWord[i])) {
+                            iter.remove();
+                        } else {
+                            counter++;
+                        }
+
+                        if (counter == topk) {
+                            break;
+                        }
+                    }
+
+                    return nearest.subList(0, Math.min(topk, nearest.size()));
+                }
             }
 
             return Collections.emptyList();
