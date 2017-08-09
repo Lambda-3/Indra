@@ -1,7 +1,7 @@
 package org.lambda3.indra.core.threshold;
 
-import org.lambda3.indra.IndraFactoryProvider;
 import org.lambda3.indra.Threshold;
+import org.lambda3.indra.core.SuperFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,8 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ThreasholdTest {
-/**
-    private IndraFactoryProvider<Threshold> provider = new IndraFactoryProvider<>(Threshold.class);
+
+    private SuperFactory sf = new SuperFactory();
     private Map<String, Double> originalTerms;
 
     @BeforeTest
@@ -35,7 +35,7 @@ public class ThreasholdTest {
     @Test
     public void max05Test() {
         LinkedHashMap<String, Double> terms = new LinkedHashMap<>(originalTerms);
-        Threshold threshold = provider.get("max-0.5");
+        Threshold threshold = sf.create("max-0.5", Threshold.class);
         threshold.apply(terms);
 
         Assert.assertEquals(7, terms.size());
@@ -47,7 +47,7 @@ public class ThreasholdTest {
     @Test
     public void max01Test() {
         LinkedHashMap<String, Double> terms = new LinkedHashMap<>(originalTerms);
-        Threshold threshold = provider.get("max-0.1");
+        Threshold threshold = sf.create("max-0.1", Threshold.class);
         threshold.apply(terms);
 
         Assert.assertEquals(3, terms.size());
@@ -57,14 +57,33 @@ public class ThreasholdTest {
     }
 
     @Test
+    public void autoTest() {
+        Threshold threshold = sf.create("AUTO", Threshold.class);
+        LinkedHashMap<String, Double> values = new LinkedHashMap<>();
+        values.put("love", 1d);
+        values.put("always", .9);
+        values.put("never", .8);
+        values.put("good", .6);
+        values.put("hate", .5);
+        values.put("cell", .1);
+        values.put("phone", 0d);
+
+        threshold.apply(values);
+        Assert.assertEquals(values.size(), 5);
+        Assert.assertTrue(values.containsKey("love"));
+        Assert.assertTrue(values.containsKey("hate"));
+        Assert.assertFalse(values.containsKey("cell"));
+        Assert.assertFalse(values.containsKey("phone"));
+    }
+
+    @Test
     public void sameInstances() {
-        Threshold t1 = provider.get("max-0.1");
-        Threshold t2 = provider.get("MAX-0.1");
+        Threshold t1 = sf.create("max-0.1", Threshold.class);
+        Threshold t2 = sf.create("MAX-0.1", Threshold.class);
         Assert.assertEquals(t1, t2);
 
-        Threshold t3 = provider.get("max-0.1");
-        Threshold t4 = provider.get("max-0.5");
+        Threshold t3 = sf.create("max-0.1", Threshold.class);
+        Threshold t4 = sf.create("max-0.5", Threshold.class);
         Assert.assertNotEquals(t3, t4);
     }
-    */
 }
