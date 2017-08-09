@@ -9,10 +9,6 @@ import java.util.LinkedHashMap;
 public class MaxThreshold implements Threshold {
     private float max;
 
-    public MaxThreshold() {
-
-    }
-
     public MaxThreshold(float max) {
         this.max = max;
     }

@@ -9,33 +9,32 @@ import java.util.Map;
 
 public abstract class CachedIndraFactory<T> implements IndraFactory<T> {
 
-    protected Map<String, T> objects = new HashMap<>();
-    protected Class<T> clazz;
+    protected final Map<String, T> objects = new HashMap<>();
+    private Class<T> clazz;
 
     public CachedIndraFactory(Class<T> clazz) {
         this.clazz = clazz;
     }
 
-    public T get(String type) {
-        if (!objects.containsKey(type)) {
-            create(type);
-        }
-
-        return objects.get(type);
-    }
-
-    private synchronized void create(String name) throws IndraRuntimeException {
+    public T get(String name) {
         String[] parts = name.split(PARAMS_SEPARATOR);
         String[] params = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : null;
+        String newName = parts[0].toLowerCase() + PARAMS_SEPARATOR + (params != null ? String.join(PARAMS_SEPARATOR, params) : "");
 
-        try {
-            T t = create(parts[0], params);
-            if (t != null) {
-                objects.put(name, t);
+        if (!objects.containsKey(newName)) {
+            synchronized (objects) {
+                try {
+                    T t = create(parts[0].toLowerCase(), params);
+                    if (t != null) {
+                        objects.put(newName, t);
+                    }
+                } catch (IndraInvalidParameterException e) {
+                    throw new IndraRuntimeException(String.format("invalid "));
+                }
             }
-        } catch (IndraInvalidParameterException e) {
-            throw new IndraRuntimeException(String.format("invalid "));
         }
+
+        return objects.get(newName);
     }
 
     @Override
