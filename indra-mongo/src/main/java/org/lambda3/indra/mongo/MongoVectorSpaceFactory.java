@@ -29,7 +29,7 @@ package org.lambda3.indra.mongo;
 import com.mongodb.MongoClient;
 import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.core.exception.ModelNotFoundException;
+import org.lambda3.indra.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.io.IOException;

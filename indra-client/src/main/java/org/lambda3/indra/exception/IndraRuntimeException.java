@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.exception;
+package org.lambda3.indra.exception;
 
 /*-
  * ==========================License-Start=============================
@@ -29,9 +29,9 @@ package org.lambda3.indra.core.exception;
 /**
  * Indra Errors must have self explanatory message as it can be serialized back to the API's user.
  */
-public class IndraException extends RuntimeException {
+public class IndraRuntimeException extends RuntimeException {
 
-    public IndraException(String message) {
+    public IndraRuntimeException(String message) {
         super(message);
     }
 }

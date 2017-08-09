@@ -1,15 +1,15 @@
 package org.lambda3.indra.core.threshold;
 
-import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.filter.Filter;
+import com.google.auto.service.AutoService;
+import org.lambda3.indra.Threshold;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
+@AutoService(Threshold.class)
 public class MaxThreshold implements Threshold {
-    float max;
+    private float max;
 
-    MaxThreshold() {
+    public MaxThreshold() {
 
     }
 
@@ -19,11 +19,11 @@ public class MaxThreshold implements Threshold {
 
     @Override
     public void apply(LinkedHashMap<String, Double> relatedness) {
-        relatedness.entrySet().removeIf(entry -> (entry.getValue() <= max));
+        relatedness.entrySet().removeIf(entry -> (entry.getValue() > max));
     }
 
     @Override
-    public void configure(String... params) {
-        max = Float.parseFloat(params[0]);
+    public String getName() {
+        return "max";
     }
 }

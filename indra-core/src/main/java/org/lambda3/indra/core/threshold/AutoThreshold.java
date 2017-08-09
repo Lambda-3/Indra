@@ -1,9 +1,13 @@
 package org.lambda3.indra.core.threshold;
 
+import com.google.auto.service.AutoService;
+import org.lambda3.indra.Threshold;
+
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@AutoService(Threshold.class)
 public class AutoThreshold implements Threshold {
 
     @Override
@@ -50,7 +54,7 @@ public class AutoThreshold implements Threshold {
     }
 
     @Override
-    public void configure(String... params) {
-        //do nothing
+    public String getName() {
+        return "auto";
     }
 }

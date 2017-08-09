@@ -31,7 +31,6 @@ import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.TextPair;
 import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
 import org.lambda3.indra.core.vs.VectorSpace;
 

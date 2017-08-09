@@ -1,4 +1,4 @@
-package org.lambda3.indra.core.exception;
+package org.lambda3.indra.exception;
 
 /*-
  * ==========================License-Start=============================
@@ -26,7 +26,7 @@ package org.lambda3.indra.core.exception;
  * ==========================License-End===============================
  */
 
-public final class ModelNotFoundException extends IndraException {
+public final class ModelNotFoundException extends IndraRuntimeException {
     public ModelNotFoundException(String name) {
         super("Model '" + name + "' not found.");
     }
