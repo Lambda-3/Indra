@@ -109,6 +109,12 @@ public final class MongoVectorSpace extends CachedVectorSpace {
             }
         }
 
+        for (String k : keys) {
+            if (!vectors.containsKey(k)) {
+                vectors.put(k, Optional.empty());
+            }
+        }
+
         return vectors;
     }
 
