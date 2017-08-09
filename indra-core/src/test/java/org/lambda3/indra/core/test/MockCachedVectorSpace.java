@@ -30,6 +30,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.vs.CachedVectorSpace;
 
 import java.io.IOException;
@@ -103,12 +104,12 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("not implemented yet.");
     }
 
     @Override
-    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("not implemented yet.");
     }
 

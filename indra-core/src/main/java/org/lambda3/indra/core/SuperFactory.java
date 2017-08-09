@@ -26,17 +26,21 @@ public class SuperFactory {
     }
 
     public <T> T create(String fullName, Class<T> clazz) {
-        String[] parts = fullName.split(IndraFactory.FACTORY_SEPARATOR);
-        IndraFactory<T> factory;
-        String item;
-        if (parts.length > 1) {
-            factory = getFactory(parts[0], clazz);
-            item = fullName.substring(parts.length, fullName.length());
-        } else {
-            factory = getFactory(IndraFactory.BUILT_IN_FACTORY, clazz);
-            item = fullName;
+        if (fullName != null) {
+            String[] parts = fullName.split(IndraFactory.FACTORY_SEPARATOR);
+            IndraFactory<T> factory;
+            String item;
+            if (parts.length > 1) {
+                factory = getFactory(parts[0], clazz);
+                item = fullName.substring(parts.length, fullName.length());
+            } else {
+                factory = getFactory(IndraFactory.BUILT_IN_FACTORY, clazz);
+                item = fullName;
+            }
+
+            return factory != null ? factory.get(item) : null;
         }
 
-        return factory != null ? factory.get(item) : null;
+        return null;
     }
 }

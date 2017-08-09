@@ -163,6 +163,7 @@ public class IndraDriver {
     public final Map<String, Map<String, float[]>> getNeighborsVectors(NeighborsVectorsRequest request) {
         logger.trace("getting neighbors vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
 
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
@@ -173,7 +174,7 @@ public class IndraDriver {
 
         Map<String, Map<String, float[]>> results = new ConcurrentHashMap<>();
         analyzedTerms.stream().parallel().forEach(at -> {
-            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk());
+            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk(), filter);
             results.put(at.getTerm(), vectors);
         });
 
@@ -185,10 +186,10 @@ public class IndraDriver {
         logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
-        Filter bf = sf.create(request.getFilter(), Filter.class);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
 
         Map<String, Map<String, Double>> relatedness = relatednessClient.getNeighborRelatedness(request.getTerms(),
-                request.getTopk(), threshold, bf);
+                request.getTopk(), threshold, filter);
 
         logger.trace("done");
         return relatedness;
