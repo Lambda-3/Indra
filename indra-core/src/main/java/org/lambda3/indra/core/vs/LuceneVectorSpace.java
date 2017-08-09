@@ -10,6 +10,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.core.filter.Filter;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -70,23 +71,20 @@ public class LuceneVectorSpace extends CachedVectorSpace {
         return null;
     }
 
-    @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
-        Collection<String> nn = getNearestTerms(term, topk);
-        //Map<String, RealVector> vectors = collectVectors(nn);
 
-        return null;
-    }
-
-    @Override
-    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
-
-
-        return null;
-    }
 
     @Override
     public void close() throws IOException {
 
+    }
+
+    @Override
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
+        return null;
     }
 }

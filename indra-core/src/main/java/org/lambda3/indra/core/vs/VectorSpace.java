@@ -30,6 +30,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.VectorPair;
 import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
 
 import java.io.Closeable;
 import java.util.Collection;
@@ -48,9 +49,9 @@ public interface VectorSpace extends Closeable {
     Map<String, RealVector> getTranslatedVectors(List<MutableTranslatedTerm> terms, VectorComposer termComposer,
                                                  VectorComposer translationComposer);
 
-    Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk);
+    Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter);
 
-    Collection<String> getNearestTerms(AnalyzedTerm term, int topk);
+    Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter);
 
     ModelMetadata getMetadata();
 }

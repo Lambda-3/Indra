@@ -14,21 +14,30 @@ public class IndraFactoryProvider {
     }
 
     private void validate() {
-        Map<String, String> names = new HashMap<>();
+        Map<Class, Map<String, String>> names = new HashMap<>();
         for (IndraFactory factory : loader) {
+            Class clazz = factory.getServingClass();
+            Map<String, String> content = names.getOrDefault(clazz, new HashMap<>());
+            if (!names.containsKey(clazz)) {
+                names.put(clazz, content);
+            }
+
             String name = factory.getName().toLowerCase();
-            if (!names.containsKey(name)) {
-                names.put(name, factory.getClass().getCanonicalName());
+            if (!content.containsKey(name)) {
+                content.put(name, factory.getClass().getCanonicalName());
+
             } else {
                 throw new Error(String.format("There are more than one factory of %s with the same name (%s). Classes are %s and %s",
                         getClass().getSimpleName(), name, names.get(name), factory.getClass().getCanonicalName()));
             }
         }
 
-        for (String name : names.keySet()) {
-            if (name.contains(IndraFactory.FACTORY_SEPARATOR) || name.contains(IndraFactory.PARAMS_SEPARATOR)) {
-                throw new Error(String.format("'getName' of factories can't contain the characters %s or %s. Error in %s |getName=%s.",
-                        IndraFactory.FACTORY_SEPARATOR, IndraFactory.PARAMS_SEPARATOR, names.get(name), name));
+        for (Map<String, String> content : names.values()) {
+            for (String name : content.keySet()) {
+                if (name.contains(IndraFactory.FACTORY_SEPARATOR) || name.contains(IndraFactory.PARAMS_SEPARATOR)) {
+                    throw new Error(String.format("'getName' of factories can't contain the characters %s or %s. Error in %s |getName=%s.",
+                            IndraFactory.FACTORY_SEPARATOR, IndraFactory.PARAMS_SEPARATOR, names.get(name), name));
+                }
             }
         }
     }

@@ -27,11 +27,11 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.Threshold;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
-import org.lambda3.indra.Threshold;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.slf4j.Logger;
@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public abstract class RelatednessClient {
 
@@ -126,16 +125,18 @@ public abstract class RelatednessClient {
         return sortedResults;
     }
 
-    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk, Threshold threshold, Filter binaryFilter) {
+    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk, Threshold threshold, Filter filter) {
         logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
         List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);
 
         Map<String, Map<String, Double>> results = new HashMap<>();
-        analyzedTerms.stream().parallel().forEach(at -> {
-            Collection<String> nearestTerms = vectorSpace.getNearestTerms(at, topk);
 
-            List<AnalyzedTerm> analyzedNeighbors = nearestTerms.stream().map(
-                    t -> new AnalyzedTerm(t, Collections.singletonList(t))).collect(Collectors.toList());
+        analyzedTerms.stream().parallel().forEach(at -> {
+            Collection<String> nearestTerms = vectorSpace.getNearestTerms(at, topk, filter);
+
+            List<AnalyzedTerm> analyzedNeighbors = new LinkedList<>();
+            nearestTerms.forEach(t -> analyzedNeighbors.add(new AnalyzedTerm(t, Collections.singletonList(t))));
+            analyzedNeighbors.add(at);
 
             Map<String, Double> relatedness = getRelatedness(at.getFirstToken(), nearestTerms,
                     analyzedNeighbors, threshold, false);
