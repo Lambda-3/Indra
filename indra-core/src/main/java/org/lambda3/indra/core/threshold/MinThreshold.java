@@ -1,13 +1,11 @@
 package org.lambda3.indra.core.threshold;
 
+import org.lambda3.indra.Threshold;
+
 import java.util.LinkedHashMap;
 
 public class MinThreshold implements Threshold {
-    float min;
-
-    MinThreshold() {
-
-    }
+    private float min;
 
     public MinThreshold(float min) {
         this.min = min;
@@ -15,11 +13,11 @@ public class MinThreshold implements Threshold {
 
     @Override
     public void apply(LinkedHashMap<String, Double> relatedness) {
-        relatedness.entrySet().removeIf(entry -> (entry.getValue() >= min));
+        relatedness.entrySet().removeIf(entry -> (entry.getValue() < min));
     }
 
     @Override
-    public void configure(String... params) {
-        min = Float.parseFloat(params[0]);
+    public String getName() {
+        return "min";
     }
 }

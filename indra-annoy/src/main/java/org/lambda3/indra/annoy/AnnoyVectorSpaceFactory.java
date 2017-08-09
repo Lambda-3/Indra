@@ -29,7 +29,7 @@ package org.lambda3.indra.annoy;
 import org.lambda3.indra.client.AbstractBasicRequest;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.core.exception.ModelNotFoundException;
+import org.lambda3.indra.exception.ModelNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -32,6 +32,7 @@ import java.util.Objects;
 public class NeighborsVectorsRequest extends AbstractBasicRequest<NeighborsVectorsRequest> {
     private List<String> terms;
     private int topk;
+    private String filter;
 
     public NeighborsVectorsRequest terms(List<String> terms) {
         this.terms = Objects.requireNonNull(terms);
@@ -49,6 +50,15 @@ public class NeighborsVectorsRequest extends AbstractBasicRequest<NeighborsVecto
 
     public int getTopk() {
         return topk;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public NeighborsVectorsRequest filter(String filter) {
+        this.filter = filter;
+        return this;
     }
 
     @Override
