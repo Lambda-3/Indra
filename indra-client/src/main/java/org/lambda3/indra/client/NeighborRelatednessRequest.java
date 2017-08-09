@@ -32,6 +32,7 @@ import java.util.Objects;
 public class NeighborRelatednessRequest extends RelatednessRequest<NeighborRelatednessRequest> {
     private List<String> terms;
     private int topk;
+    private String filter;
 
     public NeighborRelatednessRequest terms(List<String> terms) {
         this.terms = Objects.requireNonNull(terms);
@@ -49,6 +50,15 @@ public class NeighborRelatednessRequest extends RelatednessRequest<NeighborRelat
 
     public int getTopk() {
         return topk;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public NeighborRelatednessRequest filter(String filter) {
+        this.filter = filter;
+        return this;
     }
 
     @Override

@@ -29,8 +29,9 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.function.RelatednessFunction;
-import org.lambda3.indra.core.threshold.Threshold;
+import org.lambda3.indra.Threshold;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.slf4j.Logger;
@@ -125,7 +126,7 @@ public abstract class RelatednessClient {
         return sortedResults;
     }
 
-    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, Threshold threshold, int topk) {
+    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk, Threshold threshold, Filter binaryFilter) {
         logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
         List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);
 

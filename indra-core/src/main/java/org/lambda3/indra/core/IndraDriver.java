@@ -28,11 +28,11 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
+import org.lambda3.indra.Threshold;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.composition.VectorComposer;
 import org.lambda3.indra.core.composition.VectorComposerFactory;
-import org.lambda3.indra.core.threshold.Threshold;
-import org.lambda3.indra.core.threshold.ThresholdServiceProvider;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
@@ -51,7 +51,7 @@ public class IndraDriver {
     private TranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
     private VectorComposerFactory vectorComposerFactory = new VectorComposerFactory();
-    private ThresholdServiceProvider thresholdServiceProvider = new ThresholdServiceProvider();
+    private SuperFactory sf = new SuperFactory();
 
     public IndraDriver(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
@@ -71,7 +71,7 @@ public class IndraDriver {
     public final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request) {
         logger.trace("getting relatedness for one {} to many (size){} (request={})", request.getOne(),
                 request.getMany().size(), request);
-        Threshold threshold = thresholdServiceProvider.get(request.getThreshold());
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
         Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(),
@@ -184,10 +184,11 @@ public class IndraDriver {
     public final Map<String, Map<String, Double>> getNeighborRelatedness(NeighborRelatednessRequest request) {
         logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        Threshold threshold = thresholdServiceProvider.get(request.getThreshold());
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
+        Filter bf = sf.create(request.getFilter(), Filter.class);
 
         Map<String, Map<String, Double>> relatedness = relatednessClient.getNeighborRelatedness(request.getTerms(),
-                threshold, request.getTopk());
+                request.getTopk(), threshold, bf);
 
         logger.trace("done");
         return relatedness;

@@ -32,7 +32,7 @@ import org.lambda3.indra.client.RelatednessPairRequest;
 import org.lambda3.indra.client.ResourceResponse;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.core.exception.ModelNotFoundException;
+import org.lambda3.indra.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 
 import java.util.ArrayList;
