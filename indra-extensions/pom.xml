@@ -5,11 +5,13 @@
     <parent>
         <artifactId>indra-parent</artifactId>
         <groupId>org.lambda3.indra</groupId>
-        <version>2.1.0-rc</version>
+        <version>2.1.2-rc</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>indra-extensions</artifactId>
+
+    <name>Indra Extensions Module</name>
 
     <dependencies>
         <dependency>
