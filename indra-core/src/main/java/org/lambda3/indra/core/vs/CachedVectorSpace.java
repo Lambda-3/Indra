@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,7 @@ public abstract class CachedVectorSpace extends CacheLoader<String, Optional<Rea
     private static final int DEFAULT_MAX_CACHE_SIZE = 10_000;
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected final LoadingCache<String, Optional<RealVector>> cache;
+    private final LoadingCache<String, Optional<RealVector>> cache;
     protected ModelMetadata metadata;
 
     public CachedVectorSpace() {
@@ -212,8 +211,9 @@ public abstract class CachedVectorSpace extends CacheLoader<String, Optional<Rea
 
     protected Map<String, Optional<RealVector>> collectVectors(Iterable<? extends String> terms) {
         try {
-            return cache.getAll(terms);
-        } catch (ExecutionException e) {
+            //return cache.getAll(terms);
+            return loadAll(terms);
+        } catch (Exception e) {
             logger.error("Error loading vector", e);
             throw new RuntimeException("Error loading vector");
         }

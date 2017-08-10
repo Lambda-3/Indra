@@ -95,6 +95,7 @@ public abstract class RelatednessClient {
         return getRelatedness(one, many, analyzedTerms, threshold, translated);
     }
 
+    @SuppressWarnings("unchecked")
     private LinkedHashMap<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
                                                          Threshold threshold, boolean translated) {
         Map<String, RealVector> vectors;
