@@ -41,14 +41,16 @@ import java.util.Optional;
 
 public class MockCachedVectorSpace extends CachedVectorSpace {
 
-    public static final int VECTOR_SIZE = 5;
-    public static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
-    public static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
-    public static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
-    public static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
-    public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
+    private static final int VECTOR_SIZE = 5;
+    static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
+    static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
+    static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
+    static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
+    static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
-    public MockCachedVectorSpace() {
+    private Map<String, Optional<RealVector>> localCache = new HashMap<>();
+
+    MockCachedVectorSpace() {
         cachePut("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
         cachePut("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
         cachePut("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
@@ -77,9 +79,9 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
 
         //stemmed
         try {
-            cache.put("machin", cache.get("machine"));
-            cache.put("comput", cache.get("computer"));
-            cache.put("evalu", cache.get("evaluation"));
+            localCache.put("machin", localCache.get("machine"));
+            localCache.put("comput", localCache.get("computer"));
+            localCache.put("evalu", localCache.get("evaluation"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,14 +89,18 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
         this.metadata = loadMetadata();
     }
 
-    public void cachePut(String term, RealVector vector) {
-        cache.put(term, Optional.of(vector));
+    private void cachePut(String term, RealVector vector) {
+        localCache.put(term, Optional.of(vector));
     }
 
     @Override
     public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
         Map<String, Optional<RealVector>> vectors = new HashMap<>();
-        keys.forEach(k -> vectors.put(k, Optional.empty()));
+        for (String key : keys) {
+            Optional<RealVector> vector = localCache.get(key);
+            vectors.put(key, vector == null ? Optional.empty() : vector);
+        }
+
         return vectors;
     }
 
