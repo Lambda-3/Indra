@@ -10,11 +10,12 @@ public final class UnitNormalizationVectorComposer extends SumVectorComposer {
     public RealVector compose(List<RealVector> vectors) {
         logger.trace("Composing {} vectors", vectors.size());
         RealVector sum = super.compose(vectors);
-        if (sum != null) {
+        if (vectors.size() > 1) {
+            //norm is not calculated for single vectors.
             double norm = sum.getNorm();
             return sum.mapDivideToSelf(norm);
-        } else {
-            return null;
         }
+
+        return sum;
     }
 }
