@@ -22,6 +22,8 @@ public class ThresholdFactory extends CachedIndraFactory<Threshold> {
                 return new MinThreshold(Float.parseFloat(params[0]));
             case "max":
                 return new MaxThreshold(Float.parseFloat(params[0]));
+            case "top":
+                return new TopThreshold(Integer.parseInt(params[0]));
             default:
                 throw new IndraInvalidParameterException("invalid threshold descriptor.");
         }
