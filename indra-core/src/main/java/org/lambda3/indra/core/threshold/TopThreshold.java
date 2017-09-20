@@ -15,17 +15,21 @@ public class TopThreshold implements Threshold {
     }
 
     @Override
-    public void apply(LinkedHashMap<String, Double> relatedness) {
+    public LinkedHashMap<String, Double> apply(LinkedHashMap<String, Double> relatedness) {
 
         int limit = top;
-        Iterator<Map.Entry<String, Double>> iter = relatedness.entrySet().iterator();
-        while (iter.hasNext() && limit-- > 0) {
-            iter.next();
-        }
 
-        while (iter.hasNext()) {
-            iter.next();
-            iter.remove();
+        if (relatedness.size() <= top) {
+            return relatedness;
+        } else {
+            LinkedHashMap<String, Double> newOne = new LinkedHashMap<>();
+            Iterator<Map.Entry<String, Double>> iter = relatedness.entrySet().iterator();
+            while (iter.hasNext() && limit-- > 0) {
+                Map.Entry<String, Double> item = iter.next();
+                newOne.put(item.getKey(), item.getValue());
+            }
+
+            return newOne;
         }
     }
 }

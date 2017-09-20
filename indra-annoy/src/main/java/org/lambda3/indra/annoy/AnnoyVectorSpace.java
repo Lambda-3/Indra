@@ -46,8 +46,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 
 public class AnnoyVectorSpace extends CachedVectorSpace {
@@ -116,9 +114,9 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
         logger.trace("loading all terms ...");
         Map<String, Optional<RealVector>> results = new HashMap<>();
-        Stream<? extends String> stream = StreamSupport.stream(keys.spliterator(), true);
 
-        stream.forEach(key -> {
+
+        for (String key : keys) {
             float[] vector = getVector(key);
             if (vector != null) {
                 ArrayRealVector rVector = new ArrayRealVector(vector.length);
@@ -129,7 +127,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
             } else {
                 results.put(key, Optional.empty());
             }
-        });
+        }
 
         return results;
     }
