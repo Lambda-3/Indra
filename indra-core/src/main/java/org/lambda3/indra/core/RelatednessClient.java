@@ -121,7 +121,7 @@ public abstract class RelatednessClient {
 
         LinkedHashMap<String, Double> sortedResults = MapUtils.entriesSortedByValues(results);
         if (threshold != null) {
-            threshold.apply(sortedResults);
+            sortedResults = threshold.apply(sortedResults);
         }
         return sortedResults;
     }

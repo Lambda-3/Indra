@@ -12,8 +12,11 @@ public class MinThreshold implements Threshold {
     }
 
     @Override
-    public void apply(LinkedHashMap<String, Double> relatedness) {
-        relatedness.entrySet().removeIf(entry -> (entry.getValue() < min));
+    public LinkedHashMap<String, Double> apply(LinkedHashMap<String, Double> relatedness) {
+        LinkedHashMap<String, Double> results = new LinkedHashMap<>();
+        relatedness.entrySet().stream().filter(entry -> (entry.getValue() >= min)).
+                forEach(e -> results.put(e.getKey(), e.getValue()));
+        return results;
     }
 
     @Override

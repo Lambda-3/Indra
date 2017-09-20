@@ -11,7 +11,7 @@ import java.util.Map;
 public class AutoThreshold implements Threshold {
 
     @Override
-    public void apply(LinkedHashMap<String, Double> relatedness) {
+    public LinkedHashMap<String, Double> apply(LinkedHashMap<String, Double> relatedness) {
 
         if (relatedness.size() > 2) {
 
@@ -40,17 +40,18 @@ public class AutoThreshold implements Threshold {
             }
 
             iter = relatedness.entrySet().iterator();
-            iter.next();
             count = 0;
-
-            while (iter.hasNext()) {
+            LinkedHashMap<String, Double> result = new LinkedHashMap<>();
+            while (iter.hasNext() && count < pos) {
                 count++;
-                iter.next();
-                if (count >= pos) {
-                    iter.remove();
-                }
+                Map.Entry<String, Double> entry = iter.next();
+                result.put(entry.getKey(), entry.getValue());
             }
+
+            return result;
         }
+
+        return relatedness;
     }
 
     @Override

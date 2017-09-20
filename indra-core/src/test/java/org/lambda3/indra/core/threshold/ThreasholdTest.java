@@ -36,7 +36,7 @@ public class ThreasholdTest {
     public void max05Test() {
         LinkedHashMap<String, Double> terms = new LinkedHashMap<>(originalTerms);
         Threshold threshold = sf.create("max-0.5", Threshold.class);
-        threshold.apply(terms);
+        terms = threshold.apply(terms);
 
         Assert.assertEquals(7, terms.size());
         Assert.assertFalse(terms.containsKey("i1"));
@@ -48,7 +48,7 @@ public class ThreasholdTest {
     public void max01Test() {
         LinkedHashMap<String, Double> terms = new LinkedHashMap<>(originalTerms);
         Threshold threshold = sf.create("max-0.1", Threshold.class);
-        threshold.apply(terms);
+        terms = threshold.apply(terms);
 
         Assert.assertEquals(3, terms.size());
         Assert.assertTrue(terms.containsKey("i8"));
@@ -68,7 +68,7 @@ public class ThreasholdTest {
         values.put("cell", .1);
         values.put("phone", 0d);
 
-        threshold.apply(values);
+        values = threshold.apply(values);
         Assert.assertEquals(values.size(), 5);
         Assert.assertTrue(values.containsKey("love"));
         Assert.assertTrue(values.containsKey("hate"));

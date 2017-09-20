@@ -65,7 +65,7 @@ public final class Server {
 
     static {
         protocol = "http://";
-        host = System.getProperty("indra.http.host", "localhost");
+        host = System.getProperty("indra.http.host", "0.0.0.0");
         port = System.getProperty("indra.http.port", "8916");
         BASE_URI = protocol + host + ":" + port;
         mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));
