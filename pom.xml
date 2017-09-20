@@ -6,7 +6,7 @@
 
     <groupId>org.lambda3.indra</groupId>
     <artifactId>indra-parent</artifactId>
-    <version>2.1.4-rc</version>
+    <version>2.1.5-rc</version>
     <packaging>pom</packaging>
 
     <name>Indra</name>
