@@ -34,7 +34,7 @@ import org.lambda3.indra.client.VectorRequest;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.SumVectorComposer;
+import org.lambda3.indra.entity.composition.SumVectorComposer;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 
 import java.io.*;

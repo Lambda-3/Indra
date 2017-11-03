@@ -30,8 +30,7 @@ import org.lambda3.indra.client.AnalyzedPair;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.RelatednessRequest;
 import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.core.vs.VectorSpace;
 
 import java.util.ArrayList;
@@ -41,9 +40,8 @@ import java.util.stream.Collectors;
 
 public class StandardRelatednessClient extends RelatednessClient {
 
-    protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
-                                        VectorComposer termComposer) {
-        super(request, vectorSpace, func, termComposer, null);
+    protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace) {
+        super(request, vectorSpace);
     }
 
     @Override
@@ -75,7 +73,9 @@ public class StandardRelatednessClient extends RelatednessClient {
     }
 
     @Override
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs,
+                                                                 VectorComposer termComposer,
+                                                                 VectorComposer translationComposer) {
         return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs, termComposer);
     }
 }

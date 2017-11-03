@@ -1,6 +1,6 @@
 package org.lambda3.indra.core.threshold;
 
-import org.lambda3.indra.Threshold;
+import org.lambda3.indra.entity.Threshold;
 
 import java.util.LinkedHashMap;
 

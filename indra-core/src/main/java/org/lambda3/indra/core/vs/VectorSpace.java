@@ -29,7 +29,7 @@ package org.lambda3.indra.core.vs;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.core.filter.Filter;
 
 import java.io.Closeable;

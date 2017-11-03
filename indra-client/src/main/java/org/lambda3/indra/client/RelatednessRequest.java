@@ -30,10 +30,10 @@ import java.util.Objects;
 
 public abstract class RelatednessRequest<T extends RelatednessRequest> extends AbstractBasicRequest<T> {
 
-    protected ScoreFunction scoreFunction;
+    protected String scoreFunction;
     protected String threshold;
 
-    public T scoreFunction(ScoreFunction scoreFunction) {
+    public T scoreFunction(String scoreFunction) {
         this.scoreFunction = Objects.requireNonNull(scoreFunction);
         return (T) this;
     }
@@ -43,7 +43,7 @@ public abstract class RelatednessRequest<T extends RelatednessRequest> extends A
         return (T) this;
     }
 
-    public ScoreFunction getScoreFunction() {
+    public String getScoreFunction() {
         return scoreFunction;
     }
 
