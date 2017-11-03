@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class NeighborRelatednessResponse extends AbstractBasicResponse {
-    private ScoreFunction scoreFunction;
+    private String scoreFunction;
     private int topk;
     private Map<String, Map<String, Double>> terms;
 

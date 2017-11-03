@@ -1,5 +1,7 @@
 package org.lambda3.indra;
 
+import org.lambda3.indra.factory.IndraFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
