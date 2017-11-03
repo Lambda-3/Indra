@@ -1,9 +1,9 @@
 package org.lambda3.indra.core.threshold;
 
 import com.google.auto.service.AutoService;
-import org.lambda3.indra.CachedIndraFactory;
-import org.lambda3.indra.IndraFactory;
-import org.lambda3.indra.Threshold;
+import org.lambda3.indra.factory.CachedIndraFactory;
+import org.lambda3.indra.factory.IndraFactory;
+import org.lambda3.indra.entity.Threshold;
 import org.lambda3.indra.exception.IndraInvalidParameterException;
 
 @AutoService(IndraFactory.class)
@@ -27,6 +27,11 @@ public class ThresholdFactory extends CachedIndraFactory<Threshold> {
             default:
                 throw new IndraInvalidParameterException("invalid threshold descriptor.");
         }
+    }
+
+    @Override
+    public Threshold getDefault() {
+        return null;
     }
 
     @Override

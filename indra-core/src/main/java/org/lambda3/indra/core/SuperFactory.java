@@ -1,7 +1,7 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.IndraFactory;
 import org.lambda3.indra.IndraFactoryProvider;
+import org.lambda3.indra.factory.IndraFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +26,10 @@ public class SuperFactory {
     }
 
     public <T> T create(String fullName, Class<T> clazz) {
+        IndraFactory<T> factory;
+
         if (fullName != null) {
             String[] parts = fullName.split(IndraFactory.FACTORY_SEPARATOR);
-            IndraFactory<T> factory;
             String item;
             if (parts.length > 1) {
                 factory = getFactory(parts[0], clazz);
@@ -39,8 +40,10 @@ public class SuperFactory {
             }
 
             return factory != null ? factory.get(item) : null;
+        } else {
+            factory = getFactory(IndraFactory.BUILT_IN_FACTORY, clazz);
+            return factory != null ? factory.getDefault() : null;
         }
 
-        return null;
     }
 }

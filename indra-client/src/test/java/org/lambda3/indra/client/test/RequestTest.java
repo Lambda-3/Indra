@@ -1,7 +1,6 @@
 package org.lambda3.indra.client.test;
 
 import org.lambda3.indra.client.RelatednessPairRequest;
-import org.lambda3.indra.client.ScoreFunction;
 import org.lambda3.indra.client.TextPair;
 import org.testng.annotations.Test;
 
@@ -21,7 +20,7 @@ public final class RequestTest {
                 .corpus("any")
                 .language("en")
                 .model("w2v")
-                .scoreFunction(ScoreFunction.COSINE)
+                .scoreFunction("cosine")
                 .validate();
     }
 
@@ -30,7 +29,7 @@ public final class RequestTest {
         new RelatednessPairRequest()
                 .language("en")
                 .model("w2v")
-                .scoreFunction(ScoreFunction.COSINE)
+                .scoreFunction("cosine")
                 .pairs(Collections.singletonList(new TextPair("a", "b")))
                 .validate();
     }
@@ -40,7 +39,7 @@ public final class RequestTest {
         new RelatednessPairRequest()
                 .corpus("any")
                 .model("w2v")
-                .scoreFunction(ScoreFunction.COSINE)
+                .scoreFunction("cosine")
                 .pairs(Collections.singletonList(new TextPair("a", "b")))
                 .validate();
     }
@@ -50,7 +49,7 @@ public final class RequestTest {
         new RelatednessPairRequest()
                 .corpus("any")
                 .language("en")
-                .scoreFunction(ScoreFunction.COSINE)
+                .scoreFunction("cosine")
                 .pairs(Collections.singletonList(new TextPair("a", "b")))
                 .validate();
     }
@@ -80,7 +79,7 @@ public final class RequestTest {
                 .corpus("any")
                 .language("en")
                 .model("w2v")
-                .scoreFunction(ScoreFunction.COSINE)
+                .scoreFunction("cosine")
                 .pairs(Collections.singletonList(new TextPair("a", "b")))
                 .validate();
     }

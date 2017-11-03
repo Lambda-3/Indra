@@ -41,8 +41,8 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
     private boolean mt = false;
     private Boolean applyStopWords;
     private int minWordLength = -1; // flags user did not override the defaults
-    private String termComposition = VectorComposition.UNIT_NORMALIZATION.toString();
-    private String translationComposition = VectorComposition.UNIT_NORMALIZATION.toString();
+    private String termComposition;
+    private String translationComposition;
 
     public T corpus(String corpusName) {
         this.corpus = Objects.requireNonNull(corpusName);
@@ -158,8 +158,6 @@ public abstract class AbstractBasicRequest<T extends AbstractBasicRequest> {
         checkAndAppendErrorMessages(corpus, "corpus", errorMessage);
         checkAndAppendErrorMessages(model, "model", errorMessage);
         checkAndAppendErrorMessages(language, "language", errorMessage);
-        checkAndAppendErrorMessages(termComposition, "termComposition", errorMessage);
-        checkAndAppendErrorMessages(translationComposition, "translationComposition", errorMessage);
 
         errorMessage.append(isValid());
 

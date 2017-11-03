@@ -1,7 +1,7 @@
 package org.lambda3.indra.core.threshold;
 
 import com.google.auto.service.AutoService;
-import org.lambda3.indra.Threshold;
+import org.lambda3.indra.entity.Threshold;
 
 import java.util.LinkedHashMap;
 

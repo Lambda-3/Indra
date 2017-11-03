@@ -96,7 +96,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
                 this.wordToId.put(parts[1], id);
             }
         } catch (IOException e) {
-            String msg = "errors when loading mappings.";
+            String msg = String.format("errors when loading mappings. BASEDIR=%s | MAPPING_GILE=%s", dataDir, WORD_MAPPING_FILE);
             logger.error(msg);
             throw new RuntimeException(msg, e);
         } finally {

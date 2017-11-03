@@ -30,7 +30,7 @@ import java.util.Collection;
 
 public final class RelatednessPairResponse extends AbstractBasicResponse {
     private Collection<ScoredTextPair> pairs;
-    private ScoreFunction scoreFunction;
+    private String scoreFunction;
 
     private RelatednessPairResponse() {
         //jersey demands.
@@ -46,7 +46,7 @@ public final class RelatednessPairResponse extends AbstractBasicResponse {
         return pairs;
     }
 
-    public ScoreFunction getScoreFunction() {
+    public String getScoreFunction() {
         return scoreFunction;
     }
 

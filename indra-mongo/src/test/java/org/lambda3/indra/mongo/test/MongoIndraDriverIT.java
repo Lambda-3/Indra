@@ -56,7 +56,7 @@ public final class MongoIndraDriverIT {
     }
 
     private static RelatednessPairRequest buildDefaulRequest() {
-        return new RelatednessPairRequest().corpus("wiki-2014").scoreFunction(ScoreFunction.COSINE).language("EN").
+        return new RelatednessPairRequest().corpus("wiki-2014").scoreFunction("COSINE").language("EN").
                 model("W2V").mt(false);
     }
 
