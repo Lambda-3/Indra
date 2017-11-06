@@ -36,6 +36,7 @@ import org.lambda3.indra.core.translation.IndraTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public final class MongoIndraTranslator extends IndraTranslator {
@@ -100,4 +101,8 @@ public final class MongoIndraTranslator extends IndraTranslator {
         return res;
     }
 
+    @Override
+    public void close() throws IOException {
+        mongoClient.close();
+    }
 }

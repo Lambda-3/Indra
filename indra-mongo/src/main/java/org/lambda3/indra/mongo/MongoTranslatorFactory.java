@@ -28,9 +28,9 @@ package org.lambda3.indra.mongo;
 
 import com.mongodb.MongoClient;
 import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.exception.ModelNotFoundException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -40,17 +40,15 @@ import java.util.Set;
 
 public final class MongoTranslatorFactory extends TranslatorFactory {
 
-    private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
-
     private MongoClient mongoClient;
     private String dbNameSuffix;
 
     public MongoTranslatorFactory(String mongoURI) {
-        this(new MongoClient(mongoURI), DEFAULT_DB_NAME_SUFFIX);
+        this(new MongoClient(mongoURI), IndraTranslator.DEFAULT_DB_NAME_SUFFIX);
     }
 
     public MongoTranslatorFactory(MongoClient client) {
-        this(client, DEFAULT_DB_NAME_SUFFIX);
+        this(client, IndraTranslator.DEFAULT_DB_NAME_SUFFIX);
     }
 
     private MongoTranslatorFactory(MongoClient client, String dbNameSuffix) {

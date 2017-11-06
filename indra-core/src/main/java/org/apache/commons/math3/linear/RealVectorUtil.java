@@ -33,9 +33,9 @@ import java.util.Map;
 /**
  * There is a bug in the class RealVector.Entry, which restricts its access. This is way this code was located
  * into this package.
- *
+ * <p>
  * Bug track: https://issues.apache.org/jira/browse/MATH-1329
- *
+ * <p>
  * As soon as it is solved, the method can be send to a class in the lambda3 package.
  */
 public class RealVectorUtil {
@@ -52,4 +52,33 @@ public class RealVectorUtil {
         return mapVector;
     }
 
+    public static Map<String, Map<String, Map<Integer, Double>>> convertAllToMap(Map<String, Map<String, RealVector>> terms) {
+        Map<String, Map<String, Map<Integer, Double>>> results = new HashMap<>();
+
+        for (String term : terms.keySet()) {
+            HashMap<String, Map<Integer, Double>> content = new HashMap<>();
+            results.put(term, content);
+
+            for (String c : terms.get(term).keySet()) {
+                content.put(c, vectorToMap(terms.get(term).get(c)));
+            }
+        }
+
+        return results;
+    }
+
+    public static Map<String, Map<String, double[]>> convertAllToArray(Map<String, Map<String, RealVector>> terms) {
+        Map<String, Map<String, double[]>> results = new HashMap<>();
+
+        for (String term : terms.keySet()) {
+            HashMap<String, double[]> content = new HashMap<>();
+            results.put(term, content);
+
+            for (String c : terms.get(term).keySet()) {
+                content.put(c, terms.get(term).get(c).toArray());
+            }
+        }
+
+        return results;
+    }
 }

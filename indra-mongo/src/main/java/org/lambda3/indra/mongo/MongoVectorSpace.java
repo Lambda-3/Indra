@@ -37,8 +37,8 @@ import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.core.filter.Filter;
-import org.lambda3.indra.core.vs.CachedVectorSpace;
+import org.lambda3.indra.core.vs.AbstractVectorSpace;
+import org.lambda3.indra.entity.filter.Filter;
 import org.lambda3.indra.exception.IndraRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +47,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-public final class MongoVectorSpace extends CachedVectorSpace {
+public final class MongoVectorSpace extends AbstractVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
     private static final String TERMS_COLL_NAME = "terms";
@@ -85,7 +84,21 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+    protected Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        logger.info("Collecting term vectors from {}", dbName);
+        FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, terms));
+        Map<String, RealVector> vectors = new HashMap<>();
+        if (docs != null) {
+            for (Document doc : docs) {
+                vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
+            }
+        }
+
+        return vectors;
+    }
+
+    @Override
+    public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
@@ -98,27 +111,8 @@ public final class MongoVectorSpace extends CachedVectorSpace {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
     }
 
-    @Override
-    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
-        logger.info("Collecting term vectors from {}", dbName);
-        FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, keys));
-        Map<String, Optional<RealVector>> vectors = new HashMap<>();
-        if (docs != null) {
-            for (Document doc : docs) {
-                vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
-            }
-        }
 
-        for (String k : keys) {
-            if (!vectors.containsKey(k)) {
-                vectors.put(k, Optional.empty());
-            }
-        }
-
-        return vectors;
-    }
-
-    private Optional<RealVector> unmarshall(Document doc, int limit) {
+    private RealVector unmarshall(Document doc, int limit) {
         RealVector vector = null;
 
         if (!metadata.isBinary()) {
@@ -138,7 +132,7 @@ public final class MongoVectorSpace extends CachedVectorSpace {
             logger.error("Error unmarshalling vector", e);
         }
 
-        return Optional.ofNullable(vector);
+        return vector;
     }
 
     @Override

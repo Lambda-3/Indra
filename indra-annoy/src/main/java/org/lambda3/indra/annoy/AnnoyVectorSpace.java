@@ -36,8 +36,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.filter.Filter;
-import org.lambda3.indra.core.vs.CachedVectorSpace;
+import org.lambda3.indra.core.vs.AbstractVectorSpace;
+import org.lambda3.indra.entity.filter.Filter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,12 +48,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
-public class AnnoyVectorSpace extends CachedVectorSpace {
+public class AnnoyVectorSpace extends AbstractVectorSpace {
 
-    public static final String INDEX_TYPE = "index-type";
-    public static final String TREE_FILE = "trees.ann";
-    public static final String METADATA_FILE = "metadata.json";
-    public static final String WORD_MAPPING_FILE = "mappings.txt";
+    private static final String INDEX_TYPE = "index-type";
+    private static final String TREE_FILE = "trees.ann";
+    private static final String METADATA_FILE = "metadata.json";
+    private static final String WORD_MAPPING_FILE = "mappings.txt";
 
     private static final float TOP_FILTER_FACTOR = 2.5f;
 
@@ -62,7 +62,7 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     private String[] idToWord;
     private Map<String, Integer> wordToId = new ConcurrentHashMap<>();
 
-    public AnnoyVectorSpace(String dataDir) {
+    AnnoyVectorSpace(String dataDir) {
         this.dataDir = Objects.requireNonNull(dataDir);
         this.metadata = loadMetadata();
         loadMappings();
@@ -110,27 +110,6 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
         }
     }
 
-    @Override
-    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
-        logger.trace("loading all terms ...");
-        Map<String, Optional<RealVector>> results = new HashMap<>();
-
-
-        for (String key : keys) {
-            float[] vector = getVector(key);
-            if (vector != null) {
-                ArrayRealVector rVector = new ArrayRealVector(vector.length);
-                for (int i = 0; i < vector.length; i++) {
-                    rVector.addToEntry(i, vector[i]);
-                }
-                results.put(key, Optional.of(rVector));
-            } else {
-                results.put(key, Optional.empty());
-            }
-        }
-
-        return results;
-    }
 
     @Override
     protected ModelMetadata loadMetadata() {
@@ -155,12 +134,36 @@ public class AnnoyVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+    protected Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        Map<String, RealVector> vectors = new HashMap<>();
+
+        for (String term : terms) {
+            float[] v = getVector(term);
+            if (v != null) {
+                double[] dv = new double[v.length];
+                //TODO make the annoy library return natively double[]
+                for (int i = 0; i < dv.length; i++) {
+                    dv[i] = v[i];
+                }
+                RealVector vector = new ArrayRealVector(dv, false);
+                vectors.put(term, vector);
+            }
+        }
+
+        return vectors;
+    }
+
+    @Override
+    public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         Collection<Integer> nearest = getNearestIds(term, topk, filter);
 
-        Map<String, float[]> results = new HashMap<>();
+        Map<String, RealVector> results = new HashMap<>();
         for (Integer id : nearest) {
-            results.put(idToWord[id], index.getItemVector(id));
+            float[] fv = index.getItemVector(id);
+            double[] dv = new double[fv.length];
+
+            RealVector vector = new ArrayRealVector(dv);
+            results.put(idToWord[id], vector);
         }
 
         return results;

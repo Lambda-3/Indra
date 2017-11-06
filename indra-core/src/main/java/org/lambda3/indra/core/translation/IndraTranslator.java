@@ -35,8 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class IndraTranslator {
+public abstract class IndraTranslator implements Closeable{
 
+    public static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
     public static final String DEFAULT_TRANSLATION_TARGET_LANGUAGE = "EN";
 
     /**
@@ -50,7 +51,7 @@ public abstract class IndraTranslator {
         List<String> res = new LinkedList<>();
 
         if (tr.size() <= 2) {
-            tr.keySet().forEach(res::add);
+            res.addAll(tr.keySet());
         } else {
 
             LinkedHashMap<String, Double> tempWords = new LinkedHashMap<>();
