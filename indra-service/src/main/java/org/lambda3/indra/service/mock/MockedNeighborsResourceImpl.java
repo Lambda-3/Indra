@@ -31,7 +31,6 @@ import org.lambda3.indra.client.*;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 
 public final class MockedNeighborsResourceImpl implements NeighborsResource {
 
@@ -42,21 +41,18 @@ public final class MockedNeighborsResourceImpl implements NeighborsResource {
 
     @Override
     public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
-        Map<String, Map<String, float[]>> terms = new HashMap<>();
+        Map<String, Map<String, double[]>> terms = new HashMap<>();
 
-        for (String term : (List<String>) request.getTerms()) {
-            Map<String, float[]> ns = new HashMap<>();
+        for (String term : request.getTerms()) {
+            Map<String, double[]> ns = new HashMap<>();
             for (String neighbor : getRandomWords()) {
-                double[] dVector = RVG.nextVector();
-                float[] fVector = new float[NUM_DIMENSIONS];
-                IntStream.range(0, NUM_DIMENSIONS).forEach(i -> fVector[i] = (float) dVector[i]);
-                ns.put(neighbor, fVector);
+                ns.put(neighbor, RVG.nextVector());
             }
 
             terms.put(term, ns);
         }
 
-        return new NeighborVectorsResponse(request, terms);
+        return new DenseNeighborVectorsResponse(request, terms);
     }
 
     @Override

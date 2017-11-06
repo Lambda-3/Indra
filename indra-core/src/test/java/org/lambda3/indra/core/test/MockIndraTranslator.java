@@ -29,6 +29,7 @@ package org.lambda3.indra.core.test;
 import org.lambda3.indra.client.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -50,5 +51,10 @@ public final class MockIndraTranslator extends IndraTranslator {
                 term.putTranslatedTokens(token, translations.get(token));
             }
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        //do nothing
     }
 }

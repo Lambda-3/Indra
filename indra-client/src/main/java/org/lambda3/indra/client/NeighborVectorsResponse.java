@@ -26,35 +26,20 @@ package org.lambda3.indra.client;
  * ==========================License-End===============================
  */
 
-import java.util.Map;
-import java.util.Objects;
-
-public final class NeighborVectorsResponse extends AbstractBasicResponse {
-    private Map<String, Map<String, float[]>> terms;
+public abstract class NeighborVectorsResponse extends AbstractBasicResponse {
     private int topk;
 
     protected NeighborVectorsResponse() {
         //jersey demands.
     }
 
-    public NeighborVectorsResponse(NeighborsVectorsRequest request, Map<String, Map<String, float[]>> terms) {
+    public NeighborVectorsResponse(NeighborsVectorsRequest request) {
         super(request);
         this.topk = request.getTopk();
-        this.terms = Objects.requireNonNull(terms);
-    }
 
-    public Map<String, Map<String, float[]>> getTerms() {
-        return terms;
     }
 
     public int getTopk() {
         return this.topk;
-    }
-
-    @Override
-    public String toString() {
-        return "NeighborVectorsResponse{" + super.toString() +
-                "terms=" + terms +
-                '}';
     }
 }
