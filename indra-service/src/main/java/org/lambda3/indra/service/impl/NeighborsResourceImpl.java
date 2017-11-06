@@ -26,6 +26,9 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.*;
 import org.lambda3.indra.core.IndraDriver;
 import org.slf4j.Logger;
@@ -46,8 +49,27 @@ public final class NeighborsResourceImpl implements NeighborsResource {
     public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
         logger.trace("User Request: {}", request);
         request.validate();
-        Map<String, Map<String, float[]>> vectors = this.driver.getNeighborsVectors(request);
-        NeighborVectorsResponse response = new NeighborVectorsResponse(request, vectors);
+        Map<String, Map<String, RealVector>> vectors = this.driver.getNeighborsVectors(request);
+        boolean sparse = true;
+        if (!vectors.isEmpty()) {
+            Map<String, RealVector> map = vectors.values().iterator().next();
+            if (!map.isEmpty()) {
+                RealVector vector = map.values().iterator().next();
+                if (vector instanceof ArrayRealVector) {
+                    sparse = false;
+                }
+            }
+        }
+
+        NeighborVectorsResponse response;
+        if (sparse) {
+            Map<String, Map<String, Map<Integer, Double>>> sparseVectors = RealVectorUtil.convertAllToMap(vectors);
+            response = new SparseNeighborVectorsResponse(request, sparseVectors);
+        } else {
+            Map<String, Map<String, double[]>> arrayVectors = RealVectorUtil.convertAllToArray(vectors);
+            response = new DenseNeighborVectorsResponse(request, arrayVectors);
+        }
+
         logger.trace("Response: {}", response);
 
         return response;

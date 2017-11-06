@@ -32,9 +32,9 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
-import org.lambda3.indra.core.vs.HubVectorSpaceFactory;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.HubVectorSpaceFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
 import org.lambda3.indra.service.impl.InfoResourceImpl;
@@ -47,6 +47,8 @@ import org.lambda3.indra.service.mock.MockedInfoResourceImpl;
 import org.lambda3.indra.service.mock.MockedNeighborsResourceImpl;
 import org.lambda3.indra.service.mock.MockedRelatednessResourceImpl;
 import org.lambda3.indra.service.mock.MockedVectorResourceImpl;
+import org.lamdba3.indra.lucene.LuceneTranslatorFactory;
+import org.lamdba3.indra.lucene.LuceneVectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,30 +57,19 @@ import java.io.IOException;
 import java.net.URI;
 
 public final class Server {
-    private static final String BASE_URI;
-    private static final String protocol;
-    private static final String host;
-    private static final String port;
-    private static final boolean mockMode;
-    private static final String mongoURI;
-    private static final String annoyBaseDir;
+    private static final String PROTOCOL = "http";
 
-    static {
-        protocol = "http://";
-        host = System.getProperty("indra.http.host", "0.0.0.0");
-        port = System.getProperty("indra.http.port", "8916");
-        BASE_URI = protocol + host + ":" + port;
-        mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));
-        mongoURI = System.getProperty("indra.mongoURI", "localhost:27017");
-        annoyBaseDir = System.getProperty("indra.annoyBaseDir");
-    }
+    private final String baseUri;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private HttpServer httpServer;
     private HubVectorSpaceFactory spaceFactory = new HubVectorSpaceFactory();
     private TranslatorFactory translatorFactory;
 
-    public Server() {
+    Server() {
+        String host = System.getProperty("indra.http.host", "0.0.0.0");
+        String port = System.getProperty("indra.http.port", "8916");
+        this.baseUri = String.format("%s://%s:%s", PROTOCOL, host, port);
         logger.info("Initializing Indra Service.");
         ResourceConfig rc = new ResourceConfig();
         rc.register(LoggingFilter.class);
@@ -86,13 +77,20 @@ public final class Server {
         rc.register(CatchAllExceptionMapper.class);
         rc.register(SerializationExceptionMapper.class);
 
+        boolean mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));
+
         if (mockMode) {
             logger.warn("MOCK mode.");
             rc.register(new MockedRelatednessResourceImpl());
             rc.register(new MockedVectorResourceImpl());
             rc.register(new MockedInfoResourceImpl());
             rc.register(new MockedNeighborsResourceImpl());
+
         } else {
+            String mongoURI = System.getProperty("indra.mongoURI");
+            String annoyBaseDir = System.getProperty("indra.annoyBaseDir");
+            String luceneVectorsBaseDir = System.getProperty("indra.luceneVectorsBaseDir");
+            String luceneTranslationBaseDir = System.getProperty("indra.luceneTranslationBaseDir");
 
             if (annoyBaseDir != null) {
                 logger.info("Initializing AnnoyVectorSpaceFactory from {}.", annoyBaseDir);
@@ -101,11 +99,24 @@ public final class Server {
                 logger.warn("No AnnoyVectorSpaceFactory.");
             }
 
-            logger.info("Initializing MongoVectorSpaceFactory from {}.", mongoURI);
-            spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
+            if (mongoURI != null) {
+                logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
+                spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
+            }
 
-            logger.info("Initializing MongoTranslatorFactory from {}.", mongoURI);
-            translatorFactory = new MongoTranslatorFactory(mongoURI);
+            if (luceneVectorsBaseDir != null) {
+                logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
+                spaceFactory.addFactory(new LuceneVectorSpaceFactory(new File(luceneVectorsBaseDir)));
+            }
+
+            if (luceneTranslationBaseDir != null) {
+                logger.info("Initializing LuceneTranslatorFactory from {}.", luceneTranslationBaseDir);
+                translatorFactory = new LuceneTranslatorFactory(new File(luceneTranslationBaseDir));
+            } else if (mongoURI != null) {
+                logger.info("Initializing MongoTranslatorFactory from {}.", mongoURI);
+                translatorFactory = new MongoTranslatorFactory(mongoURI);
+            }
+
             IndraDriver driver = new IndraDriver(spaceFactory, translatorFactory);
 
             rc.register(new RelatednessResourceImpl(driver));
@@ -114,12 +125,12 @@ public final class Server {
             rc.register(new InfoResourceImpl(spaceFactory, translatorFactory));
         }
 
-        httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, false);
+        httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), rc, false);
     }
 
     public synchronized void start() throws IOException {
         httpServer.start();
-        logger.info("Indra serving @ {}", BASE_URI);
+        logger.info("Indra serving @ {}", baseUri);
     }
 
     public synchronized void stop() {

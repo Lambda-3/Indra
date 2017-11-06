@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>Indra Web Service Module</name>
-    
+
     <parent>
         <groupId>org.lambda3.indra</groupId>
         <artifactId>indra-parent</artifactId>
@@ -163,12 +163,17 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-mongo</artifactId>
+            <artifactId>indra-annoy</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-annoy</artifactId>
+            <artifactId>indra-lucene</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lambda3.indra</groupId>
+            <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
 

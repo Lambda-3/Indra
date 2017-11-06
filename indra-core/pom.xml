@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-extensions</artifactId>
+            <artifactId>indra-entity</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -72,13 +72,6 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <version>6.6.0</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.1</version>
         </dependency>
 
         <dependency>

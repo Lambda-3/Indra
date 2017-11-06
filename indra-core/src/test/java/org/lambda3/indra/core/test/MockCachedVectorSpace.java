@@ -30,16 +30,15 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.filter.Filter;
-import org.lambda3.indra.core.vs.CachedVectorSpace;
+import org.lambda3.indra.core.vs.AbstractVectorSpace;
+import org.lambda3.indra.entity.filter.Filter;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-public class MockCachedVectorSpace extends CachedVectorSpace {
+public class MockCachedVectorSpace extends AbstractVectorSpace {
 
     private static final int VECTOR_SIZE = 5;
     static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
@@ -48,7 +47,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
     static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
 
-    private Map<String, Optional<RealVector>> localCache = new HashMap<>();
+    private Map<String, RealVector> localCache = new HashMap<>();
 
     MockCachedVectorSpace() {
         cachePut("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
@@ -90,18 +89,7 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     private void cachePut(String term, RealVector vector) {
-        localCache.put(term, Optional.of(vector));
-    }
-
-    @Override
-    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
-        Map<String, Optional<RealVector>> vectors = new HashMap<>();
-        for (String key : keys) {
-            Optional<RealVector> vector = localCache.get(key);
-            vectors.put(key, vector == null ? Optional.empty() : vector);
-        }
-
-        return vectors;
+        localCache.put(term, vector);
     }
 
     @Override
@@ -110,7 +98,19 @@ public class MockCachedVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+    protected Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        Map<String, RealVector> results = new HashMap<>();
+        for (String term : terms) {
+            if (localCache.keySet().contains(term)) {
+                results.put(term, localCache.get(term));
+            }
+        }
+
+        return results;
+    }
+
+    @Override
+    public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("not implemented yet.");
     }
 

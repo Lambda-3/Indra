@@ -29,12 +29,12 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.filter.Filter;
+import org.lambda3.indra.entity.filter.Filter;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.entity.Threshold;
+import org.lambda3.indra.entity.threshold.Threshold;
 import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.entity.relatedness.RelatednessFunction;
 import org.slf4j.Logger;
@@ -167,7 +167,7 @@ public class IndraDriver {
         return outVectors;
     }
 
-    public final Map<String, Map<String, float[]>> getNeighborsVectors(NeighborsVectorsRequest request) {
+    public final Map<String, Map<String, RealVector>> getNeighborsVectors(NeighborsVectorsRequest request) {
         logger.trace("getting neighbors vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         Filter filter = sf.create(request.getFilter(), Filter.class);
@@ -179,9 +179,9 @@ public class IndraDriver {
             analyzedTerms.add(new AnalyzedTerm(term, analyzer.analyze(term)));
         }
 
-        Map<String, Map<String, float[]>> results = new ConcurrentHashMap<>();
+        Map<String, Map<String, RealVector>> results = new ConcurrentHashMap<>();
         analyzedTerms.stream().parallel().forEach(at -> {
-            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk(), filter);
+            Map<String, RealVector> vectors = vectorSpace.getNearestVectors(at, request.getTopk(), filter);
             results.put(at.getTerm(), vectors);
         });
 
