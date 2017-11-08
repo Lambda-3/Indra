@@ -7,7 +7,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

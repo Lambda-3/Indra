@@ -28,9 +28,9 @@ package org.lambda3.indra.benchmark;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.VectorRequest;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.request.VectorRequest;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;

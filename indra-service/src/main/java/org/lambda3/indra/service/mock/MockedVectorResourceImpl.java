@@ -29,10 +29,10 @@ package org.lambda3.indra.service.mock;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
-import org.lambda3.indra.client.SparseVectorResponse;
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResource;
-import org.lambda3.indra.client.VectorResponse;
+import org.lambda3.indra.response.SparseVectorResponse;
+import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.VectorResource;
+import org.lambda3.indra.response.VectorResponse;
 
 import java.util.HashMap;
 import java.util.Map;

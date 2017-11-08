@@ -101,6 +101,7 @@ public final class Server {
 
             if (mongoURI != null) {
                 logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
+                logger.warn("mongo support is limitted and deprecated. Please migrate to the Lucene indexes");
                 spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
             }
 
@@ -114,6 +115,7 @@ public final class Server {
                 translatorFactory = new LuceneTranslatorFactory(new File(luceneTranslationBaseDir));
             } else if (mongoURI != null) {
                 logger.info("Initializing MongoTranslatorFactory from {}.", mongoURI);
+                logger.warn("mongo support is limitted and deprecated. Please migrate to the Lucene indexes");
                 translatorFactory = new MongoTranslatorFactory(mongoURI);
             }
 

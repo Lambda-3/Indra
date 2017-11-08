@@ -1,6 +1,6 @@
 package org.lambda3.indra.core.vs;
 
-import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

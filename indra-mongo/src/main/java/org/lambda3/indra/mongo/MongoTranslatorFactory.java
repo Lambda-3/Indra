@@ -27,7 +27,7 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.exception.ModelNotFoundException;

@@ -27,13 +27,14 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.*;
 import org.lambda3.indra.entity.threshold.Threshold;
-import org.lambda3.indra.client.*;
 import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.entity.filter.Filter;
 import org.lambda3.indra.entity.relatedness.RelatednessFunction;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.request.RelatednessRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

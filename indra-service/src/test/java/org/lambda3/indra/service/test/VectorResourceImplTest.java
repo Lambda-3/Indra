@@ -26,9 +26,9 @@ package org.lambda3.indra.service.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.DenseVectorResponse;
-import org.lambda3.indra.client.VectorRequest;
-import org.lambda3.indra.client.VectorResponse;
+import org.lambda3.indra.response.DenseVectorResponse;
+import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.response.VectorResponse;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.core.test.IndraDriverTest;

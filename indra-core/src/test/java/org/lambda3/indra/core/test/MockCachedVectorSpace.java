@@ -28,8 +28,8 @@ package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
 import org.lambda3.indra.entity.filter.Filter;
 
