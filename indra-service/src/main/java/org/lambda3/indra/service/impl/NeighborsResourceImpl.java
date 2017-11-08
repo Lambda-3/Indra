@@ -29,8 +29,14 @@ package org.lambda3.indra.service.impl;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.NeighborsResource;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.request.NeighborRelatednessRequest;
+import org.lambda3.indra.request.NeighborsVectorsRequest;
+import org.lambda3.indra.response.DenseNeighborVectorsResponse;
+import org.lambda3.indra.response.NeighborRelatednessResponse;
+import org.lambda3.indra.response.NeighborVectorsResponse;
+import org.lambda3.indra.response.SparseNeighborVectorsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

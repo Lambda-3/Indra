@@ -1,6 +1,6 @@
 package org.lamdba3.indra.lucene;
 
-import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.exception.TranslatorNotFoundException;

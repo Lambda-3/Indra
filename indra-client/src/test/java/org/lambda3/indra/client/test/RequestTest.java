@@ -1,7 +1,7 @@
 package org.lambda3.indra.client.test;
 
-import org.lambda3.indra.client.RelatednessPairRequest;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.TextPair;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.BadRequestException;

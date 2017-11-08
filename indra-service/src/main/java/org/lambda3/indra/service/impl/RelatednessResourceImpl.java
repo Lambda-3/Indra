@@ -26,8 +26,13 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.RelatednessResource;
+import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.request.RelatednessOneToManyRequest;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.response.RelatednessOneToManyResponse;
+import org.lambda3.indra.response.RelatednessPairResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,7 +26,7 @@ package org.lambda3.indra.annoy;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.vs.LocalStoredVectorSpaceFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.exception.ModelNotFoundException;

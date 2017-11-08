@@ -26,7 +26,7 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.RelatednessRequest;
+import org.lambda3.indra.request.RelatednessRequest;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;

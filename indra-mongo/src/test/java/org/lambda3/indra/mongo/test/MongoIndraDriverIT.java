@@ -28,10 +28,12 @@ package org.lambda3.indra.mongo.test;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
 import org.lambda3.indra.mongo.MongoIndraDriver;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
+import org.lambda3.indra.request.RelatednessPairRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

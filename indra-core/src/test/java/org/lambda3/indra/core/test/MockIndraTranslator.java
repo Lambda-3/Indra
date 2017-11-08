@@ -26,7 +26,7 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
 import java.io.IOException;

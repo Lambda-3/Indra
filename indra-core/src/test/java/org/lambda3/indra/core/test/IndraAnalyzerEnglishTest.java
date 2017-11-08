@@ -27,7 +27,7 @@ package org.lambda3.indra.core.test;
  */
 
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.ModelMetadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
