@@ -1,6 +1,6 @@
 package org.lambda3.indra.core.translation;
 
-import org.lambda3.indra.client.AbstractBasicRequest;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.IndraCachedFactory;
 
 import java.io.Closeable;

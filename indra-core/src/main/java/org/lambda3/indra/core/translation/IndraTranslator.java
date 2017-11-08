@@ -26,7 +26,7 @@ package org.lambda3.indra.core.translation;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
 
 import java.io.Closeable;
 import java.util.LinkedHashMap;

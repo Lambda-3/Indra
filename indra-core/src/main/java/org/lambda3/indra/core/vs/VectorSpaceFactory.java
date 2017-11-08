@@ -26,8 +26,8 @@ package org.lambda3.indra.core.vs;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.request.AbstractBasicRequest;
+import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.core.IndraCachedFactory;
 
 import java.io.Closeable;

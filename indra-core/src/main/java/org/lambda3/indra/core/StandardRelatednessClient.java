@@ -26,10 +26,10 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.AnalyzedPair;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.request.RelatednessRequest;
+import org.lambda3.indra.TextPair;
 import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.core.vs.VectorSpace;
 

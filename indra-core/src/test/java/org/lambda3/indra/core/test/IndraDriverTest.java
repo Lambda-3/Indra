@@ -27,12 +27,17 @@ package org.lambda3.indra.core.test;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.request.AbstractBasicRequest;
+import org.lambda3.indra.request.RelatednessOneToManyRequest;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.request.VectorRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

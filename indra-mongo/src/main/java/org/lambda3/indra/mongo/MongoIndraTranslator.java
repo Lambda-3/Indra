@@ -31,7 +31,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

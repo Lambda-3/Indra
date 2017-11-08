@@ -26,7 +26,14 @@ package org.lambda3.indra.service.mock;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.AnalyzedPair;
+import org.lambda3.indra.RelatednessResource;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
+import org.lambda3.indra.request.RelatednessOneToManyRequest;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.response.RelatednessOneToManyResponse;
+import org.lambda3.indra.response.RelatednessPairResponse;
 
 import java.util.*;
 

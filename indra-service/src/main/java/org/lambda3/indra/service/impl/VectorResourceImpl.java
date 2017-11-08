@@ -26,8 +26,12 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.VectorResource;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.response.DenseVectorResponse;
+import org.lambda3.indra.response.SparseVectorResponse;
+import org.lambda3.indra.response.VectorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

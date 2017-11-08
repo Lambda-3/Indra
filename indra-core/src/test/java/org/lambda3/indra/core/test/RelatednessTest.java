@@ -26,8 +26,8 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.SuperFactory;
 import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.entity.relatedness.RelatednessFunction;

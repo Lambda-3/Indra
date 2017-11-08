@@ -26,10 +26,10 @@ package org.lambda3.indra.service.mock;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.InfoResource;
-import org.lambda3.indra.client.MetadataResponse;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.client.ResourceResponse;
+import org.lambda3.indra.InfoResource;
+import org.lambda3.indra.response.MetadataResponse;
+import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.response.ResourceResponse;
 
 import java.util.Collections;
 
