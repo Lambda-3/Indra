@@ -169,12 +169,7 @@
 
         <dependency>
             <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-annoy</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.lambda3.indra</groupId>
-            <artifactId>indra-lucene</artifactId>
+            <artifactId>indra-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
