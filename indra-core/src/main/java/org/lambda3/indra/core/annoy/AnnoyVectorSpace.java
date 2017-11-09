@@ -58,7 +58,7 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
     private String[] idToWord;
     private Map<String, Integer> wordToId = new ConcurrentHashMap<>();
 
-    AnnoyVectorSpace(String dataDir) {
+    public AnnoyVectorSpace(String dataDir) {
         this.dataDir = Objects.requireNonNull(dataDir);
         this.metadata = loadMetadata();
         loadMappings();

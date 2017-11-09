@@ -52,7 +52,7 @@ public abstract class IndraTranslator implements Closeable {
      */
     public abstract void translate(List<MutableTranslatedTerm> terms);
 
-    public abstract CorpusMetadata loadCorpusMetadata();
+    protected abstract CorpusMetadata loadCorpusMetadata();
 
     public IndraAnalyzer getAnalyzer() {
         if (analyzer == null) {
