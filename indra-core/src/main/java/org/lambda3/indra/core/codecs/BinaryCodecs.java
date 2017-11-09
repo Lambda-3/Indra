@@ -54,7 +54,7 @@ public final class BinaryCodecs {
     /**
      * Dense vectors serialization to byte array.
      */
-    public static byte[] marshall(double[] vector) throws IOException  {
+    public static byte[] marshall(double[] vector) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (DataOutputStream tdos = new DataOutputStream(baos)) {
                 for (int i = 0; i < vector.length; i++) {
@@ -69,22 +69,21 @@ public final class BinaryCodecs {
      * Vector deserialization.
      */
     public static RealVector unmarshall(byte[] bytes, boolean sparse, int dimensions) throws IOException {
-        RealVector realVector = !sparse ? new ArrayRealVector(dimensions) : new OpenMapRealVector(dimensions);
+        RealVector realVector = null;
 
         if (!sparse) {
+            realVector = new ArrayRealVector(dimensions);
             try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
                 for (int i = 0; i < dimensions; i++) {
                     realVector.setEntry(i, dis.readDouble());
                 }
             }
-        }
-        else {
+        } else {
             try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
                 while (true) {
                     try {
-                        realVector.setEntry(dis.readInt(), dis.readDouble());
-                    }
-                    catch (EOFException e) {
+                        realVector = (RealVector) new ObjectInputStream(dis).readObject();
+                    } catch (ClassNotFoundException | EOFException e) {
                         break;
                     }
                 }
