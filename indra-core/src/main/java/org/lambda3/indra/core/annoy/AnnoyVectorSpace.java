@@ -48,8 +48,8 @@ import java.util.regex.Pattern;
 
 public class AnnoyVectorSpace extends AbstractVectorSpace {
 
-    private static final String TREE_FILE = "trees.ann";
-    private static final String WORD_MAPPING_FILE = "mappings.txt";
+    public static final String TREE_FILE = "trees.ann";
+    public static final String WORD_MAPPING_FILE = "mappings.txt";
 
     private static final float TOP_FILTER_FACTOR = 2.5f;
 
