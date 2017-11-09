@@ -28,10 +28,10 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.*;
-import org.lambda3.indra.entity.threshold.Threshold;
-import org.lambda3.indra.entity.composition.VectorComposer;
-import org.lambda3.indra.entity.filter.Filter;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.threshold.Threshold;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.request.RelatednessRequest;
@@ -70,7 +70,7 @@ public abstract class RelatednessClient {
 
             if (vectorPair.v1 != null && vectorPair.v2 != null) {
                 scoredTextPairs.add(new ScoredTextPair(pair,
-                        func.sim(vectorPair.v1, vectorPair.v2, vectorSpace.getMetadata().isSparse())));
+                        func.sim(vectorPair.v1, vectorPair.v2, vectorSpace.getMetadata().sparse)));
             } else {
                 scoredTextPairs.add(new ScoredTextPair(pair, 0));
             }
@@ -111,7 +111,7 @@ public abstract class RelatednessClient {
         many.stream().parallel().forEach(m -> {
             RealVector mVector = vectors.get(m);
             if (oneVector != null && mVector != null) {
-                double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().isSparse());
+                double score = func.sim(oneVector, mVector, vectorSpace.getMetadata().sparse);
                 results.put(m, score);
             } else {
                 results.put(m, 0d);

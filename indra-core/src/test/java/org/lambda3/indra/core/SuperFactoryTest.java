@@ -1,7 +1,7 @@
 package org.lambda3.indra.core;
 
-import org.lambda3.indra.entity.relatedness.CosineRelatednessFunction;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.relatedness.CosineRelatednessFunction;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

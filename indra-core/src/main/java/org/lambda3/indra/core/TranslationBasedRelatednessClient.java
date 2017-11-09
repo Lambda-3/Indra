@@ -27,7 +27,7 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.*;
-import org.lambda3.indra.entity.composition.VectorComposer;
+import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.request.RelatednessRequest;
@@ -55,17 +55,18 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
+            IndraAnalyzer targetAnalyzer = vectorSpace.getAnalyzer();
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
                 for (String token : transTokens.keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
-                            IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE, vectorSpace.getMetadata().getApplyStemmer()));
+                    term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(transTokens.get(token)));
                 }
             }
 
         } else {
             logger.error("IndraTranslator is not available, but getParams().translate is true.");
+            //TODO throw new exception here
         }
     }
 
@@ -76,8 +77,7 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraAnalyzer analyzer = translator.getAnalyzer();
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
@@ -95,8 +95,7 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
     @Override
     @SuppressWarnings("unchecked")
     protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraAnalyzer analyzer = translator.getAnalyzer();
 
         List analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
                 .collect(Collectors.toList());

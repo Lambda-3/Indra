@@ -27,7 +27,7 @@ package org.lambda3.indra.service.mock;
  */
 
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
-import org.lambda3.indra.NeighborsResource;
+import org.lambda3.indra.web.NeighborsResource;
 import org.lambda3.indra.request.NeighborRelatednessRequest;
 import org.lambda3.indra.request.NeighborsVectorsRequest;
 import org.lambda3.indra.response.DenseNeighborVectorsResponse;

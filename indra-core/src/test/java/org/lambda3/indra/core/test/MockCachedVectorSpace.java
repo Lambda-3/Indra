@@ -29,9 +29,11 @@ package org.lambda3.indra.core.test;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
-import org.lambda3.indra.entity.filter.Filter;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -94,7 +96,9 @@ public class MockCachedVectorSpace extends AbstractVectorSpace {
 
     @Override
     protected ModelMetadata loadMetadata() {
-        return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
+        CorpusMetadata cm = CorpusMetadataBuilder.newCorpusMetadata("bla", "en").
+                applyStemmer(0).removeAccents(false).build();
+        return new ModelMetadata("bla bla", false, VECTOR_SIZE, -1, -1, cm);
     }
 
     @Override

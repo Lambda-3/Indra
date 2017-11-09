@@ -29,17 +29,17 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.ScoredTextPair;
-import org.lambda3.indra.entity.filter.Filter;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.entity.threshold.Threshold;
-import org.lambda3.indra.entity.composition.VectorComposer;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.relatedness.RelatednessFunction;
+import org.lambda3.indra.threshold.Threshold;
 import org.lambda3.indra.request.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,35 +94,39 @@ public class IndraDriver {
     }
 
     public final boolean isSparseModel(VectorRequest request) {
-        return vectorSpaceFactory.create(request).getMetadata().isSparse();
+        return vectorSpaceFactory.create(request).getMetadata().sparse;
     }
 
     public final Map<String, RealVector> getVectors(VectorRequest request) {
         logger.trace("getting vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
-        ModelMetadata modelMetadata = vectorSpace.getMetadata();
+        CorpusMetadata corpusMetadata = vectorSpace.getMetadata().corpusMetadata;
+        IndraAnalyzer targetAnalyzer = vectorSpace.getAnalyzer();
+
         VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
 
+
         if (request.isMt()) {
-            ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
-            IndraAnalyzer nativeLangAnalyzer = new IndraAnalyzer(request.getLanguage(), translationModelMetadata);
+
 
             logger.trace("applying translation");
+            IndraTranslator translator = translatorFactory.create(request);
+            IndraAnalyzer nativeLangAnalyzer = translator.getAnalyzer();
+
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
             for (String term : request.getTerms()) {
                 List<String> analyzedTokens = nativeLangAnalyzer.analyze(term);
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
 
-            IndraTranslator translator = translatorFactory.create(request);
+
             translator.translate(translatedTerms);
 
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     List<String> translatedTokens = term.getTranslatedTokens().get(token);
-                    if (modelMetadata.getApplyStemmer() > 0) {
-                        translatedTokens = IndraAnalyzer.stem(translatedTokens, IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE,
-                                modelMetadata.getApplyStemmer());
+                    if (corpusMetadata.applyStemmer > 0) {
+                        translatedTokens = targetAnalyzer.stem(translatedTokens);
                     }
 
                     term.putAnalyzedTranslatedTokens(token, translatedTokens);
@@ -135,11 +139,11 @@ public class IndraDriver {
             return vectorSpace.getTranslatedVectors(translatedTerms, termComposer, translationComposer);
 
         } else {
-            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(request.getLanguage(), modelMetadata);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
             for (String term : request.getTerms()) {
-                analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
+                analyzedTerms.add(new AnalyzedTerm(term, targetAnalyzer.analyze(term)));
             }
+
             logger.trace("done");
             return vectorSpace.getVectors(analyzedTerms, termComposer);
         }
@@ -176,7 +180,7 @@ public class IndraDriver {
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         Filter filter = sf.create(request.getFilter(), Filter.class);
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
 
         for (String term : request.getTerms()) {

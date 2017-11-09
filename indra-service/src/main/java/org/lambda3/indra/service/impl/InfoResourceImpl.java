@@ -26,14 +26,14 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.InfoResource;
-import org.lambda3.indra.response.MetadataResponse;
-import org.lambda3.indra.request.RelatednessPairRequest;
-import org.lambda3.indra.response.ResourceResponse;
+import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.exception.ModelNotFoundException;
-import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.response.MetadataResponse;
+import org.lambda3.indra.response.ResourceResponse;
+import org.lambda3.indra.web.InfoResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;

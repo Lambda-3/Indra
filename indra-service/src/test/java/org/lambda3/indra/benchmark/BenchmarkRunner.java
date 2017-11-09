@@ -27,15 +27,16 @@ package org.lambda3.indra.benchmark;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
-import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
-import org.lambda3.indra.entity.composition.SumVectorComposer;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
+import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
+import org.lambda3.indra.request.VectorRequest;
 
 import java.io.*;
 import java.util.*;
@@ -111,10 +112,11 @@ final class BenchmarkRunner {
     }
 
     public Report run(String lang) {
+        CorpusMetadata cm = CorpusMetadataBuilder.newCorpusMetadata("wiki-2014", lang).build();
         VectorRequest request = new VectorRequest();
         request.model("W2V").language(lang).corpus("wiki-2014").mt(false);
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), ModelMetadata.createDefault());
+        IndraAnalyzer analyzer = new IndraAnalyzer(cm);
         String[] files = {WORD_SET_1_FILE, WORD_SET_2_FILE, WORD_SET_3_FILE};
 
         for (String file : files) {

@@ -33,13 +33,11 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
-import org.bson.types.Binary;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
-import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
-import org.lambda3.indra.entity.filter.Filter;
+import org.lambda3.indra.filter.Filter;
 import org.lambda3.indra.exception.IndraRuntimeException;
+import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +66,7 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
     protected ModelMetadata loadMetadata() {
         MongoDatabase db = this.mongoClient.getDatabase(dbName);
         MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
+        //TODO metadata needs to include CM
 
         if (metadataColl.count() > 1) {
             throw new IndraRuntimeException("Model metadata must have only one entry!");
@@ -76,10 +75,12 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
         if (metadataColl.count() == 1) {
             logger.debug("Using stored metadata of {}", dbName);
             Document storedMetadata = metadataColl.find().first();
-            return ModelMetadata.createFromMap(storedMetadata);
+            return new ModelMetadata(storedMetadata);
         } else {
             logger.debug("No metadata found in {}, using defaults.", dbName);
-            return ModelMetadata.createDefault();
+            //TODO throws an exception.
+            //no default supported anymore.
+            return null;
         }
     }
 
@@ -90,7 +91,8 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
         Map<String, RealVector> vectors = new HashMap<>();
         if (docs != null) {
             for (Document doc : docs) {
-                vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
+                //BinaryCodecs.unmarshall(b, metadata.sparse, metadata.dimensions);
+                //TODO other problem hrer vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
             }
         }
 
@@ -109,30 +111,6 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
 
     private MongoCollection<Document> getTermsColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
-    }
-
-
-    private RealVector unmarshall(Document doc, int limit) {
-        RealVector vector = null;
-
-        if (!metadata.isBinary()) {
-            throw new UnsupportedOperationException("Can't consume non-binary models.");
-        }
-
-        try {
-            final Binary binary = doc.get(VECTOR_FIELD_NAME, Binary.class);
-            final byte[] b = binary.getData();
-
-            if (metadata.getLoaderId().equalsIgnoreCase("legacy")) {
-                vector = BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
-            } else {
-                vector = BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
-            }
-        } catch (Exception e) {
-            logger.error("Error unmarshalling vector", e);
-        }
-
-        return vector;
     }
 
     @Override
