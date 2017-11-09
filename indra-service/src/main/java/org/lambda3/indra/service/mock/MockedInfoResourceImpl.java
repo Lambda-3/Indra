@@ -45,6 +45,6 @@ public final class MockedInfoResourceImpl extends InfoResource {
     @Override
     public MetadataResponse getMetadata(String model) {
         CorpusMetadata cm = CorpusMetadataBuilder.random();
-        return new MetadataResponse(new ModelMetadata("bla bla bla", true, 5l, 5l, 55l, cm).asMap());
+        return new MetadataResponse(new ModelMetadata("bla bla bla", true, 5l, 10l, 5l, 55l, cm).asMap());
     }
 }
