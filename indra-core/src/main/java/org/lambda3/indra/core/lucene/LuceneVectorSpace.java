@@ -1,4 +1,4 @@
-package org.lamdba3.indra.lucene;
+package org.lambda3.indra.core.lucene;
 
 import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;

@@ -1,4 +1,4 @@
-package org.lambda3.indra.annoy;
+package org.lambda3.indra.core.annoy;
 
 /*-
  * ==========================License-Start=============================

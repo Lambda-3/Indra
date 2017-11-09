@@ -1,4 +1,4 @@
-package org.lamdba3.indra.lucene;
+package org.lambda3.indra.core.lucene;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
