@@ -97,7 +97,7 @@ public abstract class IndraTranslator implements Closeable {
             for (String word : sortedWords.keySet()) {
                 Double score = sortedWords.get(word);
                 double diff = lastScore - score;
-                if (diff >= maxDiff) {
+                if (maxDiff > 0 && diff >= maxDiff) {
                     break;
                 }
 
