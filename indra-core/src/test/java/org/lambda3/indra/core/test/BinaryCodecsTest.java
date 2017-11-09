@@ -27,20 +27,49 @@ package org.lambda3.indra.core.test;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public final class BinaryCodecsTest {
 
     @Test
     public void denseSerializationTest() throws IOException {
-        double[] v1 = new double[] {1.52, 1/3, -3.1};
+        double[] v1 = new double[]{1.52, 1 / 3, -3.1};
         byte[] b = BinaryCodecs.marshall(v1);
         RealVector realVector = BinaryCodecs.unmarshall(b, false, 3);
         Assert.assertEquals(v1, realVector.toArray());
     }
 
+    @Test
+    public void sparseSerializationTest() throws IOException {
+        Random random = new Random(31);
+
+        Map<Integer, Double> v1 = new HashMap<>();
+
+        for (int i = 0; i < 10; i++) {
+            v1.put(Math.abs(random.nextInt()), random.nextDouble());
+        }
+
+        int dim = Collections.max(v1.keySet()) + 1;
+
+        byte[] b = BinaryCodecs.marshall(v1);
+        RealVector realVector = BinaryCodecs.unmarshall(b, true, dim);
+
+        Assert.assertEquals(dim, realVector.getDimension());
+
+        Map<Integer, Double> v2 = RealVectorUtil.vectorToMap(realVector);
+        Assert.assertEquals(v1.size(), v2.size());
+
+        for (int i : v1.keySet()) {
+            Assert.assertEquals(v1.get(i), v2.get(i));
+        }
+    }
 }

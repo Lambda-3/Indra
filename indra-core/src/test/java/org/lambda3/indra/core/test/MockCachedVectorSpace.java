@@ -98,7 +98,7 @@ public class MockCachedVectorSpace extends AbstractVectorSpace {
     protected ModelMetadata loadMetadata() {
         CorpusMetadata cm = CorpusMetadataBuilder.newCorpusMetadata("bla", "en").
                 applyStemmer(0).removeAccents(false).build();
-        return new ModelMetadata("bla bla", false, VECTOR_SIZE, -1, -1, cm);
+        return new ModelMetadata("bla bla", false, VECTOR_SIZE, localCache.size(), -1, -1, cm);
     }
 
     @Override
