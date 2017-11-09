@@ -31,13 +31,11 @@ import com.spotify.annoy.AnnoyIndex;
 import com.spotify.annoy.IndexType;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
-import org.lambda3.indra.entity.filter.Filter;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,9 +48,7 @@ import java.util.regex.Pattern;
 
 public class AnnoyVectorSpace extends AbstractVectorSpace {
 
-    private static final String INDEX_TYPE = "index-type";
     private static final String TREE_FILE = "trees.ann";
-    private static final String METADATA_FILE = "metadata.json";
     private static final String WORD_MAPPING_FILE = "mappings.txt";
 
     private static final float TOP_FILTER_FACTOR = 2.5f;
@@ -67,10 +63,10 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
         this.metadata = loadMetadata();
         loadMappings();
 
-        IndexType type = IndexType.valueOf(metadata.getMore().getOrDefault(INDEX_TYPE, "ANGULAR"));
+        IndexType type = IndexType.ANGULAR;
 
         try {
-            this.index = new ANNIndex(metadata.getDimensions(), new File(dataDir, TREE_FILE).getAbsolutePath(), type);
+            this.index = new ANNIndex((int) metadata.dimensions, new File(dataDir, TREE_FILE).getAbsolutePath(), type);
         } catch (IOException e) {
             String msg = "problem instantiating an ANNIndex.";
             logger.error(msg);
@@ -113,24 +109,7 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
 
     @Override
     protected ModelMetadata loadMetadata() {
-
-        File file = new File(dataDir, METADATA_FILE);
-
-        if (file.exists()) {
-            try {
-                JSONParser jsonParser = new JSONParser();
-                JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader(file));
-                return ModelMetadata.createFromMap(jsonObject);
-
-            } catch (ParseException | IOException e) {
-                String msg = String.format("problem reading the metadata file. dataDir=%s", dataDir);
-                logger.error(msg);
-                throw new RuntimeException(msg, e);
-            }
-
-        } else {
-            return ModelMetadata.createDefault();
-        }
+        return MetadataIO.load(dataDir, ModelMetadata.class);
     }
 
     @Override

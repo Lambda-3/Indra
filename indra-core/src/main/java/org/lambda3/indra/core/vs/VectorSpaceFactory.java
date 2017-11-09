@@ -26,30 +26,14 @@ package org.lambda3.indra.core.vs;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.request.AbstractBasicRequest;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.core.IndraCachedFactory;
+import org.lambda3.indra.request.AbstractBasicRequest;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 
 public abstract class VectorSpaceFactory extends IndraCachedFactory<VectorSpace, AbstractBasicRequest> implements Closeable {
-
-    @Override
-    public VectorSpace create(AbstractBasicRequest request) {
-        VectorSpace vectorSpace = super.create(request);
-        ModelMetadata metadata = vectorSpace.getMetadata();
-        if (request.getApplyStopWords() != null) {
-            metadata.applyStopWords(request.getApplyStopWords());
-        }
-
-        if (request.getMinWordLength() >= 0) {
-            metadata.minWordLength(request.getMinWordLength());
-        }
-
-        return vectorSpace;
-    }
 
     public abstract Collection<String> getAvailableModels();
 

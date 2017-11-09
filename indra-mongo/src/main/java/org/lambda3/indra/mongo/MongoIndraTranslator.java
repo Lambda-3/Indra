@@ -32,7 +32,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.corpus.CorpusMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +84,11 @@ public final class MongoIndraTranslator extends IndraTranslator {
                 }
             }
         }
+    }
+
+    @Override
+    public CorpusMetadata loadCorpusMetadata() {
+        return null;
     }
 
     private Map<String, List<String>> doTranslate(Set<String> tokens) {

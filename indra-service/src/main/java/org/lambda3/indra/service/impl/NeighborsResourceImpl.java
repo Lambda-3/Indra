@@ -29,7 +29,6 @@ package org.lambda3.indra.service.impl;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.NeighborsResource;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.request.NeighborRelatednessRequest;
 import org.lambda3.indra.request.NeighborsVectorsRequest;
@@ -37,6 +36,7 @@ import org.lambda3.indra.response.DenseNeighborVectorsResponse;
 import org.lambda3.indra.response.NeighborRelatednessResponse;
 import org.lambda3.indra.response.NeighborVectorsResponse;
 import org.lambda3.indra.response.SparseNeighborVectorsResponse;
+import org.lambda3.indra.web.NeighborsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,8 @@ public final class NeighborsResourceImpl implements NeighborsResource {
     @Override
     public NeighborVectorsResponse getNeighborsVectors(NeighborsVectorsRequest request) {
         logger.trace("User Request: {}", request);
-        request.validate();
+
+        RequestValidator.validate(request);
         Map<String, Map<String, RealVector>> vectors = this.driver.getNeighborsVectors(request);
         boolean sparse = true;
         if (!vectors.isEmpty()) {
@@ -66,6 +67,7 @@ public final class NeighborsResourceImpl implements NeighborsResource {
                 }
             }
         }
+
 
         NeighborVectorsResponse response;
         if (sparse) {
@@ -84,7 +86,8 @@ public final class NeighborsResourceImpl implements NeighborsResource {
     @Override
     public NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request) {
         logger.trace("User Request: {}", request);
-        request.validate();
+        RequestValidator.validate(request);
+
         Map<String, Map<String, Double>> relatedness = this.driver.getNeighborRelatedness(request);
         NeighborRelatednessResponse response = new NeighborRelatednessResponse(request, relatedness);
         logger.trace("Response: {}", response);

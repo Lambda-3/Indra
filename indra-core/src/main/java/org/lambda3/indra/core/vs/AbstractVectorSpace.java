@@ -27,9 +27,14 @@ package org.lambda3.indra.core.vs;
  */
 
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.*;
+import org.lambda3.indra.AnalyzedPair;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.AnalyzedTranslatedPair;
+import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.entity.composition.VectorComposer;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +45,7 @@ public abstract class AbstractVectorSpace implements VectorSpace {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected ModelMetadata metadata;
+    private IndraAnalyzer analyzer;
 
     protected abstract ModelMetadata loadMetadata();
 
@@ -50,6 +56,14 @@ public abstract class AbstractVectorSpace implements VectorSpace {
         }
 
         return metadata;
+    }
+
+    @Override
+    public IndraAnalyzer getAnalyzer() {
+        if (analyzer == null) {
+            analyzer = new IndraAnalyzer(getMetadata().corpusMetadata);
+        }
+        return analyzer;
     }
 
     @Override

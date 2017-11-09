@@ -31,7 +31,7 @@ import org.apache.commons.math3.linear.RealVectorUtil;
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
 import org.lambda3.indra.response.SparseVectorResponse;
 import org.lambda3.indra.request.VectorRequest;
-import org.lambda3.indra.VectorResource;
+import org.lambda3.indra.web.VectorResource;
 import org.lambda3.indra.response.VectorResponse;
 
 import java.util.HashMap;

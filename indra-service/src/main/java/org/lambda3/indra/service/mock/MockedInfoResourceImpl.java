@@ -26,9 +26,11 @@ package org.lambda3.indra.service.mock;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.InfoResource;
+import org.lambda3.indra.web.InfoResource;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
+import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.response.MetadataResponse;
-import org.lambda3.indra.ModelMetadata;
 import org.lambda3.indra.response.ResourceResponse;
 
 import java.util.Collections;
@@ -42,6 +44,7 @@ public final class MockedInfoResourceImpl extends InfoResource {
 
     @Override
     public MetadataResponse getMetadata(String model) {
-        return new MetadataResponse(ModelMetadata.createDefault().asMap());
+        CorpusMetadata cm = CorpusMetadataBuilder.random();
+        return new MetadataResponse(new ModelMetadata("bla bla bla", true, 5l, 5l, 55l, cm).asMap());
     }
 }
