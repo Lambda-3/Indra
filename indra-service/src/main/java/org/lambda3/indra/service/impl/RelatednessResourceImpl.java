@@ -26,7 +26,7 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.RelatednessResource;
+import org.lambda3.indra.web.RelatednessResource;
 import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.request.RelatednessOneToManyRequest;
@@ -51,7 +51,8 @@ public final class RelatednessResourceImpl implements RelatednessResource {
     @Override
     public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
-        request.validate();
+        RequestValidator.validate(request);
+
         List<ScoredTextPair> relatedness = this.driver.getRelatedness(request);
         RelatednessPairResponse response = new RelatednessPairResponse(request, relatedness);
         logger.trace("Response: {}", response);
@@ -62,7 +63,8 @@ public final class RelatednessResourceImpl implements RelatednessResource {
     @Override
     public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
-        request.validate();
+        RequestValidator.validate(request);
+
         Map<String, Double> relatedness = this.driver.getRelatedness(request);
         RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, relatedness);
         logger.trace("Response: {}", response);

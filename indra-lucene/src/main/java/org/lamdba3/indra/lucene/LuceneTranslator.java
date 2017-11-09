@@ -7,8 +7,11 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.corpus.CorpusMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +31,13 @@ public class LuceneTranslator extends IndraTranslator {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private String dataDir;
     private IndexReader reader;
     private IndexSearcher searcher;
 
 
     LuceneTranslator(String dataDir) {
-
+        this.dataDir = dataDir;
         try {
             this.reader = DirectoryReader.open(FSDirectory.open(Paths.get(dataDir, LEX_INDEX)));
             this.searcher = new IndexSearcher(reader);
@@ -62,6 +66,16 @@ public class LuceneTranslator extends IndraTranslator {
                 }
             }
         }
+    }
+
+    @Override
+    public CorpusMetadata loadCorpusMetadata() {
+        return MetadataIO.load(dataDir, CorpusMetadata.class);
+    }
+
+    @Override
+    public IndraAnalyzer getAnalyzer() {
+        return null;
     }
 
     private Map<String, List<String>> doTranslate(Set<String> terms) {

@@ -1,6 +1,6 @@
 package org.lambda3.indra.core.threshold;
 
-import org.lambda3.indra.entity.threshold.Threshold;
+import org.lambda3.indra.threshold.Threshold;
 import org.lambda3.indra.core.SuperFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;

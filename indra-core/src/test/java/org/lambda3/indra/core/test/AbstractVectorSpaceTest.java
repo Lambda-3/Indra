@@ -28,10 +28,11 @@ package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.*;
+import org.lambda3.indra.composition.AveragedVectorComposer;
+import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.entity.composition.AveragedVectorComposer;
-import org.lambda3.indra.entity.composition.SumVectorComposer;
+import org.lambda3.indra.core.translation.IndraTranslator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -44,7 +45,7 @@ import java.util.stream.Collectors;
 public class AbstractVectorSpaceTest {
 
     private MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace();
-    private IndraAnalyzer analyzer = new IndraAnalyzer("EN", vectorSpace.getMetadata());
+    private IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
 
     @Test
     public void getSimpleVectorPairsTest() {
@@ -83,7 +84,6 @@ public class AbstractVectorSpaceTest {
 
     @Test
     public void getComposedVectorTest() {
-        IndraAnalyzer analyzer = new IndraAnalyzer("EN", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
         List<String> terms = Arrays.asList("love plane good south hot", "hate car bad north cold");
         List<AnalyzedTerm> analyzedTerms = terms.stream().map(t -> new AnalyzedTerm(t, analyzer.analyze(t))).
                 collect(Collectors.toList());
@@ -97,7 +97,8 @@ public class AbstractVectorSpaceTest {
 
     @Test
     public void getTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraTranslator translator = null; //TODO problem here
+        IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyze(new TextPair("mãe", "pai"), AnalyzedTranslatedPair.class);
         AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyze(new TextPair("computador", "avaliação"), AnalyzedTranslatedPair.class);
 
@@ -124,7 +125,8 @@ public class AbstractVectorSpaceTest {
 
     @Test
     public void getComposedTranslatedPairsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraTranslator translator = null; //TODO problem here
+        IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyze(new TextPair("mãe computador", "pai avaliação"), AnalyzedTranslatedPair.class);
 
         analyzedPair.getTranslatedT1().putAnalyzedTranslatedTokens("mãe", Arrays.asList("mother", "mom", "matriarch"));
@@ -150,7 +152,8 @@ public class AbstractVectorSpaceTest {
 
     @Test
     public void getComposedTranslatedVectorsTest() {
-        IndraAnalyzer ptAnalyzer = new IndraAnalyzer("PT", ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraTranslator translator = null; //TODO problem here
+        IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
         List<MutableTranslatedTerm> analyzedTerms = terms.stream().map(t -> new MutableTranslatedTerm(t,
                 ptAnalyzer.analyze(t))).collect(Collectors.toList());

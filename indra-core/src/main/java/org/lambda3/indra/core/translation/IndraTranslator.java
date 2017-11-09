@@ -27,6 +27,8 @@ package org.lambda3.indra.core.translation;
  */
 
 import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.core.IndraAnalyzer;
+import org.lambda3.indra.corpus.CorpusMetadata;
 
 import java.io.Closeable;
 import java.util.LinkedHashMap;
@@ -35,10 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class IndraTranslator implements Closeable{
+public abstract class IndraTranslator implements Closeable {
 
     public static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
     public static final String DEFAULT_TRANSLATION_TARGET_LANGUAGE = "EN";
+
+    private CorpusMetadata corpusMetadata;
+    private IndraAnalyzer analyzer;
 
     /**
      * Translate each AnalyzedTerm token by token and store into MutableTranslatedTerm.translatedTokens.
@@ -46,6 +51,22 @@ public abstract class IndraTranslator implements Closeable{
      * @param terms
      */
     public abstract void translate(List<MutableTranslatedTerm> terms);
+
+    public abstract CorpusMetadata loadCorpusMetadata();
+
+    public IndraAnalyzer getAnalyzer() {
+        if (analyzer == null) {
+            analyzer = new IndraAnalyzer(getCorpusMetadata());
+        }
+        return analyzer;
+    }
+
+    public CorpusMetadata getCorpusMetadata() {
+        if (corpusMetadata == null) {
+            corpusMetadata = loadCorpusMetadata();
+        }
+        return corpusMetadata;
+    }
 
     public static List<String> getRelevantTranslations(Map<String, Double> tr) {
         List<String> res = new LinkedList<>();

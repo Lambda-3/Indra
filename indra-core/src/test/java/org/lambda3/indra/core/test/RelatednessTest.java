@@ -29,8 +29,8 @@ package org.lambda3.indra.core.test;
 import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.SuperFactory;
-import org.lambda3.indra.entity.composition.VectorComposer;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -32,8 +32,8 @@ import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.entity.composition.VectorComposer;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.lambda3.indra.request.RelatednessPairRequest;
 
 import java.util.Arrays;

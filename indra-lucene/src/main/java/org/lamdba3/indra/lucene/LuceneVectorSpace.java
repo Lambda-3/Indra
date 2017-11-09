@@ -10,13 +10,14 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 import org.lambda3.indra.AnalyzedTerm;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
-import org.lambda3.indra.entity.filter.Filter;
-import org.lambda3.indra.entity.relatedness.AbsoluteCosineRelatednessFunction;
-import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.relatedness.AbsoluteCosineRelatednessFunction;
+import org.lambda3.indra.relatedness.RelatednessFunction;
+import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private String modelDir;
     private IndexReader termsReader;
     private IndexSearcher termsSearcher;
     private RelatednessFunction func = new AbsoluteCosineRelatednessFunction();
@@ -46,9 +48,10 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
     }
 
-    public LuceneVectorSpace(String indexDir) {
+    public LuceneVectorSpace(String modelDir) {
+        this.modelDir = modelDir;
         try {
-            this.termsReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDir, TERMS_INDEX)));
+            this.termsReader = DirectoryReader.open(FSDirectory.open(Paths.get(modelDir, TERMS_INDEX)));
             this.termsSearcher = new IndexSearcher(termsReader);
         } catch (IOException e) {
             logger.error("Lucene basedir is wrongly configured or there is an I/O error\n{}", e.getMessage());
@@ -59,8 +62,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
 
     @Override
     protected ModelMetadata loadMetadata() {
-        //TODO the same as the annoy.
-        return null;
+        return MetadataIO.load(modelDir, ModelMetadata.class);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
                 int count = 0;
                 for (String key : sortedResults.keySet()) {
                     Map<Integer, Double> mapVector = RealVectorUtil.vectorToMap(candidates.get(key));
-                    int size = metadata.getDimensions();
+                    int size = (int) metadata.dimensions;
                     OpenMapRealVector vector = new OpenMapRealVector(size);
 
                     for (int index : mapVector.keySet()) {

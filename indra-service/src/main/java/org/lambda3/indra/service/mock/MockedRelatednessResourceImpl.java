@@ -27,7 +27,7 @@ package org.lambda3.indra.service.mock;
  */
 
 import org.lambda3.indra.AnalyzedPair;
-import org.lambda3.indra.RelatednessResource;
+import org.lambda3.indra.web.RelatednessResource;
 import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.TextPair;
 import org.lambda3.indra.request.RelatednessOneToManyRequest;

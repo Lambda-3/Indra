@@ -30,7 +30,7 @@ import org.lambda3.indra.AnalyzedPair;
 import org.lambda3.indra.AnalyzedTerm;
 import org.lambda3.indra.request.RelatednessRequest;
 import org.lambda3.indra.TextPair;
-import org.lambda3.indra.entity.composition.VectorComposer;
+import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.core.vs.VectorSpace;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class StandardRelatednessClient extends RelatednessClient {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
 
         for (TextPair pair : pairs) {
             AnalyzedPair analyzedPair = analyzer.analyze(pair, AnalyzedPair.class);
@@ -63,7 +63,8 @@ public class StandardRelatednessClient extends RelatednessClient {
 
     @Override
     protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
+
         List<AnalyzedTerm> ats = terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
         if (one != null) {
             ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));

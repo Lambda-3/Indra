@@ -27,7 +27,7 @@ package org.lambda3.indra.core.test;
  */
 
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.ModelMetadata;
+import org.lambda3.indra.model.ModelMetadata;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,14 +41,15 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void nullStringTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
+        /*ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
         IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
-        Assert.assertNull(analyzer.analyze(null));
+        Assert.assertNull(analyzer.analyze(null));*/
+        Assert.fail();
     }
 
     @Test
     public void nonStemmedAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
+        /*ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
         IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
         String loveString = "love";
         List<String> res = analyzer.analyze(loveString);
@@ -60,12 +61,13 @@ public class IndraAnalyzerEnglishTest {
         res = analyzer.analyze(loveString);
 
         Assert.assertEquals(res.size(), 1);
-        Assert.assertEquals(res.get(0), loveString.toLowerCase());
+        Assert.assertEquals(res.get(0), loveString.toLowerCase());*/
+        Assert.fail();
     }
 
     @Test
     public void stemmedAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(3);
+        /*ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(3);
         IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
 
         String term = "hapiness";
@@ -74,23 +76,25 @@ public class IndraAnalyzerEnglishTest {
 
         List<String> stems = IndraAnalyzer.stem(Collections.singleton(term), LANG, metadata.getApplyStemmer());
         Assert.assertEquals(stems.size(), 1);
-        Assert.assertEquals(res.get(0), stems.get(0));
+        Assert.assertEquals(res.get(0), stems.get(0));*/
+        Assert.fail();
     }
 
     @Test
     public void expressionAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0).minWordLength(3);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        //ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0).minWordLength(3);
+        //IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
         String term = "GIANT by thine OWN nature";
-        List<String> res = analyzer.analyze(term);
+        //List<String> res = analyzer.analyze(term);
 
-        Assert.assertEquals(res.size(), 3);
-        Assert.assertEquals(String.join(" ", res), term.toLowerCase().replace(" by", "").replace(" own", ""));
+        //Assert.assertEquals(res.size(), 3);
+        //Assert.assertEquals(String.join(" ", res), term.toLowerCase().replace(" by", "").replace(" own", ""));
+        Assert.fail();
     }
 
     @Test
     public void analyzeMultiplesRequestsTest() {
-        List<String> terms = Arrays.asList("love", "hapiness", "information", "management", "language",
+        /*List<String> terms = Arrays.asList("love", "hapiness", "information", "management", "language",
                 "strawberries", "refactorization");
 
         ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
@@ -106,6 +110,7 @@ public class IndraAnalyzerEnglishTest {
         for (String term : terms) {
             List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);
-        }
+        }*/
+        Assert.fail();
     }
 }

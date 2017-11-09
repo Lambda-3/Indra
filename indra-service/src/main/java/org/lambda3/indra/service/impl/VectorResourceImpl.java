@@ -26,7 +26,7 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.VectorResource;
+import org.lambda3.indra.web.VectorResource;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.request.VectorRequest;
 import org.lambda3.indra.response.DenseVectorResponse;
@@ -49,6 +49,8 @@ public final class VectorResourceImpl implements VectorResource {
     @Override
     public VectorResponse getVector(VectorRequest request) {
         logger.trace("getVector - User Request: {}", request);
+        RequestValidator.validate(request);
+
         VectorResponse response;
 
         if (this.driver.isSparseModel(request)) {

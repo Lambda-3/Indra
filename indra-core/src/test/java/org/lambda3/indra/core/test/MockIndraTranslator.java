@@ -28,6 +28,8 @@ package org.lambda3.indra.core.test;
 
 import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -44,13 +46,19 @@ public final class MockIndraTranslator extends IndraTranslator {
         translations.put("pai", Arrays.asList("father", "dad", "patriarch"));
         translations.put("avaliação", Arrays.asList("test", "evaluation"));
     }
+
     @Override
     public void translate(List<MutableTranslatedTerm> terms) {
-        for(MutableTranslatedTerm term : terms) {
-            for(String token : term.getAnalyzedTokens()) {
+        for (MutableTranslatedTerm term : terms) {
+            for (String token : term.getAnalyzedTokens()) {
                 term.putTranslatedTokens(token, translations.get(token));
             }
         }
+    }
+
+    @Override
+    public CorpusMetadata loadCorpusMetadata() {
+        return CorpusMetadataBuilder.newCorpusMetadata("bla", "pt").build();
     }
 
     @Override
