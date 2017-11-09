@@ -11,6 +11,8 @@
 
     <artifactId>indra-web</artifactId>
 
+    <name>Indra Web Module</name>
+
     <dependencies>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>

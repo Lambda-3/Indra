@@ -1,5 +1,6 @@
-package org.lambda3.indra.annoy;
+package org.lambda3.indra.core.annoy;
 
+import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
 import org.testng.annotations.Test;
 
 public class AnnoyVectorSpaceTest {

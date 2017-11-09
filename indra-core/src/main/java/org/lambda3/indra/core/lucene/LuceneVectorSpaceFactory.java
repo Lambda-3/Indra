@@ -1,4 +1,4 @@
-package org.lamdba3.indra.lucene;
+package org.lambda3.indra.core.lucene;
 
 import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.vs.LocalStoredVectorSpaceFactory;
