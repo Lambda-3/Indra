@@ -23,11 +23,10 @@ import java.util.*;
 
 public class LuceneTranslator extends IndraTranslator {
 
-    private static final String LEX_INDEX = "lex";
-
-    private static final String TERM_FIELD = "term";
-    private static final String TRANSLATION_FIELD = "tr";
-    private static final String NULL_VALUE = "NULL";
+    public static final String LEX_INDEX = "lex";
+    public static final String TERM_FIELD = "term";
+    public static final String TRANSLATION_FIELD = "tr";
+    public static final String NULL_VALUE = "NULL";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -35,8 +34,7 @@ public class LuceneTranslator extends IndraTranslator {
     private IndexReader reader;
     private IndexSearcher searcher;
 
-
-    LuceneTranslator(String dataDir) {
+    public LuceneTranslator(String dataDir) {
         this.dataDir = dataDir;
         try {
             this.reader = DirectoryReader.open(FSDirectory.open(Paths.get(dataDir, LEX_INDEX)));
@@ -75,7 +73,7 @@ public class LuceneTranslator extends IndraTranslator {
 
     @Override
     public IndraAnalyzer getAnalyzer() {
-        return null;
+        return new IndraAnalyzer(getCorpusMetadata());
     }
 
     private Map<String, List<String>> doTranslate(Set<String> terms) {
