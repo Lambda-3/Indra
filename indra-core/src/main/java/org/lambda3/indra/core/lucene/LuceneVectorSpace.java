@@ -31,11 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LuceneVectorSpace extends AbstractVectorSpace {
 
-    private static final String TERMS_INDEX = "terms";
+    public static final String TERMS_INDEX = "terms";
 
-    private static final String TERM_FIELD = "term";
-    private static final String VECTOR_FIELD = "vector";
-    private static final String INDEXES_FIELD = "indexes";
+    public static final String TERM_FIELD = "term";
+    public static final String VECTOR_FIELD = "vector";
+    public static final String INDEXES_FIELD = "indexes";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

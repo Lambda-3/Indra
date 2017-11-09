@@ -1,4 +1,4 @@
-package org.lambda3.indra.client.test;
+package org.lambda3.indra.request;
 
 import org.lambda3.indra.TextPair;
 import org.lambda3.indra.exception.InvalidRequestException;
