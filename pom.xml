@@ -35,10 +35,8 @@
 
     <modules>
         <module>indra-essentials</module>
-        <module>indra-annoy</module>
-        <module>indra-lucene</module>
-        <module>indra-web</module>
         <module>indra-core</module>
+        <module>indra-web</module>
         <module>indra-service</module>
         <module>indra-mongo</module>
     </modules>
