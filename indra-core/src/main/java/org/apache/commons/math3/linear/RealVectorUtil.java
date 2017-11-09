@@ -42,7 +42,7 @@ public class RealVectorUtil {
 
     public static Map<Integer, Double> vectorToMap(RealVector vector) {
         Map<Integer, Double> mapVector = new HashMap<>();
-        Iterator<RealVector.Entry> iter = vector.iterator();
+        Iterator<RealVector.Entry> iter = vector.sparseIterator();
 
         while (iter.hasNext()) {
             RealVector.Entry entry = iter.next();

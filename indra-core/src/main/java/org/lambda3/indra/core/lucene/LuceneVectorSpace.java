@@ -15,9 +15,9 @@ import org.lambda3.indra.core.codecs.BinaryCodecs;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.AbstractVectorSpace;
 import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.relatedness.AbsoluteCosineRelatednessFunction;
 import org.lambda3.indra.relatedness.RelatednessFunction;
-import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
             if (topDocs != null && topDocs.totalHits > 0) {
                 for (ScoreDoc sd : topDocs.scoreDocs) {
                     Document doc = termsSearcher.doc(sd.doc);
-                    RealVector v = BinaryCodecs.unmarshall(doc.getBinaryValue(VECTOR_FIELD).bytes, true, -1);
+                    RealVector v = BinaryCodecs.unmarshall(doc.getBinaryValue(VECTOR_FIELD).bytes, true, (int) metadata.dimensions);
                     results.put(doc.get(TERM_FIELD), v);
                 }
             }

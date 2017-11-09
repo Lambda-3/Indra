@@ -29,6 +29,7 @@ public class MetadataIOTest {
     private static final String MODEL_NAME = "the model bla bla";
     private static final boolean SPARSE = true;
     private static final long DIM = 500;
+    private static final long VOCAB = 400;
     private static final long WINDOW_SIZE = 10;
     private static final long FREQ = 30;
 
@@ -69,6 +70,7 @@ public class MetadataIOTest {
             CorpusMetadata loaded = MetadataIO.load(modelDir.getAbsolutePath(), CorpusMetadata.class);
             Assert.assertEquals(cm, loaded);
             modelDir.delete();
+            //TODO FileUtils.
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,7 +79,7 @@ public class MetadataIOTest {
 
     @Test
     public void modelMetadataTest() {
-        ModelMetadata mm = new ModelMetadata(MODEL_NAME, SPARSE, DIM, WINDOW_SIZE, FREQ, getCorpusMetadata());
+        ModelMetadata mm = new ModelMetadata(MODEL_NAME, SPARSE, DIM, VOCAB, WINDOW_SIZE, FREQ, getCorpusMetadata());
 
         try {
             File modelDir = Files.createTempDirectory("indra").toFile();
@@ -86,6 +88,7 @@ public class MetadataIOTest {
             ModelMetadata loaded = MetadataIO.load(modelDir.getAbsolutePath(), ModelMetadata.class);
             System.out.println(mm.equals(loaded));
             Assert.assertEquals(mm, loaded);
+            //TODO FileUtils.
             modelDir.delete();
 
         } catch (IOException e) {
