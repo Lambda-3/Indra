@@ -27,9 +27,9 @@ package org.lambda3.indra.core;
  */
 
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.entity.composition.VectorComposer;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.vs.VectorSpace;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,9 +40,8 @@ import java.util.stream.Collectors;
 class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
 
-    TranslationBasedRelatednessClient(IndraTranslator translator, RelatednessRequest request, VectorSpace vectorSpace,
-                                      RelatednessFunction func, VectorComposer termComposer, VectorComposer translationComposer) {
-        super(request, vectorSpace, func, termComposer, translationComposer);
+    TranslationBasedRelatednessClient(IndraTranslator translator, RelatednessRequest request, VectorSpace vectorSpace) {
+        super(request, vectorSpace);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
         }
@@ -110,7 +109,7 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs, VectorComposer termComposer, VectorComposer translationComposer) {
         return vectorSpace.getTranslatedVectorPairs((List<AnalyzedTranslatedPair>) analyzedPairs, termComposer, translationComposer);
     }
 }

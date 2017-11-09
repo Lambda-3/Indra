@@ -29,10 +29,14 @@ package org.lambda3.indra.core;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.composition.VectorComposerFactory;
+import org.lambda3.indra.core.filter.Filter;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.entity.Threshold;
+import org.lambda3.indra.entity.composition.VectorComposer;
+import org.lambda3.indra.entity.relatedness.RelatednessFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +50,7 @@ public class IndraDriver {
     private VectorSpaceFactory vectorSpaceFactory;
     private TranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
-    private VectorComposerFactory vectorComposerFactory = new VectorComposerFactory();
+    private SuperFactory sf = new SuperFactory();
 
     public IndraDriver(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
@@ -58,8 +62,13 @@ public class IndraDriver {
         logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
+        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs(), func, termComposer,
+                TranslationComposer);
         logger.trace("done");
+
         return scoredPairs;
     }
 
@@ -68,9 +77,15 @@ public class IndraDriver {
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
         Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(),
-                request.isMt());
+                threshold, request.isMt(), func, termComposer, TranslationComposer);
         logger.trace("done");
+
         return scores;
     }
 
@@ -82,8 +97,7 @@ public class IndraDriver {
         logger.trace("getting vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
         ModelMetadata modelMetadata = vectorSpace.getMetadata();
-        VectorComposer termComposer = vectorComposerFactory.getComposer(
-                VectorComposition.valueOf(request.getTermComposition()));
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
 
         if (request.isMt()) {
             ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
@@ -111,8 +125,7 @@ public class IndraDriver {
                 }
             }
 
-            VectorComposer translationComposer = vectorComposerFactory.getComposer(
-                    VectorComposition.valueOf(request.getTranslationComposition()));
+            VectorComposer translationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
 
             logger.trace("done");
             return vectorSpace.getTranslatedVectors(translatedTerms, termComposer, translationComposer);
@@ -157,6 +170,7 @@ public class IndraDriver {
     public final Map<String, Map<String, float[]>> getNeighborsVectors(NeighborsVectorsRequest request) {
         logger.trace("getting neighbors vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
 
         IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
         List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
@@ -167,7 +181,7 @@ public class IndraDriver {
 
         Map<String, Map<String, float[]>> results = new ConcurrentHashMap<>();
         analyzedTerms.stream().parallel().forEach(at -> {
-            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk());
+            Map<String, float[]> vectors = vectorSpace.getNearestVectors(at, request.getTopk(), filter);
             results.put(at.getTerm(), vectors);
         });
 
@@ -178,8 +192,14 @@ public class IndraDriver {
     public final Map<String, Map<String, Double>> getNeighborRelatedness(NeighborRelatednessRequest request) {
         logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
+
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
         Map<String, Map<String, Double>> relatedness = relatednessClient.getNeighborRelatedness(request.getTerms(),
-                request.getTopk());
+                request.getTopk(), threshold, filter, func, termComposer, TranslationComposer);
 
         logger.trace("done");
         return relatedness;

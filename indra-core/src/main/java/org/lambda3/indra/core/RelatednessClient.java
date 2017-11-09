@@ -27,42 +27,40 @@ package org.lambda3.indra.core;
  */
 
 import org.apache.commons.math3.linear.RealVector;
+import org.lambda3.indra.entity.Threshold;
 import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.entity.composition.VectorComposer;
+import org.lambda3.indra.core.filter.Filter;
+import org.lambda3.indra.entity.relatedness.RelatednessFunction;
+import org.lambda3.indra.core.utils.MapUtils;
+import org.lambda3.indra.core.vs.VectorSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public abstract class RelatednessClient {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
     protected VectorSpace vectorSpace;
     protected RelatednessRequest request;
-    protected RelatednessFunction func;
-    protected VectorComposer termComposer;
-    protected VectorComposer translationComposer;
 
-    protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func,
-                                VectorComposer termComposer, VectorComposer translationComposer) {
+    protected RelatednessClient(RelatednessRequest request, VectorSpace vectorSpace) {
         this.vectorSpace = Objects.requireNonNull(vectorSpace);
         this.request = Objects.requireNonNull(request);
-        this.func = Objects.requireNonNull(func);
-        this.termComposer = Objects.requireNonNull(termComposer);
-        this.translationComposer = translationComposer;
     }
 
     protected abstract List<AnalyzedPair> doAnalyzePairs(List<TextPair> pairs);
 
     protected abstract List<AnalyzedTerm> doAnalyze(String one, List<String> terms);
 
-    protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs);
+    protected abstract Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs,
+                                                                          VectorComposer termComposer,
+                                                                          VectorComposer translationComposer);
 
-    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
+    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs, RelatednessFunction func) {
         Queue<ScoredTextPair> scoredTextPairs = new ConcurrentLinkedQueue<>();
 
         vectorPairs.entrySet().stream().parallel().forEach(entry -> {
@@ -81,19 +79,23 @@ public abstract class RelatednessClient {
         return new LinkedList<>(scoredTextPairs);
     }
 
-    public final List<ScoredTextPair> getRelatedness(List<TextPair> pairs) {
+    public final List<ScoredTextPair> getRelatedness(List<TextPair> pairs, RelatednessFunction func,
+                                                     VectorComposer termComposer, VectorComposer tranlationComposer) {
         List<AnalyzedPair> analyzedPairs = doAnalyzePairs(pairs);
-        Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs);
-        return compute(vectorsPairs);
+        Map<? extends AnalyzedPair, VectorPair> vectorsPairs = getVectors(analyzedPairs, termComposer, tranlationComposer);
+        return compute(vectorsPairs, func);
     }
 
-    public Map<String, Double> getRelatedness(String one, List<String> many, boolean translated) {
+    LinkedHashMap<String, Double> getRelatedness(String one, List<String> many, Threshold threshold, boolean translated, RelatednessFunction func,
+                                                 VectorComposer termComposer, VectorComposer translationComposer) {
         List<? extends AnalyzedTerm> analyzedTerms = doAnalyze(one, many);
-        return getRelatedness(one, many, analyzedTerms, translated);
+        return getRelatedness(one, many, analyzedTerms, threshold, translated, func, termComposer, translationComposer);
     }
 
-    private Map<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
-                                               boolean translated) {
+    @SuppressWarnings("unchecked")
+    private LinkedHashMap<String, Double> getRelatedness(String one, Collection<String> many, List<? extends AnalyzedTerm> analyzedTerms,
+                                                         Threshold threshold, boolean translated, RelatednessFunction func,
+                                                         VectorComposer termComposer, VectorComposer translationComposer) {
         Map<String, RealVector> vectors;
         if (translated) {
             vectors = vectorSpace.getTranslatedVectors((List<MutableTranslatedTerm>) analyzedTerms,
@@ -115,22 +117,31 @@ public abstract class RelatednessClient {
             }
         });
 
-        return results;
+        LinkedHashMap<String, Double> sortedResults = MapUtils.entriesSortedByValues(results);
+        if (threshold != null) {
+            sortedResults = threshold.apply(sortedResults);
+        }
+        return sortedResults;
     }
 
-    public Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk) {
+    Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk, Threshold threshold,
+                                                            Filter filter, RelatednessFunction func,
+                                                            VectorComposer termComposer,VectorComposer
+                                                                    translationComposer) {
         logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
         List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);
 
         Map<String, Map<String, Double>> results = new HashMap<>();
-        analyzedTerms.stream().parallel().forEach(at -> {
-            Collection<String> nearestTerms = vectorSpace.getNearestTerms(at, topk);
 
-            List<AnalyzedTerm> analyzedNeighbors = nearestTerms.stream().map(
-                    t -> new AnalyzedTerm(t, Collections.singletonList(t))).collect(Collectors.toList());
+        analyzedTerms.stream().parallel().forEach(at -> {
+            Collection<String> nearestTerms = vectorSpace.getNearestTerms(at, topk, filter);
+
+            List<AnalyzedTerm> analyzedNeighbors = new LinkedList<>();
+            nearestTerms.forEach(t -> analyzedNeighbors.add(new AnalyzedTerm(t, Collections.singletonList(t))));
+            analyzedNeighbors.add(at);
 
             Map<String, Double> relatedness = getRelatedness(at.getFirstToken(), nearestTerms,
-                    analyzedNeighbors, false);
+                    analyzedNeighbors, threshold, false, func, termComposer, translationComposer);
 
             results.put(at.getTerm(), relatedness);
         });

@@ -26,7 +26,7 @@ package org.lambda3.indra.service.mapper;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.core.exception.ModelNotFoundException;
+import org.lambda3.indra.exception.ModelNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

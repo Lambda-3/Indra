@@ -36,17 +36,18 @@ import org.bson.Document;
 import org.bson.types.Binary;
 import org.lambda3.indra.client.AnalyzedTerm;
 import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.CachedVectorSpace;
 import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.core.exception.IndraException;
+import org.lambda3.indra.core.filter.Filter;
+import org.lambda3.indra.core.vs.CachedVectorSpace;
+import org.lambda3.indra.exception.IndraRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public final class MongoVectorSpace extends CachedVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
@@ -70,7 +71,7 @@ public final class MongoVectorSpace extends CachedVectorSpace {
         MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
 
         if (metadataColl.count() > 1) {
-            throw new IndraException("Model metadata must have only one entry!");
+            throw new IndraRuntimeException("Model metadata must have only one entry!");
         }
 
         if (metadataColl.count() == 1) {
@@ -84,12 +85,12 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk) {
+    public Map<String, float[]> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
     @Override
-    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk) {
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
@@ -98,27 +99,28 @@ public final class MongoVectorSpace extends CachedVectorSpace {
     }
 
     @Override
-    protected void collectVectors(Collection<String> terms, int limit) {
-        Set<String> toFetch = terms.stream()
-                .filter(t -> !this.vectorsCache.containsKey(t))
-                .collect(Collectors.toSet());
-
-        logger.debug("Cache has {} vectors, need to fetch more {}",
-                terms.size() - toFetch.size(), toFetch.size());
-
-        if (!toFetch.isEmpty()) {
-            logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
-            FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
-            if (docs != null) {
-                docs.batchSize(toFetch.size());
-                for (Document doc : docs) {
-                    this.vectorsCache.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, limit));
-                }
+    public Map<String, Optional<RealVector>> loadAll(Iterable<? extends String> keys) throws Exception {
+        logger.info("Collecting term vectors from {}", dbName);
+        FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, keys));
+        Map<String, Optional<RealVector>> vectors = new HashMap<>();
+        if (docs != null) {
+            for (Document doc : docs) {
+                vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
             }
         }
+
+        for (String k : keys) {
+            if (!vectors.containsKey(k)) {
+                vectors.put(k, Optional.empty());
+            }
+        }
+
+        return vectors;
     }
 
-    private RealVector unmarshall(Document doc, int limit) {
+    private Optional<RealVector> unmarshall(Document doc, int limit) {
+        RealVector vector = null;
+
         if (!metadata.isBinary()) {
             throw new UnsupportedOperationException("Can't consume non-binary models.");
         }
@@ -128,15 +130,15 @@ public final class MongoVectorSpace extends CachedVectorSpace {
             final byte[] b = binary.getData();
 
             if (metadata.getLoaderId().equalsIgnoreCase("legacy")) {
-                return BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
+                vector = BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
             } else {
-                return BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
+                vector = BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
             }
         } catch (Exception e) {
             logger.error("Error unmarshalling vector", e);
         }
 
-        return null;
+        return Optional.ofNullable(vector);
     }
 
     @Override

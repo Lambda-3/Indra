@@ -32,7 +32,7 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.annoy.AnnoyVectorSpaceFactory;
-import org.lambda3.indra.core.HubVectorSpaceFactory;
+import org.lambda3.indra.core.vs.HubVectorSpaceFactory;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
@@ -65,7 +65,7 @@ public final class Server {
 
     static {
         protocol = "http://";
-        host = System.getProperty("indra.http.host", "localhost");
+        host = System.getProperty("indra.http.host", "0.0.0.0");
         port = System.getProperty("indra.http.port", "8916");
         BASE_URI = protocol + host + ":" + port;
         mockMode = Boolean.parseBoolean(System.getProperty("indra.mock", "false"));

@@ -31,7 +31,7 @@ import java.util.Map;
 public final class RelatednessOneToManyResponse extends AbstractBasicResponse {
     private String one;
     private Map<String, Double> many;
-    private ScoreFunction scoreFunction;
+    private String scoreFunction;
 
     private RelatednessOneToManyResponse() {
         //jersey demands.
@@ -52,7 +52,7 @@ public final class RelatednessOneToManyResponse extends AbstractBasicResponse {
         return many;
     }
 
-    public ScoreFunction getScoreFunction() {
+    public String getScoreFunction() {
         return scoreFunction;
     }
 
