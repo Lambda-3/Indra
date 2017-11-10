@@ -26,14 +26,19 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.*;
 import org.lambda3.indra.composition.AveragedVectorComposer;
 import org.lambda3.indra.composition.SumVectorComposer;
 import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.VectorPair;
+import org.lambda3.indra.core.annoy.AnnoyVectorSpace;
+import org.lambda3.indra.core.lucene.LuceneTranslator;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.vs.VectorSpace;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -44,8 +49,33 @@ import java.util.stream.Collectors;
 
 public class AbstractVectorSpaceTest {
 
-    private MockCachedVectorSpace vectorSpace = new MockCachedVectorSpace();
-    private IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
+    private static final int VECTOR_SIZE = 5;
+    static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
+    static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
+    static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
+    static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
+    static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
+
+    private VectorSpace vectorSpace;
+    private IndraAnalyzer analyzer;
+    private IndraTranslator translator;
+
+    public static VectorSpace getSimpleDenseVectorSpaceModel() {
+        String vsmDir = AbstractVectorSpaceTest.class.getClassLoader().getResource("models/annoy/dense/en/simple").getPath();
+        return new AnnoyVectorSpace(vsmDir);
+    }
+
+    public static IndraTranslator getPTTranslator() {
+        String translationDir = AbstractVectorSpaceTest.class.getClassLoader().getResource("translations/pt").getPath();
+        return new LuceneTranslator(translationDir);
+    }
+
+    @BeforeTest
+    public void configuring() {
+        this.translator = getPTTranslator();
+        vectorSpace = getSimpleDenseVectorSpaceModel();
+        analyzer = vectorSpace.getAnalyzer();
+    }
 
     @Test
     public void getSimpleVectorPairsTest() {
@@ -61,7 +91,7 @@ public class AbstractVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), MockCachedVectorSpace.ZERO_VECTOR);
+            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), ZERO_VECTOR);
         }
     }
 
@@ -78,7 +108,7 @@ public class AbstractVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), MockCachedVectorSpace.ZERO_VECTOR);
+            Assert.assertEquals(vectorPair.v1.add(vectorPair.v2), ZERO_VECTOR);
         }
     }
 
@@ -91,13 +121,12 @@ public class AbstractVectorSpaceTest {
         Map<String, RealVector> vectorPairs = vectorSpace.getVectors(analyzedTerms, new SumVectorComposer());
         Assert.assertEquals(vectorPairs.size(), 2);
 
-        Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.ONE_VECTOR);
-        Assert.assertEquals(vectorPairs.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(0)), ONE_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(1)), NEGATIVE_ONE_VECTOR);
     }
 
     @Test
     public void getTranslatedPairsTest() {
-        IndraTranslator translator = null; //TODO problem here
         IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         AnalyzedTranslatedPair analyzedPair1 = ptAnalyzer.analyze(new TextPair("mãe", "pai"), AnalyzedTranslatedPair.class);
         AnalyzedTranslatedPair analyzedPair2 = ptAnalyzer.analyze(new TextPair("computador", "avaliação"), AnalyzedTranslatedPair.class);
@@ -118,14 +147,13 @@ public class AbstractVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1, MockCachedVectorSpace.ONE_VECTOR);
-            Assert.assertEquals(vectorPair.v2, MockCachedVectorSpace.NEGATIVE_ONE_VECTOR);
+            Assert.assertEquals(vectorPair.v1, ONE_VECTOR);
+            Assert.assertEquals(vectorPair.v2, NEGATIVE_ONE_VECTOR);
         }
     }
 
     @Test
     public void getComposedTranslatedPairsTest() {
-        IndraTranslator translator = null; //TODO problem here
         IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         AnalyzedTranslatedPair analyzedPair = ptAnalyzer.analyze(new TextPair("mãe computador", "pai avaliação"), AnalyzedTranslatedPair.class);
 
@@ -145,14 +173,13 @@ public class AbstractVectorSpaceTest {
             Assert.assertTrue(pairs.contains(pair));
 
             VectorPair vectorPair = vectorPairs.get(pair);
-            Assert.assertEquals(vectorPair.v1, MockCachedVectorSpace.TWO_VECTOR);
-            Assert.assertEquals(vectorPair.v2, MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
+            Assert.assertEquals(vectorPair.v1, TWO_VECTOR);
+            Assert.assertEquals(vectorPair.v2, NEGATIVE_TWO_VECTOR);
         }
     }
 
     @Test
     public void getComposedTranslatedVectorsTest() {
-        IndraTranslator translator = null; //TODO problem here
         IndraAnalyzer ptAnalyzer = translator.getAnalyzer();
         List<String> terms = Arrays.asList("mãe computador", "pai avaliação");
         List<MutableTranslatedTerm> analyzedTerms = terms.stream().map(t -> new MutableTranslatedTerm(t,
@@ -169,8 +196,8 @@ public class AbstractVectorSpaceTest {
 
         Assert.assertEquals(vectorPairs.size(), 2);
 
-        Assert.assertEquals(vectorPairs.get(terms.get(0)), MockCachedVectorSpace.TWO_VECTOR);
-        Assert.assertEquals(vectorPairs.get(terms.get(1)), MockCachedVectorSpace.NEGATIVE_TWO_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(0)), TWO_VECTOR);
+        Assert.assertEquals(vectorPairs.get(terms.get(1)), NEGATIVE_TWO_VECTOR);
     }
 
 }

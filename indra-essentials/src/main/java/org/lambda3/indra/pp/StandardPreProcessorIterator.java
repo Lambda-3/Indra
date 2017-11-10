@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class StandardPreProcessorIterator implements Iterator<String> {
-    private static final String NUMBER_PLACEHOLDER = "<NUMBER>";
+    public static final String NUMBER_PLACEHOLDER = "<NUMBER>";
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+([,\\.][0-9]+)*$");
 
     private Tokenizer tokenizer;

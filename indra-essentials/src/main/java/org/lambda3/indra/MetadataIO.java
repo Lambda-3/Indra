@@ -3,6 +3,7 @@ package org.lambda3.indra;
 import org.lambda3.indra.corpus.CorpusMetadata;
 import org.lambda3.indra.corpus.CorpusMetadataBuilder;
 import org.lambda3.indra.model.ModelMetadata;
+import org.lambda3.indra.util.JSONUtil;
 
 import java.io.File;
 import java.io.IOException;

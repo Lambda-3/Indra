@@ -1,0 +1,1 @@
+{"windowSize":5,"minWordFrequency":5,"corpusMetadata":{"corpusName":"frei","stopWords":[],"transformers":{},"replaceNumbers":true,"applyStemmer":0,"removeAccents":true,"maxTokenLength":100,"minTokenLength":1,"description":null,"language":"en","encoding":"UTF-8","applyLowercase":true},"vocabSize":98,"sparse":false,"model":"W2V","dimensions":25}
