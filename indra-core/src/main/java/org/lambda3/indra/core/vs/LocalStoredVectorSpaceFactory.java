@@ -55,6 +55,7 @@ public abstract class LocalStoredVectorSpaceFactory extends VectorSpaceFactory {
     protected File createVSFile(AbstractBasicRequest request) {
         String lang = request.isMt() ? IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE.toLowerCase() :
                 request.getLanguage().toLowerCase();
+
         return Paths.get(baseDir.getAbsolutePath(), request.getModel().toLowerCase(), lang,
                 request.getCorpus().toLowerCase()).toFile();
     }

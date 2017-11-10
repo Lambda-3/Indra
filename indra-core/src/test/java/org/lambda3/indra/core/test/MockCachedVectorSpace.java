@@ -42,13 +42,6 @@ import java.util.Map;
 
 public class MockCachedVectorSpace extends AbstractVectorSpace {
 
-    private static final int VECTOR_SIZE = 5;
-    static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
-    static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
-    static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
-    static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
-    static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
-
     private Map<String, RealVector> localCache = new HashMap<>();
 
     MockCachedVectorSpace() {
@@ -98,7 +91,7 @@ public class MockCachedVectorSpace extends AbstractVectorSpace {
     protected ModelMetadata loadMetadata() {
         CorpusMetadata cm = CorpusMetadataBuilder.newCorpusMetadata("bla", "en").
                 applyStemmer(0).removeAccents(false).build();
-        return new ModelMetadata("bla bla", false, VECTOR_SIZE, localCache.size(), -1, -1, cm);
+        return new ModelMetadata("bla bla", false, 5, localCache.size(), -1, -1, cm);
     }
 
     @Override

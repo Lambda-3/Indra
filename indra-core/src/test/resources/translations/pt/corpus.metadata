@@ -1,0 +1,1 @@
+{"corpusName":"en-Europarl_DGT_OpenSubtitile","stopWords":[],"transformers":{},"replaceNumbers":false,"applyStemmer":0,"removeAccents":false,"maxTokenLength":100,"minTokenLength":1,"description":null,"language":"pt","encoding":"UTF-8","applyLowercase":true}

@@ -58,8 +58,7 @@ public class LuceneTranslatorFactory extends TranslatorFactory {
 
     @Override
     protected String createKey(AbstractBasicRequest<?> request) {
-        return Paths.get(this.baseDir.getAbsolutePath(), request.getLanguage(), IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE,
-                IndraTranslator.DEFAULT_DB_NAME_SUFFIX).toString();
+        return Paths.get(this.baseDir.getAbsolutePath(), request.getLanguage().toLowerCase()).toString();
     }
 
     @Override

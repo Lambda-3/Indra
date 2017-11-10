@@ -1,0 +1,1 @@
+{"windowSize":-1,"minWordFrequency":-1,"corpusMetadata":{"corpusName":"simple","stopWords":[],"transformers":{},"replaceNumbers":false,"applyStemmer":0,"removeAccents":true,"maxTokenLength":100,"minTokenLength":1,"description":null,"language":"en","encoding":"UTF-8","applyLowercase":true},"vocabSize":21,"sparse":true,"model":"sparse","dimensions":5}
