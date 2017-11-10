@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.exception.IndraException;
 import org.lambda3.indra.exception.IndraRuntimeException;
 import org.lambda3.indra.pp.transform.MultiWordsTransformer;
 import org.lambda3.indra.pp.transform.Transformer;
@@ -93,29 +94,44 @@ public class StandardPreProcessorIterator implements Iterator<String> {
 
         } else {
             try {
-                InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
-                if (in != null) {
-                    CharArraySet stopWords = new CharArraySet(30, true);
-                    try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
-                        String line;
-                        String[] parts;
-                        while ((line = bin.readLine()) != null) {
-                            parts = line.split(Pattern.quote("|"));
-                            line = parts[0].trim();
+                Set<String> sws = getDefaultStopWordSet(lang);
 
-                            if (line.length() > 0) {
-                                stopWords.add(line);
-                            }
-                        }
-                        return new StopFilter(stream, stopWords);
-                    }
+                if (sws != null) {
+                    CharArraySet stopWords = new CharArraySet(30, true);
+                    stopWords.addAll(sws);
+                    return new StopFilter(stream, stopWords);
                 }
-            } catch (Exception e) {
+            } catch (IndraException e) {
                 throw new IndraRuntimeException(String.format("Error creating stop filter for lang '%s'", lang), e);
             }
         }
-
         return stream;
+    }
+
+    public static Set<String> getDefaultStopWordSet(String lang) throws IndraException {
+
+        try {
+            InputStream in = ClassLoader.getSystemResourceAsStream(lang.toLowerCase() + ".stopwords");
+            if (in != null) {
+                Set<String> stopWords = new HashSet<>();
+                try (BufferedReader bin = new BufferedReader(new InputStreamReader(in))) {
+                    String line;
+                    String[] parts;
+                    while ((line = bin.readLine()) != null) {
+                        parts = line.split(Pattern.quote("|"));
+                        line = parts[0].trim();
+
+                        if (line.length() > 0) {
+                            stopWords.add(line);
+                        }
+                    }
+                    return stopWords;
+                }
+            }
+        } catch (Exception e) {
+            throw new IndraException(String.format("Error creating stop filter for lang '%s'", lang), e);
+        }
+        return null;
     }
 
     private TokenStream createStream(CorpusMetadata metadata, Tokenizer tokenizer) {
