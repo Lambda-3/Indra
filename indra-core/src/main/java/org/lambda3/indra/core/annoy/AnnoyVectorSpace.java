@@ -26,9 +26,9 @@ package org.lambda3.indra.core.annoy;
  * ==========================License-End===============================
  */
 
-import com.spotify.annoy.ANNIndex;
-import com.spotify.annoy.AnnoyIndex;
-import com.spotify.annoy.IndexType;
+import internal.com.spotify.annoy.ANNIndex;
+import internal.com.spotify.annoy.AnnoyIndex;
+import internal.com.spotify.annoy.IndexType;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.AnalyzedTerm;
@@ -117,14 +117,9 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
         Map<String, RealVector> vectors = new HashMap<>();
 
         for (String term : terms) {
-            float[] v = getVector(term);
+            double[] v = getVector(term);
             if (v != null) {
-                double[] dv = new double[v.length];
-                //TODO make the annoy library return natively double[]
-                for (int i = 0; i < dv.length; i++) {
-                    dv[i] = v[i];
-                }
-                RealVector vector = new ArrayRealVector(dv, false);
+                RealVector vector = new ArrayRealVector(v, false);
                 vectors.put(term, vector);
             }
         }
@@ -138,8 +133,7 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
 
         Map<String, RealVector> results = new HashMap<>();
         for (Integer id : nearest) {
-            float[] fv = index.getItemVector(id);
-            double[] dv = new double[fv.length];
+            double[] dv = index.getItemVector(id);
 
             RealVector vector = new ArrayRealVector(dv);
             results.put(idToWord[id], vector);
@@ -162,7 +156,7 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
 
     private Collection<Integer> getNearestIds(AnalyzedTerm term, int topk, Filter filter) {
         if (term.getAnalyzedTokens().size() == 1) {
-            float[] vector = getVector(term.getFirstToken());
+            double[] vector = getVector(term.getFirstToken());
 
             if (vector != null) {
                 if (filter == null) {
@@ -196,7 +190,7 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
         }
     }
 
-    private float[] getVector(String term) {
+    private double[] getVector(String term) {
         Integer termId = this.wordToId.get(term);
         if (termId != null) {
             return index.getItemVector(termId);
