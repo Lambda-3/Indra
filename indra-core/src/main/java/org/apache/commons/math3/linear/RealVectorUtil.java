@@ -81,4 +81,18 @@ public class RealVectorUtil {
 
         return results;
     }
+
+    /*
+        method for test proposes.
+     */
+    public static RealVector loosePrecision(RealVector rv) {
+        double[] arv = rv.toArray();
+
+        double[] nrv = new double[rv.getDimension()];
+        for (int i = 0; i < arv.length; i++) {
+            nrv[i] = (float) arv[i];
+        }
+
+        return new ArrayRealVector(nrv, false);
+    }
 }
