@@ -92,4 +92,30 @@ public final class BinaryCodecs {
 
         return realVector;
     }
+
+    /**
+     * Legacy (not created by IndraLoader) dense vector deserialization.
+     */
+    public static RealVector legacyUnmarshall(byte[] b, int limit, boolean sparse, int maxDimensions) throws IOException {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(b))) {
+            int key;
+            double score;
+            int size = Math.min(dis.readInt(), limit);
+
+            RealVector vector;
+            if (sparse) {
+                vector = new OpenMapRealVector(maxDimensions);
+            } else {
+                vector = new ArrayRealVector(size);
+            }
+
+            for (int i = 0; i < size; i++) {
+                key = dis.readInt();
+                score = dis.readFloat();
+                vector.setEntry(key, score);
+            }
+
+            return vector;
+        }
+    }
 }
