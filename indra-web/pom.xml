@@ -38,6 +38,14 @@
             <artifactId>indra-essentials</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.lambda3.indra</groupId>
+            <artifactId>indra-core</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
