@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class VectorResourceImplTest {
 
-    @Test
+    @Test(enabled = false)
     public void generalTest() {
         VectorSpaceFactory vectorSpaceFactory = IndraDriverTest.createVectorSpaceFactory();
         TranslatorFactory translatorFactory = IndraDriverTest.createTranslatorFactory();
