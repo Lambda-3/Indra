@@ -41,10 +41,11 @@ public class RawSpaceModel<V extends Vector> {
     private File vectorFileAbsolutePath;
     private Class<V> clazz;
 
-    public RawSpaceModel(String modelDir, Class<V> clazz) {
+    @SuppressWarnings("unchecked")
+    public RawSpaceModel(String modelDir) {
         this.modelMetadata = MetadataIO.load(modelDir, ModelMetadata.class);
         this.vectorFileAbsolutePath = Paths.get(modelDir, MODEL_CONTENT_FILE_NAME).toFile();
-        this.clazz = clazz;
+        this.clazz = this.modelMetadata.sparse ? (Class<V>) SparseVector.class : (Class<V>) DenseVector.class;
     }
 
     public boolean isSparse() {
