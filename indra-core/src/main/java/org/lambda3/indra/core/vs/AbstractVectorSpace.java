@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractVectorSpace implements VectorSpace {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    protected ModelMetadata metadata;
+    private ModelMetadata metadata;
     private IndraAnalyzer analyzer;
 
     protected abstract ModelMetadata loadMetadata();

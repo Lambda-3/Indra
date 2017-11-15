@@ -105,7 +105,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
             if (topDocs != null && topDocs.totalHits > 0) {
                 for (ScoreDoc sd : topDocs.scoreDocs) {
                     Document doc = termsSearcher.doc(sd.doc);
-                    RealVector v = BinaryCodecs.unmarshall(doc.getBinaryValue(VECTOR_FIELD).bytes, true, (int) metadata.dimensions);
+                    RealVector v = BinaryCodecs.unmarshall(doc.getBinaryValue(VECTOR_FIELD).bytes, true, (int) getMetadata().dimensions);
                     results.put(doc.get(TERM_FIELD), v);
                 }
             }
@@ -144,7 +144,7 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
                 int count = 0;
                 for (String key : sortedResults.keySet()) {
                     Map<Integer, Double> mapVector = RealVectorUtil.vectorToMap(candidates.get(key));
-                    int size = (int) metadata.dimensions;
+                    int size = (int) getMetadata().dimensions;
                     OpenMapRealVector vector = new OpenMapRealVector(size);
 
                     for (int index : mapVector.keySet()) {

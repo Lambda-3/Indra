@@ -79,8 +79,6 @@ public class MockCachedVectorSpace extends AbstractVectorSpace {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.metadata = loadMetadata();
     }
 
     private void cachePut(String term, RealVector vector) {
