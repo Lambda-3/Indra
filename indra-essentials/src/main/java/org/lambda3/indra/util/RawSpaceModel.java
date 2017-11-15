@@ -26,6 +26,7 @@ package org.lambda3.indra.util;
  * ==========================License-End===============================
  */
 
+import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
@@ -40,9 +41,9 @@ public class RawSpaceModel<V extends Vector> {
     private File vectorFileAbsolutePath;
     private Class<V> clazz;
 
-    public RawSpaceModel(String baseDir, ModelMetadata modelMetadata, Class<V> clazz) {
-        this.vectorFileAbsolutePath = Paths.get(baseDir, MODEL_CONTENT_FILE_NAME).toFile();
-        this.modelMetadata = modelMetadata;
+    public RawSpaceModel(String modelDir, Class<V> clazz) {
+        this.modelMetadata = MetadataIO.load(modelDir, ModelMetadata.class);
+        this.vectorFileAbsolutePath = Paths.get(modelDir, MODEL_CONTENT_FILE_NAME).toFile();
         this.clazz = clazz;
     }
 
