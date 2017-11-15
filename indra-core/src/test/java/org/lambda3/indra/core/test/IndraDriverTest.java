@@ -97,8 +97,8 @@ public class IndraDriverTest {
     private <V extends Vector> RawSpaceModel<V> getRawSpaceModel(String model, String corpus, Class<V> clazz) {
         String resourcesDir = getClass().getClassLoader().getResource(String.format(MODELS, model)).getPath();
         String modelDir = Paths.get(resourcesDir, "raw", String.format("%s-%s-%s", model, LANG, corpus)).toString();
-        
-        return new RawSpaceModel<>(modelDir, clazz);
+
+        return new RawSpaceModel<>(modelDir);
     }
 
     private <V extends Vector> void simpleVectorTest(String model, Class<V> clazz) throws FileNotFoundException {
