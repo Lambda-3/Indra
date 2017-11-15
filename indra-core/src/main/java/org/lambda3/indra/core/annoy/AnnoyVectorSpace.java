@@ -60,13 +60,12 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
 
     public AnnoyVectorSpace(String dataDir) {
         this.dataDir = Objects.requireNonNull(dataDir);
-        this.metadata = loadMetadata();
         loadMappings();
 
         IndexType type = IndexType.ANGULAR;
 
         try {
-            this.index = new ANNIndex((int) metadata.dimensions, new File(dataDir, TREE_FILE).getAbsolutePath(), type);
+            this.index = new ANNIndex((int) getMetadata().dimensions, new File(dataDir, TREE_FILE).getAbsolutePath(), type);
         } catch (IOException e) {
             String msg = "problem instantiating an ANNIndex.";
             logger.error(msg);
