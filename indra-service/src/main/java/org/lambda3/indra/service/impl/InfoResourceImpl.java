@@ -35,10 +35,7 @@ import org.lambda3.indra.response.MetadataResponse;
 import org.lambda3.indra.response.ResourceResponse;
 import org.lambda3.indra.web.InfoResource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class InfoResourceImpl extends InfoResource {
@@ -48,12 +45,12 @@ public final class InfoResourceImpl extends InfoResource {
 
     public InfoResourceImpl(VectorSpaceFactory spaceFactory, TranslatorFactory translatorFactory) {
         this.spaceFactory = Objects.requireNonNull(spaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
+        this.translatorFactory = translatorFactory;
     }
 
     @Override
     public ResourceResponse getResources() {
-        Collection<String> translationModels = translatorFactory.getAvailableModels();
+        Collection<String> translationModels = translatorFactory != null ? translatorFactory.getAvailableModels() : Collections.EMPTY_LIST;
         Collection<String> filteredTranslationModels = new ArrayList<>(translationModels);
 
         Collection<String> spaceModels = spaceFactory.getAvailableModels();
