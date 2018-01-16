@@ -31,15 +31,14 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.request.NeighborRelatednessRequest;
+import org.lambda3.indra.request.NeighborsByVectorRequest;
 import org.lambda3.indra.request.NeighborsVectorsRequest;
-import org.lambda3.indra.response.DenseNeighborVectorsResponse;
-import org.lambda3.indra.response.NeighborRelatednessResponse;
-import org.lambda3.indra.response.NeighborVectorsResponse;
-import org.lambda3.indra.response.SparseNeighborVectorsResponse;
+import org.lambda3.indra.response.*;
 import org.lambda3.indra.web.NeighborsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -90,6 +89,18 @@ public final class NeighborsResourceImpl implements NeighborsResource {
 
         Map<String, Map<String, Double>> relatedness = this.driver.getNeighborRelatedness(request);
         NeighborRelatednessResponse response = new NeighborRelatednessResponse(request, relatedness);
+        logger.trace("Response: {}", response);
+
+        return response;
+    }
+
+    @Override
+    public NeighborsByVectorResponse getNeighborsByVector(NeighborsByVectorRequest request) {
+        logger.trace("User Request: {}", request);
+        RequestValidator.validate(request);
+
+        Collection<String> terms = this.driver.getNeighborsByVector(request);
+        NeighborsByVectorResponse response = new NeighborsByVectorResponse(request, terms);
         logger.trace("Response: {}", response);
 
         return response;

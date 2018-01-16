@@ -115,6 +115,11 @@ public class MockCachedVectorSpace extends AbstractVectorSpace {
     }
 
     @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
     public void close() throws IOException {
         //do nothing.
     }

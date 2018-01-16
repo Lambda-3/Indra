@@ -31,16 +31,16 @@ import org.apache.commons.math3.linear.RealVectorUtil;
 import org.lambda3.indra.AnalyzedTerm;
 import org.lambda3.indra.MutableTranslatedTerm;
 import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.core.translation.IndraTranslator;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.corpus.CorpusMetadata;
-import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.filter.Filter;
 import org.lambda3.indra.relatedness.RelatednessFunction;
-import org.lambda3.indra.threshold.Threshold;
 import org.lambda3.indra.request.*;
+import org.lambda3.indra.threshold.Threshold;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,5 +211,12 @@ public class IndraDriver {
 
         logger.trace("done");
         return relatedness;
+    }
+
+    public final Collection<String> getNeighborsByVector(NeighborsByVectorRequest request) {
+        logger.trace("getting neighbors by vector for {} terms (request={})", request.getVector(), request);
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+
+        return vectorSpace.getNearestTerms(request.getVector(), request.getTopk());
     }
 }

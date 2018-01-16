@@ -27,9 +27,11 @@ package org.lambda3.indra.web;
  */
 
 import org.lambda3.indra.request.NeighborRelatednessRequest;
+import org.lambda3.indra.request.NeighborsByVectorRequest;
 import org.lambda3.indra.request.NeighborsVectorsRequest;
 import org.lambda3.indra.response.NeighborRelatednessResponse;
 import org.lambda3.indra.response.NeighborVectorsResponse;
+import org.lambda3.indra.response.NeighborsByVectorResponse;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -52,4 +54,9 @@ public interface NeighborsResource {
     @Valid
     @Path("/relatedness")
     NeighborRelatednessResponse getNeighborRelatedness(NeighborRelatednessRequest request);
+
+    @POST
+    @Valid
+    @Path("/bv")
+    NeighborsByVectorResponse getNeighborsByVector(NeighborsByVectorRequest request);
 }
