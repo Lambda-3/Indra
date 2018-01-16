@@ -28,13 +28,13 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.lambda3.indra.*;
-import org.lambda3.indra.threshold.Threshold;
 import org.lambda3.indra.composition.VectorComposer;
-import org.lambda3.indra.filter.Filter;
-import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.lambda3.indra.core.utils.MapUtils;
 import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.lambda3.indra.request.RelatednessRequest;
+import org.lambda3.indra.threshold.Threshold;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +127,7 @@ public abstract class RelatednessClient {
 
     Map<String, Map<String, Double>> getNeighborRelatedness(List<String> terms, int topk, Threshold threshold,
                                                             Filter filter, RelatednessFunction func,
-                                                            VectorComposer termComposer,VectorComposer
+                                                            VectorComposer termComposer, VectorComposer
                                                                     translationComposer) {
         logger.trace("getting neighbors Relatedness for {} terms and {} topk", terms.size(), topk);
         List<AnalyzedTerm> analyzedTerms = doAnalyze(null, terms);

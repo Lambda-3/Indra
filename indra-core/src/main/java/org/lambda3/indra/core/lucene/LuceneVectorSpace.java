@@ -171,6 +171,11 @@ public class LuceneVectorSpace extends AbstractVectorSpace {
     }
 
     @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void close() throws IOException {
         termsReader.close();
     }

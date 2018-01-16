@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class AnnoyVectorSpace extends AbstractVectorSpace {
@@ -151,6 +152,12 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
         }
 
         return terms;
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        List<Integer> nn = this.index.getNearest(vector, topk);
+        return nn.stream().map(i -> idToWord[i]).collect(Collectors.toList());
     }
 
     private Collection<Integer> getNearestIds(AnalyzedTerm term, int topk, Filter filter) {
