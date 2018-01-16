@@ -69,7 +69,7 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
         //TODO metadata needs to include CM
 
         if (metadataColl.count() > 1) {
-            throw new IndraRuntimeException("Model metadata must have only one entry!");
+            throw new IndraRuntimeException("This model is misconfigured. Contact the support with the following message: model metadata has more than one entry.");
         }
 
         if (metadataColl.count() == 1) {
@@ -101,17 +101,17 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
 
     @Override
     public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
-        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
     }
 
     @Override
     public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
-        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
     }
 
     @Override
     public Collection<String> getNearestTerms(double[] vector, int topk) {
-        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
     }
 
     private MongoCollection<Document> getTermsColl() {

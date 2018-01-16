@@ -26,10 +26,11 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.request.RelatednessRequest;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.exception.TranslatorNotFoundException;
+import org.lambda3.indra.request.RelatednessRequest;
 
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
 
     public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
+        this.translatorFactory = translatorFactory;
     }
 
     @Override
@@ -48,7 +49,7 @@ public final class RelatednessClientFactory extends IndraCachedFactory<Relatedne
 
         if (request.isMt()) {
             if (translatorFactory == null) {
-                throw new IllegalStateException("Translation-based relatedness not activated.");
+                throw new TranslatorNotFoundException();
             }
 
             return new TranslationBasedRelatednessClient(translatorFactory.create(request), request, vectorSpace);
