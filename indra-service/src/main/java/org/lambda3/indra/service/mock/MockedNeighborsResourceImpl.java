@@ -27,6 +27,8 @@ package org.lambda3.indra.service.mock;
  */
 
 import org.apache.commons.math3.random.UnitSphereRandomVectorGenerator;
+import org.lambda3.indra.request.NeighborsByVectorRequest;
+import org.lambda3.indra.response.NeighborsByVectorResponse;
 import org.lambda3.indra.web.NeighborsResource;
 import org.lambda3.indra.request.NeighborRelatednessRequest;
 import org.lambda3.indra.request.NeighborsVectorsRequest;
@@ -74,6 +76,11 @@ public final class MockedNeighborsResourceImpl implements NeighborsResource {
         }
 
         return new NeighborRelatednessResponse(request, terms);
+    }
+
+    @Override
+    public NeighborsByVectorResponse getNeighborsByVector(NeighborsByVectorRequest request) {
+        throw new UnsupportedOperationException("not support 'nearest' function.");
     }
 
     private Set<String> getRandomWords() {

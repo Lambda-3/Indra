@@ -109,6 +109,11 @@ public final class MongoVectorSpace extends AbstractVectorSpace {
         throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
     }
 
+    @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        throw new UnsupportedOperationException("Mongo implementation does not support 'nearest' function.");
+    }
+
     private MongoCollection<Document> getTermsColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
     }

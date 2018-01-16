@@ -58,6 +58,8 @@ public interface VectorSpace extends Closeable {
 
     Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter);
 
+    Collection<String> getNearestTerms(double[] vector, int topk);
+
     ModelMetadata getMetadata();
 
     IndraAnalyzer getAnalyzer();
