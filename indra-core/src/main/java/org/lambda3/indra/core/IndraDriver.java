@@ -37,6 +37,7 @@ import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.VectorSpace;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.exception.TranslatorNotFoundException;
 import org.lambda3.indra.filter.Filter;
 import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.lambda3.indra.request.*;
@@ -58,7 +59,7 @@ public class IndraDriver {
 
     public IndraDriver(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
+        this.translatorFactory = translatorFactory;
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
@@ -107,9 +108,12 @@ public class IndraDriver {
 
 
         if (request.isMt()) {
-
-
             logger.trace("applying translation");
+
+            if(translatorFactory == null) {
+                throw new TranslatorNotFoundException();
+            }
+
             IndraTranslator translator = translatorFactory.create(request);
             IndraAnalyzer nativeLangAnalyzer = translator.getAnalyzer();
 
@@ -118,7 +122,6 @@ public class IndraDriver {
                 List<String> analyzedTokens = nativeLangAnalyzer.analyze(term);
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
-
 
             translator.translate(translatedTerms);
 

@@ -26,7 +26,7 @@ package org.lambda3.indra.service.mapper;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.exception.ModelNotFoundException;
+import org.lambda3.indra.exception.IndraRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public final class CatchAllExceptionMapper implements ExceptionMapper<Throwable>
 
     @Override
     public Response toResponse(Throwable exception) {
-        if (exception instanceof ModelNotFoundException) {
+        if (exception instanceof IndraRuntimeException) {
             logger.error("Oops!", exception);
             return Response.status(Response.Status.BAD_REQUEST).entity(new HashMap<String, String>() {{
                 put("msg", exception.getLocalizedMessage());
