@@ -26,37 +26,89 @@ package org.lambda3.indra.util;
  * ==========================License-End===============================
  */
 
-import java.io.BufferedReader;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.OpenMapRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
-public class VectorIterator<V extends Vector> implements Iterator<V> {
+public class VectorIterator implements Iterator<Vector> {
 
     private final boolean sparse;
-    private Iterator<String> iterator;
     private int dimensions;
+    private DataInputStream input;
+    private Vector currentVector;
 
-    public VectorIterator(File vectorsFile, long dimensions, Class<V> clazz) throws FileNotFoundException {
-        this.sparse = clazz.equals(SparseVector.class);
+    public VectorIterator(File vectorsFile, long dimensions, boolean sparse) throws IOException {
+        this.sparse = sparse;
         this.dimensions = (int) dimensions;
-        this.iterator = new BufferedReader(new FileReader(vectorsFile)).lines().iterator();
+
+        this.input = new DataInputStream(new FileInputStream(vectorsFile));
+    }
+
+    private void setCurrentContent() throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        if (input.available() > 0) {
+            char b;
+            while ((b = (char) input.read()) != ' ') {
+                sb.append(b);
+            }
+
+            if (this.sparse) {
+                this.currentVector = new Vector(true, sb.toString(), readSparseVector(this.dimensions));
+            } else {
+                this.currentVector = new Vector(false, sb.toString(), readDenseVector(this.dimensions));
+            }
+
+        } else {
+            this.currentVector = null;
+        }
     }
 
     @Override
     public boolean hasNext() {
-        return iterator.hasNext();
+        return currentVector != null;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public V next() {
-        String content = iterator.next();
-        if (this.sparse) {
-            return (V) new SparseVector(dimensions, content);
-        } else {
-            return (V) new DenseVector(content);
+    public Vector next() {
+        Vector result = this.currentVector;
+        try {
+            setCurrentContent();
+        } catch (IOException e) {
+            //TODO solve me.
+            e.printStackTrace();
         }
+
+        return result;
+    }
+
+    public RealVector readSparseVector(int dimensions) throws IOException {
+        RealVector vector = new OpenMapRealVector(dimensions);
+
+        int size = input.readInt();
+        for (int i = 0; i < size; i++) {
+            vector.addToEntry(input.readInt(), input.readFloat());
+        }
+
+        input.readChar(); //character \n in the end.
+        return vector;
+    }
+
+    public RealVector readDenseVector(int dimensions) throws IOException {
+        double[] vector = new double[dimensions];
+
+        for (int i = 0; i < dimensions; i++) {
+            vector[i] = input.readFloat();
+        }
+
+        input.readChar(); //character \n in the end.
+        return new ArrayRealVector(vector, false);
     }
 }
