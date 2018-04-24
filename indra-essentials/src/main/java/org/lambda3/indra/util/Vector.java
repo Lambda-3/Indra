@@ -28,17 +28,19 @@ package org.lambda3.indra.util;
 
 import org.apache.commons.math3.linear.RealVector;
 
-public abstract class Vector {
+public class Vector {
 
+    public final boolean sparse;
     public final String term;
     public final RealVector content;
-    protected int dimensions;
 
-    public Vector(int dimensions, String... parts) {
-        this.dimensions = dimensions;
-        this.term = parts[0];
-        content = digestContent(parts[1]);
+    public Vector(boolean sparse, String term, RealVector content) {
+        this.sparse = sparse;
+        this.term = term;
+        this.content = content;
     }
 
-    public abstract RealVector digestContent(String content);
+    public int getDimensions() {
+        return this.content.getDimension();
+    }
 }

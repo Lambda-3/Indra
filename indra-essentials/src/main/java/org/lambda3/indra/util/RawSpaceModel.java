@@ -30,29 +30,27 @@ import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.model.ModelMetadata;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Paths;
 
-public class RawSpaceModel<V extends Vector> {
+public class RawSpaceModel {
 
     public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
 
     public final ModelMetadata modelMetadata;
     private File vectorFileAbsolutePath;
-    private Class<V> clazz;
 
     @SuppressWarnings("unchecked")
     public RawSpaceModel(String modelDir) {
         this.modelMetadata = MetadataIO.load(modelDir, ModelMetadata.class);
         this.vectorFileAbsolutePath = Paths.get(modelDir, MODEL_CONTENT_FILE_NAME).toFile();
-        this.clazz = this.modelMetadata.sparse ? (Class<V>) SparseVector.class : (Class<V>) DenseVector.class;
     }
 
     public boolean isSparse() {
         return modelMetadata.sparse;
     }
 
-    public VectorIterator<V> getVectorIterator() throws FileNotFoundException {
-        return new VectorIterator<V>(this.vectorFileAbsolutePath, modelMetadata.dimensions, clazz);
+    public VectorIterator getVectorIterator() throws IOException {
+        return new VectorIterator(this.vectorFileAbsolutePath, modelMetadata.dimensions, this.modelMetadata.sparse);
     }
 }
