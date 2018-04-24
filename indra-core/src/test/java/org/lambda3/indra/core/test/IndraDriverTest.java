@@ -28,7 +28,6 @@ package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.MetadataIO;
 import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.IndraDriver;
@@ -39,18 +38,19 @@ import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.HubVectorSpaceFactory;
 import org.lambda3.indra.core.vs.VectorSpaceFactory;
 import org.lambda3.indra.exception.ModelNotFoundException;
-import org.lambda3.indra.model.ModelMetadata;
 import org.lambda3.indra.pp.StandardPreProcessorIterator;
 import org.lambda3.indra.request.RelatednessOneToManyRequest;
 import org.lambda3.indra.request.RelatednessPairRequest;
 import org.lambda3.indra.request.VectorRequest;
-import org.lambda3.indra.util.*;
+import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.Vector;
+import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,20 +94,20 @@ public class IndraDriverTest {
         return new VectorRequest().terms(Collections.singletonList(term)).corpus(corpus).language(LANG).model(model);
     }
 
-    private <V extends Vector> RawSpaceModel<V> getRawSpaceModel(String model, String corpus, Class<V> clazz) {
+    private RawSpaceModel getRawSpaceModel(String model, String corpus) {
         String resourcesDir = getClass().getClassLoader().getResource(String.format(MODELS, model)).getPath();
         String modelDir = Paths.get(resourcesDir, "raw", String.format("%s-%s-%s", model, LANG, corpus)).toString();
 
-        return new RawSpaceModel<>(modelDir);
+        return new RawSpaceModel(modelDir);
     }
 
-    private <V extends Vector> void simpleVectorTest(String model, Class<V> clazz) throws FileNotFoundException {
+    private void simpleVectorTest(String model) throws IOException {
         final String CORPUS = "frei";
-        RawSpaceModel<V> rsm = getRawSpaceModel(model, CORPUS, clazz);
-        VectorIterator<V> iter = rsm.getVectorIterator();
+        RawSpaceModel rsm = getRawSpaceModel(model, CORPUS);
+        VectorIterator iter = rsm.getVectorIterator();
 
         while (iter.hasNext()) {
-            V v = iter.next();
+            Vector v = iter.next();
             if (!v.term.equalsIgnoreCase(StandardPreProcessorIterator.NUMBER_PLACEHOLDER)) {
                 Assert.assertNotNull(v.content);
 
@@ -126,13 +126,14 @@ public class IndraDriverTest {
         final String DENSE = "dense";
         final String SPARSE = "sparse";
 
-        RawSpaceModel<DenseVector> rsm = getRawSpaceModel(DENSE, CORPUS, DenseVector.class);
+        RawSpaceModel rsm = getRawSpaceModel(DENSE, CORPUS);
 
         try {
-            VectorIterator<DenseVector> iter = rsm.getVectorIterator();
+            VectorIterator iter = rsm.getVectorIterator();
+
 
             while (iter.hasNext()) {
-                DenseVector v = iter.next();
+                Vector v = iter.next();
                 if (!v.term.equalsIgnoreCase(StandardPreProcessorIterator.NUMBER_PLACEHOLDER)) {
                     Assert.assertNotNull(v.content);
                     RealVector rvo = RealVectorUtil.loosePrecision(v.content);
@@ -146,44 +147,49 @@ public class IndraDriverTest {
                     Assert.assertEquals(rvDense.toArray(), rvSparse.toArray());
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            Assert.fail();
         }
     }
 
     @Test
     public void gloveAnnoyTest() {
         try {
-            simpleVectorTest("glove", DenseVector.class);
-        } catch (FileNotFoundException e) {
+            simpleVectorTest("glove");
+        } catch (IOException e) {
             e.printStackTrace();
+            Assert.fail();
         }
     }
 
     @Test
     public void esaLuceneTest() {
         try {
-            simpleVectorTest("esa", SparseVector.class);
-        } catch (FileNotFoundException e) {
+            simpleVectorTest("esa");
+        } catch (IOException e) {
             e.printStackTrace();
+            Assert.fail();
         }
     }
 
     @Test
     public void lsaAnnoyTest() {
         try {
-            simpleVectorTest("lsa", DenseVector.class);
-        } catch (FileNotFoundException e) {
+            simpleVectorTest("lsa");
+        } catch (IOException e) {
             e.printStackTrace();
+            Assert.fail();
         }
     }
 
     @Test
     public void w2vAnnoyTest() {
         try {
-            simpleVectorTest("w2v", DenseVector.class);
-        } catch (FileNotFoundException e) {
+            simpleVectorTest("w2v");
+        } catch (IOException e) {
             e.printStackTrace();
+            Assert.fail();
         }
     }
 
