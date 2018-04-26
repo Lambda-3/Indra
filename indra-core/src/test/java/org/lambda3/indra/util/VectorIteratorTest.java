@@ -15,8 +15,8 @@ import java.util.Set;
 
 public class VectorIteratorTest {
 
-    private static float round(float value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
+    public static float round(float value) {
+        final int places = 6;
 
         BigDecimal bd = new BigDecimal(Double.toString(value));
         bd = bd.setScale(places, RoundingMode.HALF_UP);
@@ -50,7 +50,7 @@ public class VectorIteratorTest {
 
                     float[] base = bases.get(vector.term);
                     for (int b = 0; b < base.length; b++) {
-                        Assert.assertEquals(round((float) vector.content.toArray()[b], 6), round(base[b], 6));
+                        Assert.assertEquals(round((float) vector.content.toArray()[b]), round(base[b]));
                     }
                 }
             }
