@@ -28,13 +28,13 @@ package org.lambda3.indra.util;
 
 import org.apache.commons.math3.linear.RealVector;
 
-public class Vector {
+public class TermVector {
 
     public final boolean sparse;
     public final String term;
     public final RealVector content;
 
-    public Vector(boolean sparse, String term, RealVector content) {
+    public TermVector(boolean sparse, String term, RealVector content) {
         this.sparse = sparse;
         this.term = term;
         this.content = content;

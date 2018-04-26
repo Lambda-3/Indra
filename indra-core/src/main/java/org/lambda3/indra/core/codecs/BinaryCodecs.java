@@ -67,7 +67,7 @@ public final class BinaryCodecs {
     }
 
     /**
-     * Vector deserialization.
+     * TermVector deserialization.
      */
     public static RealVector unmarshall(byte[] bytes, boolean sparse, int dimensions) throws IOException {
         RealVector realVector = !sparse ? new ArrayRealVector(dimensions) : new OpenMapRealVector(dimensions);

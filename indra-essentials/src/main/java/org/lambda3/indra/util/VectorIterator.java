@@ -26,6 +26,9 @@ package org.lambda3.indra.util;
  * ==========================License-End===============================
  */
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.LittleEndianDataInputStream;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.OpenMapRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -34,35 +37,61 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-public class VectorIterator implements Iterator<Vector> {
+public class VectorIterator implements Iterator<TermVector> {
 
     private final boolean sparse;
     private int dimensions;
-    private DataInputStream input;
-    private Vector currentVector;
+    private int numberOfVectors;
+    private LittleEndianDataInputStream input;
+    private TermVector currentVector;
 
     public VectorIterator(File vectorsFile, long dimensions, boolean sparse) throws IOException {
         this.sparse = sparse;
-        this.dimensions = (int) dimensions;
+        this.input = new LittleEndianDataInputStream(new FileInputStream(vectorsFile));
+        parseHeadline(this.input);
 
-        this.input = new DataInputStream(new FileInputStream(vectorsFile));
+        if (this.dimensions != (int) dimensions) {
+            throw new IOException("inconsistent number of dimensions.");
+        }
+
+        setCurrentContent();
+    }
+
+    private void parseHeadline(LittleEndianDataInputStream input) throws IOException {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        byte c;
+
+        while((c = input.readByte()) != '\n') {
+            out.writeByte(c);
+        }
+
+        String[] headline = new String(out.toByteArray(), StandardCharsets.UTF_8).split(" ");
+        this.numberOfVectors = Integer.parseInt(headline[0]);
+        this.dimensions = Integer.parseInt(headline[1]);
     }
 
     private void setCurrentContent() throws IOException {
-        StringBuilder sb = new StringBuilder();
+        if (numberOfVectors > 0) {
+            numberOfVectors--;
 
-        if (input.available() > 0) {
-            char b;
-            while ((b = (char) input.read()) != ' ') {
-                sb.append(b);
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+
+            byte b;
+            while ((b = input.readByte()) != ' ') {
+                out.writeByte(b);
             }
 
+            String word = new String(out.toByteArray(), StandardCharsets.UTF_8);
             if (this.sparse) {
-                this.currentVector = new Vector(true, sb.toString(), readSparseVector(this.dimensions));
+                this.currentVector = new TermVector(true, word, readSparseVector(this.dimensions));
             } else {
-                this.currentVector = new Vector(false, sb.toString(), readDenseVector(this.dimensions));
+                this.currentVector = new TermVector(false, word, readDenseVector(this.dimensions));
             }
 
         } else {
@@ -77,8 +106,8 @@ public class VectorIterator implements Iterator<Vector> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Vector next() {
-        Vector result = this.currentVector;
+    public TermVector next() {
+        TermVector result = this.currentVector;
         try {
             setCurrentContent();
         } catch (IOException e) {
@@ -94,10 +123,9 @@ public class VectorIterator implements Iterator<Vector> {
 
         int size = input.readInt();
         for (int i = 0; i < size; i++) {
-            vector.addToEntry(input.readInt(), input.readFloat());
+            vector.addToEntry(input.readInt(), (double) input.readFloat());
         }
 
-        input.readChar(); //character \n in the end.
         return vector;
     }
 
@@ -105,10 +133,9 @@ public class VectorIterator implements Iterator<Vector> {
         double[] vector = new double[dimensions];
 
         for (int i = 0; i < dimensions; i++) {
-            vector[i] = input.readFloat();
+            vector[i] = (double) input.readFloat();
         }
 
-        input.readChar(); //character \n in the end.
         return new ArrayRealVector(vector, false);
     }
 }
