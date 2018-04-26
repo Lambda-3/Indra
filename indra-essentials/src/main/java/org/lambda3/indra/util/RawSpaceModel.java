@@ -35,7 +35,7 @@ import java.nio.file.Paths;
 
 public class RawSpaceModel {
 
-    public static final String MODEL_CONTENT_FILE_NAME = "vectors.txt";
+    public static final String MODEL_CONTENT_FILE_NAME = "vectors.bin";
 
     public final ModelMetadata modelMetadata;
     private File vectorFileAbsolutePath;
