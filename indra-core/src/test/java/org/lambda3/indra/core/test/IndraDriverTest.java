@@ -42,8 +42,8 @@ import org.lambda3.indra.pp.StandardPreProcessorIterator;
 import org.lambda3.indra.request.RelatednessOneToManyRequest;
 import org.lambda3.indra.request.RelatednessPairRequest;
 import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.RawSpaceModel;
-import org.lambda3.indra.util.Vector;
 import org.lambda3.indra.util.VectorIterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -107,7 +107,7 @@ public class IndraDriverTest {
         VectorIterator iter = rsm.getVectorIterator();
 
         while (iter.hasNext()) {
-            Vector v = iter.next();
+            TermVector v = iter.next();
             if (!v.term.equalsIgnoreCase(StandardPreProcessorIterator.NUMBER_PLACEHOLDER)) {
                 Assert.assertNotNull(v.content);
 
@@ -133,7 +133,7 @@ public class IndraDriverTest {
 
 
             while (iter.hasNext()) {
-                Vector v = iter.next();
+                TermVector v = iter.next();
                 if (!v.term.equalsIgnoreCase(StandardPreProcessorIterator.NUMBER_PLACEHOLDER)) {
                     Assert.assertNotNull(v.content);
                     RealVector rvo = RealVectorUtil.loosePrecision(v.content);
