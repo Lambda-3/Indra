@@ -42,9 +42,10 @@ import org.lambda3.indra.pp.StandardPreProcessorIterator;
 import org.lambda3.indra.request.RelatednessOneToManyRequest;
 import org.lambda3.indra.request.RelatednessPairRequest;
 import org.lambda3.indra.request.VectorRequest;
-import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.RawSpaceModel;
+import org.lambda3.indra.util.TermVector;
 import org.lambda3.indra.util.VectorIterator;
+import org.lambda3.indra.util.VectorIteratorTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -115,6 +116,11 @@ public class IndraDriverTest {
                 RealVector rv = results.get(v.term);
 
                 RealVector rvo = rsm.modelMetadata.sparse ? v.content : RealVectorUtil.loosePrecision(v.content);
+
+                for (int i = 0; i < rv.getDimension(); i++) {
+                    Assert.assertEquals(VectorIteratorTest.round((float) rvo.toArray()[i]), VectorIteratorTest.round((float) rv.toArray()[i]));
+                }
+
                 Assert.assertEquals(rvo, rv);
             }
         }
