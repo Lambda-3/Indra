@@ -31,12 +31,15 @@ import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.lambda3.indra.core.annoy.AnnoyVectorSpaceFactory;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.core.annoy.AnnoyVectorSpaceFactory;
+import org.lambda3.indra.core.lucene.LuceneTranslatorFactory;
+import org.lambda3.indra.core.lucene.LuceneVectorSpaceFactory;
 import org.lambda3.indra.core.translation.TranslatorFactory;
 import org.lambda3.indra.core.vs.HubVectorSpaceFactory;
 import org.lambda3.indra.mongo.MongoTranslatorFactory;
 import org.lambda3.indra.mongo.MongoVectorSpaceFactory;
+import org.lambda3.indra.response.VersionResponse;
 import org.lambda3.indra.service.impl.InfoResourceImpl;
 import org.lambda3.indra.service.impl.NeighborsResourceImpl;
 import org.lambda3.indra.service.impl.RelatednessResourceImpl;
@@ -47,8 +50,6 @@ import org.lambda3.indra.service.mock.MockedInfoResourceImpl;
 import org.lambda3.indra.service.mock.MockedNeighborsResourceImpl;
 import org.lambda3.indra.service.mock.MockedRelatednessResourceImpl;
 import org.lambda3.indra.service.mock.MockedVectorResourceImpl;
-import org.lambda3.indra.core.lucene.LuceneTranslatorFactory;
-import org.lambda3.indra.core.lucene.LuceneVectorSpaceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public final class Server {
         String host = System.getProperty("indra.http.host", "0.0.0.0");
         String port = System.getProperty("indra.http.port", "8916");
         this.baseUri = String.format("%s://%s:%s", PROTOCOL, host, port);
-        logger.info("Initializing Indra Service.");
+        logger.info("Initializing Indra Service v. {}.", new VersionResponse().getVersion());
         ResourceConfig rc = new ResourceConfig();
         rc.register(LoggingFilter.class);
         rc.register(JacksonFeature.class);
@@ -99,15 +100,13 @@ public final class Server {
                 logger.warn("No AnnoyVectorSpaceFactory.");
             }
 
-            if (mongoURI != null) {
-                logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
-                logger.warn("mongo support is limitted and deprecated. Please migrate to the Lucene indexes");
-                spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
-            }
-
             if (luceneVectorsBaseDir != null) {
-                logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
+                logger.info("Initializing LuceneVectorSpaceFactory from {}.", luceneVectorsBaseDir);
                 spaceFactory.addFactory(new LuceneVectorSpaceFactory(new File(luceneVectorsBaseDir)));
+            } else if (mongoURI != null) {
+                logger.info("Initializing LuceneVectorSpaceFactory from {}.", mongoURI);
+                logger.warn("mongo support is limited and deprecated. Please migrate to the Lucene indexes.");
+                spaceFactory.addFactory(new MongoVectorSpaceFactory(mongoURI));
             }
 
             if (luceneTranslationBaseDir != null) {
@@ -115,7 +114,7 @@ public final class Server {
                 translatorFactory = new LuceneTranslatorFactory(new File(luceneTranslationBaseDir));
             } else if (mongoURI != null) {
                 logger.info("Initializing MongoTranslatorFactory from {}.", mongoURI);
-                logger.warn("mongo support is limitted and deprecated. Please migrate to the Lucene indexes");
+                logger.warn("mongo support is limited and deprecated. Please migrate to the Lucene indexes.");
                 translatorFactory = new MongoTranslatorFactory(mongoURI);
             }
 
