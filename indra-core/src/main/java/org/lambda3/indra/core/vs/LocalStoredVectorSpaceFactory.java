@@ -42,9 +42,6 @@ public abstract class LocalStoredVectorSpaceFactory extends VectorSpaceFactory {
 
     public LocalStoredVectorSpaceFactory(File baseDir) {
         this.baseDir = baseDir;
-        if (!baseDir.canRead()) {
-            throw new RuntimeException("Can't read data from " + baseDir);
-        }
         logger.debug("Setting baseDir to {}", this.baseDir);
     }
 
