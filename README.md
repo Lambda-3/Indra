@@ -12,7 +12,7 @@ Indra is powered by [spotify-annoy](https://github.com/spotify/annoy) delivering
 # Features
 
 * Efficient approximate nearest neighbors (powered by [spotify-annoy](https://github.com/spotify/annoy));
-* 60+ pre-build models in 14 languages;
+* 60+ pre-build models in 15 languages;
 * Permissive license for commercial use (MIT License);
 * Support to [translated distributional relatedness](http://andrefreitas.org/papers/preprint_eakw_mt_2016.pdf);
 * Easy deploy: Deploy the infrastructure in 3 steps;
@@ -48,6 +48,7 @@ For a full list of pre-build models, please check the [Wiki](https://github.com/
 * JA - Japanese
 * AR - Arabic
 * FA - Persian
+* EL - Greek
 
 # Install
 
@@ -61,7 +62,7 @@ This guide provides the basic instructions to get you started using Indra. For f
 
 ```json
 {
-	"corpus": "googlenews300neg",
+	"corpus": "googlenews",
 	"model": "W2V",
 	"language": "EN",
 	"terms": ["love", "mother", "santa claus"]
@@ -73,7 +74,7 @@ For further details, check the [Word Embeddings documentation](https://github.co
 
 ```json
 {
-	"corpus": "googlenews300neg",
+	"corpus": "googlenews",
 	"model": "W2V",
 	"language": "EN",
 	"topk": 10,
@@ -86,7 +87,7 @@ For further details, check the [Nearest Neighbors documentation](https://github.
 
 ```json
 {
-	"corpus": "googlenews300neg",
+	"corpus": "googlenews",
 	"model": "W2V",
 	"language": "EN",
 	"topk": 10,
@@ -101,7 +102,7 @@ For further details, check the [Nearest Neighbors documentation](https://github.
 
 ```json
 {
-	"corpus": "wiki-2014",
+	"corpus": "wiki-2018",
 	"model": "W2V",
 	"language": "EN",
 	"scoreFunction": "COSINE",
@@ -122,7 +123,7 @@ For further details, check the [Semantic Similarity documentation](https://githu
 
 ```json
 {
-	"corpus": "wiki-2014",
+	"corpus": "wiki-2018",
 	"model": "W2V",
 	"language": "EN",
 	"scoreFunction": "COSINE",
@@ -146,7 +147,7 @@ We have a public endpoint for demonstration only hence you can try right now wit
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
-	"corpus": "wiki-2014",
+	"corpus": "wiki-2018",
 	"model": "W2V",
 	"language": "EN",
 	"terms": ["love", "mother", "santa claus"]
@@ -157,7 +158,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 
 ```
 curl -X POST -H "Content-Type: application/json" -d '{
-	"corpus": "wiki-2014",
+	"corpus": "wiki-2018",
 	"model": "W2V",
 	"language": "EN",
 	"scoreFunction": "COSINE",
@@ -176,25 +177,14 @@ curl -X POST -H "Content-Type: application/json" -d '{
 
 Please cite Indra, if you use it in your experiments or project.
 ```latex
-@Inbook{Freitas2016,
-author="Freitas, Andr{\'e}
-and Barzegar, Siamak
-and Sales, Juliano Efson
-and Handschuh, Siegfried
-and Davis, Brian",
-editor="Blomqvist, Eva
-and Ciancarini, Paolo
-and Poggi, Francesco
-and Vitali, Fabio",
-title="Semantic Relatedness for All (Languages): A Comparative Analysis of Multilingual Semantic Relatedness Using Machine Translation",
-bookTitle="Knowledge Engineering and Knowledge Management: 20th International Conference, EKAW 2016, Bologna, Italy, November 19-23, 2016, Proceedings",
-year="2016",
-publisher="Springer International Publishing",
-address="Cham",
-pages="212--222",
-isbn="978-3-319-49004-5",
-doi="10.1007/978-3-319-49004-5_14",
-url="http://dx.doi.org/10.1007/978-3-319-49004-5_14"
+@InProceedings{indra,
+author="Sales, Juliano Efson and Souza, Leonardo and Barzegar, Siamak and Davis, Brian and Freitas, Andr{\'e} and Handschuh, Siegfried",
+title="Indra: A Word Embedding and Semantic Relatedness Server",
+booktitle = {Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)},
+month     = {May},
+year      = {2018},
+address   = {Miyazaki, Japan},
+publisher = {European Language Resources Association (ELRA)},
 }
 ```
 
