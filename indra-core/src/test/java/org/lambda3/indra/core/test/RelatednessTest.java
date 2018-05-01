@@ -26,8 +26,11 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.ScoredTextPair;
-import org.lambda3.indra.client.TextPair;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
+import org.lambda3.indra.core.SuperFactory;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.relatedness.RelatednessFunction;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,10 +41,15 @@ public class RelatednessTest {
 
     @Test
     public void relatednessSimpleTest() {
+        SuperFactory sf = new SuperFactory();
         RelatednessDummyClient cli = new RelatednessDummyClient();
         TextPair pair = new TextPair("car", "engine");
 
-        List<ScoredTextPair> res = cli.getRelatedness(Collections.singletonList(pair));
+        RelatednessFunction func = sf.create("cosine", RelatednessFunction.class);
+        VectorComposer termComposer = sf.create("sum", VectorComposer.class);
+        VectorComposer translationComposer = sf.create("average", VectorComposer.class);
+
+        List<ScoredTextPair> res = cli.getRelatedness(Collections.singletonList(pair), func, termComposer, translationComposer);
 
         Assert.assertNotNull(res);
         Assert.assertEquals(1, res.size());

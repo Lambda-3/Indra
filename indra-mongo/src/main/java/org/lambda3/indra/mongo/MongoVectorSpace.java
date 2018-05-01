@@ -33,121 +33,93 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.apache.commons.math3.linear.RealVector;
 import org.bson.Document;
-import org.bson.types.Binary;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.core.codecs.BinaryCodecs;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.exception.IndraError;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.core.vs.AbstractVectorSpace;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.exception.IndraRuntimeException;
+import org.lambda3.indra.model.ModelMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MongoVectorSpace extends CachedVectorSpace {
+public final class MongoVectorSpace extends AbstractVectorSpace {
     private static final String TERM_FIELD_NAME = "term";
     private static final String VECTOR_FIELD_NAME = "vector";
     private static final String TERMS_COLL_NAME = "terms";
     private static final String METADATA_COLL_NAME = "metadata";
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Map<String, RealVector> vectorsCache = new ConcurrentHashMap<>();
     private MongoClient mongoClient;
     private final String dbName;
-    private ModelMetadata metadata;
 
-    MongoVectorSpace(MongoClient client, String dbName, VectorComposer composer, VectorComposer translationComposer) {
-        super(composer, translationComposer);
+    MongoVectorSpace(MongoClient client, String dbName) {
         logger.info("Creating new vector space from {}", dbName);
         this.mongoClient = client;
         this.dbName = dbName;
-        configure();
     }
 
-    private void configure() {
+    @Override
+    protected ModelMetadata loadMetadata() {
         MongoDatabase db = this.mongoClient.getDatabase(dbName);
         MongoCollection<Document> metadataColl = db.getCollection(METADATA_COLL_NAME);
+        //TODO metadata needs to include CM
 
         if (metadataColl.count() > 1) {
-            throw new IndraError("Model metadata must have only one entry!");
+            throw new IndraRuntimeException("This model is misconfigured. Contact the support with the following message: model metadata has more than one entry.");
         }
 
         if (metadataColl.count() == 1) {
             logger.debug("Using stored metadata of {}", dbName);
             Document storedMetadata = metadataColl.find().first();
-            metadata = ModelMetadata.createFromMap(storedMetadata);
-        }
-        else {
+            return new ModelMetadata(storedMetadata);
+        } else {
             logger.debug("No metadata found in {}, using defaults.", dbName);
-            metadata = ModelMetadata.createDefault();
+            //TODO throws an exception.
+            //no default supported anymore.
+            return null;
         }
-
-        logger.info("Model metadata: {}", metadata);
     }
 
     @Override
-    public ModelMetadata getMetadata() {
-        return metadata;
+    protected Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        logger.info("Collecting term vectors from {}", dbName);
+        FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, terms));
+        Map<String, RealVector> vectors = new HashMap<>();
+        if (docs != null) {
+            for (Document doc : docs) {
+                //BinaryCodecs.unmarshall(b, metadata.sparse, metadata.dimensions);
+                //TODO other problem hrer vectors.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, getMetadata().getDimensions()));
+            }
+        }
+
+        return vectors;
     }
 
+    @Override
+    public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        throw new IndraRuntimeException("This model does not support 'nearest' function.");
+    }
 
     private MongoCollection<Document> getTermsColl() {
         return this.mongoClient.getDatabase(dbName).getCollection(TERMS_COLL_NAME);
     }
 
     @Override
-    protected void collectVectors(Collection<String> terms, int limit) {
-        Set<String> toFetch = terms.stream()
-                .filter(t -> !this.vectorsCache.containsKey(t))
-                .collect(Collectors.toSet());
-
-        logger.debug("Cache has {} vectors, need to fetch more {}",
-                terms.size() - toFetch.size(), toFetch.size());
-
-        if (!toFetch.isEmpty()) {
-            logger.info("Collecting {} term vectors from {}", toFetch.size(), dbName);
-            FindIterable<Document> docs = getTermsColl().find(Filters.in(TERM_FIELD_NAME, toFetch));
-            if (docs != null) {
-                docs.batchSize(toFetch.size());
-                for (Document doc : docs) {
-                    this.vectorsCache.put(doc.getString(TERM_FIELD_NAME), unmarshall(doc, limit));
-                }
-            }
-        }
-    }
-
-
-    @Override
-    protected List<RealVector> getFromCache(Collection<String> terms) {
-        List<RealVector> termVectors = new ArrayList<>();
-        terms.stream().
-                filter(t -> this.vectorsCache.containsKey(t)).
-                forEach((t) -> termVectors.add(this.vectorsCache.get(t)));
-        return termVectors;
-    }
-
-    private RealVector unmarshall(Document doc, int limit) {
-        if (!metadata.isBinary()) {
-            throw new UnsupportedOperationException("Can't consume non-binary models.");
-        }
-
-        try {
-            final Binary binary = doc.get(VECTOR_FIELD_NAME, Binary.class);
-            final byte[] b = binary.getData();
-
-            if (metadata.getLoaderId().equalsIgnoreCase("legacy")) {
-                return BinaryCodecs.legacyUnmarshall(b, limit, metadata.isSparse(), metadata.getDimensions());
-            }
-            else {
-                return BinaryCodecs.unmarshall(b, metadata.isSparse(), metadata.getDimensions());
-            }
-        }
-        catch (Exception e) {
-            logger.error("Error unmarshalling vector", e);
-        }
-
-        return null;
+    public void close() throws IOException {
+        //do nothing. don't close the mongo client here because it is a shared instance.
     }
 }

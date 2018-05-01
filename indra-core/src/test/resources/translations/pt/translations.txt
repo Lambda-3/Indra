@@ -1,0 +1,4 @@
+mãe	mother:0.9 mom:0.9 matriarch:0.8 bla:0.1
+computador	machine:0.6 computer:0.9 tectec:0.1
+pai	father:0.9 dad:0.9 patriarch:0.8 tri:0.1
+avaliação	test:0.4 evaluation:0.5 bru:0.1

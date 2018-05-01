@@ -26,11 +26,12 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.AnalyzedPair;
-import org.lambda3.indra.client.AnalyzedTerm;
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.client.TextPair;
-import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.AnalyzedPair;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.request.RelatednessRequest;
+import org.lambda3.indra.TextPair;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.core.vs.VectorSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,8 @@ import java.util.stream.Collectors;
 
 public class StandardRelatednessClient extends RelatednessClient {
 
-    protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func) {
-        super(request, vectorSpace, func);
+    protected StandardRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace) {
+        super(request, vectorSpace);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class StandardRelatednessClient extends RelatednessClient {
         logger.debug("Analyzing {} pairs", pairs.size());
 
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
 
         for (TextPair pair : pairs) {
             AnalyzedPair analyzedPair = analyzer.analyze(pair, AnalyzedPair.class);
@@ -62,15 +63,20 @@ public class StandardRelatednessClient extends RelatednessClient {
 
     @Override
     protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(), vectorSpace.getMetadata());
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
+
         List<AnalyzedTerm> ats = terms.stream().map(m -> new AnalyzedTerm(m, analyzer.analyze(m))).collect(Collectors.toList());
-        ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));
+        if (one != null) {
+            ats.add(new AnalyzedTerm(one, analyzer.analyze(one)));
+        }
 
         return ats;
     }
 
     @Override
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
-        return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs);
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs,
+                                                                 VectorComposer termComposer,
+                                                                 VectorComposer translationComposer) {
+        return vectorSpace.getVectorPairs((List<AnalyzedPair>) analyzedPairs, termComposer);
     }
 }

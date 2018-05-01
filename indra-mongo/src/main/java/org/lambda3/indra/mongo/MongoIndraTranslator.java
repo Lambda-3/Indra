@@ -31,11 +31,14 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
-import org.lambda3.indra.client.MutableTranslatedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.core.IndraAnalyzer;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.corpus.CorpusMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public final class MongoIndraTranslator extends IndraTranslator {
@@ -83,6 +86,11 @@ public final class MongoIndraTranslator extends IndraTranslator {
         }
     }
 
+    @Override
+    public CorpusMetadata loadCorpusMetadata() {
+        return null;
+    }
+
     private Map<String, List<String>> doTranslate(Set<String> tokens) {
         MongoCollection<Document> lexColl = getLexCollection();
         FindIterable<Document> lexs = lexColl.find(Filters.in(TERM_FIELD, tokens));
@@ -100,4 +108,8 @@ public final class MongoIndraTranslator extends IndraTranslator {
         return res;
     }
 
+    @Override
+    public void close() throws IOException {
+        mongoClient.close();
+    }
 }

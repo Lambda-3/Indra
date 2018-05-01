@@ -28,73 +28,99 @@ package org.lambda3.indra.core.test;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.lambda3.indra.core.CachedVectorSpace;
-import org.lambda3.indra.client.ModelMetadata;
-import org.lambda3.indra.core.composition.VectorComposer;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.core.vs.AbstractVectorSpace;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.model.ModelMetadata;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MockCachedVectorSpace extends CachedVectorSpace {
+public class MockCachedVectorSpace extends AbstractVectorSpace {
 
-    public static final int VECTOR_SIZE = 5;
-    public static final RealVector ZERO_VECTOR = new ArrayRealVector(VECTOR_SIZE);
-    public static final RealVector ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, 1);
-    public static final RealVector NEGATIVE_ONE_VECTOR = new ArrayRealVector(VECTOR_SIZE, -1);
-    public static final RealVector TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, 2);
-    public static final RealVector NEGATIVE_TWO_VECTOR = new ArrayRealVector(VECTOR_SIZE, -2);
+    private Map<String, RealVector> localCache = new HashMap<>();
 
-    private Map<String, RealVector> vectors = new HashMap<>();
+    MockCachedVectorSpace() {
+        cachePut("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
+        cachePut("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
+        cachePut("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
+        cachePut("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
+        cachePut("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
+        cachePut("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
+        cachePut("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
+        cachePut("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
+        cachePut("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
+        cachePut("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
+        cachePut("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
 
-    public MockCachedVectorSpace(VectorComposer termComposer, VectorComposer translationComposer) {
-        super(termComposer, translationComposer);
-        vectors.put("throne", new ArrayRealVector(new double[]{5, 6, 7, 8, 9}));
-        vectors.put("love", new ArrayRealVector(new double[]{1, 0, 0, 0, 0}));
-        vectors.put("plane", new ArrayRealVector(new double[]{0, 1, 0, 0, 0}));
-        vectors.put("good", new ArrayRealVector(new double[]{0, 0, 1, 0, 0}));
-        vectors.put("hot", new ArrayRealVector(new double[]{0, 0, 0, 1, 0}));
-        vectors.put("south", new ArrayRealVector(new double[]{0, 0, 0, 0, 1}));
-        vectors.put("hate", new ArrayRealVector(new double[]{-1, 0, 0, 0, 0}));
-        vectors.put("car", new ArrayRealVector(new double[]{0, -1, 0, 0, 0}));
-        vectors.put("bad", new ArrayRealVector(new double[]{0, 0, -1, 0, 0}));
-        vectors.put("cold", new ArrayRealVector(new double[]{0, 0, 0, -1, 0}));
-        vectors.put("north", new ArrayRealVector(new double[]{0, 0, 0, 0, -1}));
+        cachePut("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
+        cachePut("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
+        cachePut("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
 
-        vectors.put("mother", new ArrayRealVector(new double[]{3, 3, 0, 0, 0}));
-        vectors.put("mom", new ArrayRealVector(new double[]{0, 0, 3, 0, 0}));
-        vectors.put("matriarch", new ArrayRealVector(new double[]{0, 0, 0, 3, 3}));
+        cachePut("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
+        cachePut("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
+        cachePut("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
 
-        vectors.put("father", new ArrayRealVector(new double[]{-3, -3, 0, 0, 0}));
-        vectors.put("dad", new ArrayRealVector(new double[]{0, 0, -3, 0, 0}));
-        vectors.put("patriarch", new ArrayRealVector(new double[]{0, 0, 0, -3, -3}));
+        cachePut("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
+        cachePut("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
 
-        vectors.put("machine", new ArrayRealVector(new double[]{2, 2, 0, 0, 0}));
-        vectors.put("computer", new ArrayRealVector(new double[]{0, 0, 2, 2, 2}));
-
-        vectors.put("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
-        vectors.put("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
+        cachePut("test", new ArrayRealVector(new double[]{-2, -2, 0, 0, 0}));
+        cachePut("evaluation", new ArrayRealVector(new double[]{0, 0, -2, -2, -2}));
 
         //stemmed
-        vectors.put("machin", vectors.get("machine"));
-        vectors.put("comput", vectors.get("computer"));
-        vectors.put("evalu", vectors.get("evaluation"));
+        try {
+            localCache.put("machin", localCache.get("machine"));
+            localCache.put("comput", localCache.get("computer"));
+            localCache.put("evalu", localCache.get("evaluation"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cachePut(String term, RealVector vector) {
+        localCache.put(term, vector);
     }
 
     @Override
-    public ModelMetadata getMetadata() {
-        return ModelMetadata.createDefault().applyStemmer(0).removeAccents(false).dimensions(VECTOR_SIZE).sparse(false);
+    protected ModelMetadata loadMetadata() {
+        CorpusMetadata cm = CorpusMetadataBuilder.newCorpusMetadata("bla", "en").
+                applyStemmer(0).removeAccents(false).build();
+        return new ModelMetadata("bla bla", false, 5, localCache.size(), -1, -1, cm);
     }
 
     @Override
-    protected void collectVectors(Collection<String> terms, int limit) {
-        //does nothing
+    protected Map<String, RealVector> collectVectors(Iterable<? extends String> terms) {
+        Map<String, RealVector> results = new HashMap<>();
+        for (String term : terms) {
+            if (localCache.keySet().contains(term)) {
+                results.put(term, localCache.get(term));
+            }
+        }
+
+        return results;
     }
 
     @Override
-    protected List<RealVector> getFromCache(Collection<String> terms) {
-        List<RealVector> termVectors = new ArrayList<>();
-        terms.stream().
-                filter(t -> this.vectors.containsKey(t)).
-                forEach((t) -> termVectors.add(this.vectors.get(t)));
-        return termVectors;
+    public Map<String, RealVector> getNearestVectors(AnalyzedTerm term, int topk, Filter filter) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(AnalyzedTerm term, int topk, Filter filter) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
+    public Collection<String> getNearestTerms(double[] vector, int topk) {
+        throw new UnsupportedOperationException("not implemented yet.");
+    }
+
+    @Override
+    public void close() throws IOException {
+        //do nothing.
     }
 }

@@ -26,30 +26,32 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.InfoResource;
-import org.lambda3.indra.client.ResourceResponse;
-import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.exception.ModelNotFoundException;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.response.MetadataResponse;
+import org.lambda3.indra.response.ResourceResponse;
+import org.lambda3.indra.web.InfoResource;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class InfoResourceImpl extends InfoResource {
 
     private VectorSpaceFactory spaceFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private TranslatorFactory translatorFactory;
 
-    public InfoResourceImpl(VectorSpaceFactory spaceFactory, IndraTranslatorFactory translatorFactory) {
+    public InfoResourceImpl(VectorSpaceFactory spaceFactory, TranslatorFactory translatorFactory) {
         this.spaceFactory = Objects.requireNonNull(spaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
+        this.translatorFactory = translatorFactory;
     }
 
     @Override
     public ResourceResponse getResources() {
-        Collection<String> translationModels = translatorFactory.getAvailableModels();
-        Collection<String> filteredTranslationModels = translationModels.stream()
-                .collect(Collectors.toList());
+        Collection<String> translationModels = translatorFactory != null ? translatorFactory.getAvailableModels() : Collections.EMPTY_LIST;
+        Collection<String> filteredTranslationModels = new ArrayList<>(translationModels);
 
         Collection<String> spaceModels = spaceFactory.getAvailableModels();
         Collection<String> filteredSpaceModels = spaceModels.stream()
@@ -58,6 +60,21 @@ public final class InfoResourceImpl extends InfoResource {
                 .collect(Collectors.toList());
 
         return new ResourceResponse(filteredSpaceModels, filteredTranslationModels);
+    }
+
+    @Override
+    public MetadataResponse getMetadata(String model) {
+        String parts[] = model.split("-");
+        if (parts.length >= 3) {
+            RelatednessPairRequest request = new RelatednessPairRequest().model(parts[0]).
+                    language(parts[1]).corpus(String.join("-",
+                    Arrays.copyOfRange(parts, 2, parts.length)));
+
+            VectorSpace vm = spaceFactory.create(request);
+            return new MetadataResponse(vm.getMetadata().asMap());
+        }
+
+        throw new ModelNotFoundException(model);
     }
 
 }

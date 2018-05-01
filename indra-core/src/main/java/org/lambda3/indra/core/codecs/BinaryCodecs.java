@@ -41,11 +41,12 @@ public final class BinaryCodecs {
     public static byte[] marshall(Map<Integer, Double> vector) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (DataOutputStream tdos = new DataOutputStream(baos)) {
-                tdos.writeInt(vector.size());
                 for (Integer key : vector.keySet()) {
                     tdos.writeInt(key);
-                    tdos.writeFloat(vector.get(key).floatValue());
+                    tdos.writeDouble(vector.get(key));
                 }
+
+                tdos.flush();
                 return baos.toByteArray();
             }
         }
@@ -54,7 +55,7 @@ public final class BinaryCodecs {
     /**
      * Dense vectors serialization to byte array.
      */
-    public static byte[] marshall(double[] vector) throws IOException  {
+    public static byte[] marshall(double[] vector) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             try (DataOutputStream tdos = new DataOutputStream(baos)) {
                 for (int i = 0; i < vector.length; i++) {
@@ -66,7 +67,7 @@ public final class BinaryCodecs {
     }
 
     /**
-     * Vector deserialization.
+     * TermVector deserialization.
      */
     public static RealVector unmarshall(byte[] bytes, boolean sparse, int dimensions) throws IOException {
         RealVector realVector = !sparse ? new ArrayRealVector(dimensions) : new OpenMapRealVector(dimensions);
@@ -77,14 +78,12 @@ public final class BinaryCodecs {
                     realVector.setEntry(i, dis.readDouble());
                 }
             }
-        }
-        else {
+        } else {
             try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
                 while (true) {
                     try {
                         realVector.setEntry(dis.readInt(), dis.readDouble());
-                    }
-                    catch (EOFException e) {
+                    } catch (EOFException e) {
                         break;
                     }
                 }
@@ -119,5 +118,4 @@ public final class BinaryCodecs {
             return vector;
         }
     }
-
 }

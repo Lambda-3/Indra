@@ -27,29 +27,28 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.core.exception.ModelNoFound;
+import org.lambda3.indra.request.AbstractBasicRequest;
 import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.exception.ModelNotFoundException;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class MongoTranslatorFactory extends IndraTranslatorFactory {
-
-    private static final String DEFAULT_DB_NAME_SUFFIX = "Europarl_DGT_OpenSubtitile";
+public final class MongoTranslatorFactory extends TranslatorFactory {
 
     private MongoClient mongoClient;
     private String dbNameSuffix;
 
     public MongoTranslatorFactory(String mongoURI) {
-        this(new MongoClient(mongoURI), DEFAULT_DB_NAME_SUFFIX);
+        this(new MongoClient(mongoURI), IndraTranslator.DEFAULT_DB_NAME_SUFFIX);
     }
 
     public MongoTranslatorFactory(MongoClient client) {
-        this(client, DEFAULT_DB_NAME_SUFFIX);
+        this(client, IndraTranslator.DEFAULT_DB_NAME_SUFFIX);
     }
 
     private MongoTranslatorFactory(MongoClient client, String dbNameSuffix) {
@@ -58,13 +57,13 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
     }
 
     @Override
-    protected MongoIndraTranslator doCreate(AbstractBasicRequest<?> request) throws ModelNoFound {
+    protected MongoIndraTranslator doCreate(AbstractBasicRequest<?> request) throws ModelNotFoundException {
         String dbName = getDbName(request.getLanguage(), IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE);
         if (getAvailableModels().contains(dbName)) {
             return new MongoIndraTranslator(mongoClient, dbName);
         }
 
-        throw new ModelNoFound(dbName);
+        throw new ModelNotFoundException(dbName);
     }
 
     @Override
@@ -85,5 +84,10 @@ public final class MongoTranslatorFactory extends IndraTranslatorFactory {
             }
         }
         return availableModels;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.mongoClient.close();
     }
 }

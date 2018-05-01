@@ -55,4 +55,27 @@ public class IndraTranslatorTest {
         Assert.assertTrue(res.contains("wife"));
         Assert.assertTrue(res.contains("science"));
     }
+
+
+    @Test
+    public void getRelevantTranslationsEqualsTest() {
+        Map<String, Double> tr = new HashMap<>();
+        tr.put("work", 1d);
+        tr.put("love", 1d);
+        tr.put("hate", 1d);
+        tr.put("mother", 1d);
+        tr.put("child", 1d);
+        tr.put("wife", 1d);
+        tr.put("science", 1d);
+
+        List<String> res = IndraTranslator.getRelevantTranslations(tr);
+        Assert.assertEquals(res.size(), 7);
+        Assert.assertTrue(res.contains("work"));
+        Assert.assertTrue(res.contains("love"));
+        Assert.assertTrue(res.contains("hate"));
+        Assert.assertTrue(res.contains("mother"));
+        Assert.assertTrue(res.contains("child"));
+        Assert.assertTrue(res.contains("wife"));
+        Assert.assertTrue(res.contains("science"));
+    }
 }

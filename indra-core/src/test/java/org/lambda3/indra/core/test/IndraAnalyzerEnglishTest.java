@@ -27,29 +27,35 @@ package org.lambda3.indra.core.test;
  */
 
 import org.lambda3.indra.core.IndraAnalyzer;
-import org.lambda3.indra.client.ModelMetadata;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.corpus.CorpusMetadataBuilder;
+import org.lambda3.indra.pp.StandardPreProcessorIterator;
+import org.tartarus.snowball.SnowballProgram;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class IndraAnalyzerEnglishTest {
 
     private static final String LANG = "EN";
 
-    @Test
+    public CorpusMetadataBuilder builder() {
+        return CorpusMetadataBuilder.newCorpusMetadata("bla bla", LANG);
+    }
+
+    @Test(expectedExceptions = NullPointerException.class)
     public void nullStringTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
-        Assert.assertNull(analyzer.analyze(null));
+        CorpusMetadata metadata = builder().build();
+        IndraAnalyzer analyzer = new IndraAnalyzer(metadata);
+        analyzer.analyze(null);
     }
 
     @Test
     public void nonStemmedAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        CorpusMetadata metadata = builder().build();
+        IndraAnalyzer analyzer = new IndraAnalyzer(metadata);
         String loveString = "love";
         List<String> res = analyzer.analyze(loveString);
 
@@ -65,27 +71,34 @@ public class IndraAnalyzerEnglishTest {
 
     @Test
     public void stemmedAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(3);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        final int TIMES = 3;
+        CorpusMetadata metadata = builder().applyStemmer(TIMES).build();
+        IndraAnalyzer analyzer = new IndraAnalyzer(metadata);
 
         String term = "hapiness";
         List<String> res = analyzer.analyze(term);
         Assert.assertEquals(res.size(), 1);
 
-        List<String> stems = IndraAnalyzer.stem(Collections.singleton(term), LANG, metadata.getApplyStemmer());
-        Assert.assertEquals(stems.size(), 1);
-        Assert.assertEquals(res.get(0), stems.get(0));
+
+        SnowballProgram stemmer = StandardPreProcessorIterator.getStemmer(LANG);
+        stemmer.setCurrent(term);
+        for (int i = 0; i < TIMES; i++) {
+            stemmer.stem();
+        }
+
+        Assert.assertEquals(res.get(0), stemmer.getCurrent());
     }
 
     @Test
     public void expressionAnalyzeTest() {
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0).minWordLength(3);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        CorpusMetadata metadata = builder().minTokenLength(3).build();
+        IndraAnalyzer analyzer = new IndraAnalyzer(metadata);
+
         String term = "GIANT by thine OWN nature";
         List<String> res = analyzer.analyze(term);
 
-        Assert.assertEquals(res.size(), 3);
-        Assert.assertEquals(String.join(" ", res), term.toLowerCase().replace(" by", "").replace(" own", ""));
+        Assert.assertEquals(res.size(), 4);
+        Assert.assertEquals(String.join(" ", res), term.toLowerCase().replace(" by", ""));
     }
 
     @Test
@@ -93,16 +106,16 @@ public class IndraAnalyzerEnglishTest {
         List<String> terms = Arrays.asList("love", "hapiness", "information", "management", "language",
                 "strawberries", "refactorization");
 
-        ModelMetadata metadata = ModelMetadata.createDefault().applyStemmer(0);
-        IndraAnalyzer analyzer = new IndraAnalyzer(LANG, metadata);
+        CorpusMetadata metadata = builder().build();
+        IndraAnalyzer analyzer = new IndraAnalyzer(metadata);
 
         for (String term : terms) {
             List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);
         }
 
-        metadata = ModelMetadata.createDefault().applyStemmer(0);
-        analyzer = new IndraAnalyzer(LANG, metadata);
+        metadata = builder().build();
+        analyzer = new IndraAnalyzer(metadata);
         for (String term : terms) {
             List<String> res = analyzer.analyze(term);
             Assert.assertEquals(res.size(), 1);

@@ -26,27 +26,35 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.web.RelatednessResource;
+import org.lambda3.indra.ScoredTextPair;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.request.RelatednessOneToManyRequest;
+import org.lambda3.indra.request.RelatednessPairRequest;
+import org.lambda3.indra.response.RelatednessOneToManyResponse;
+import org.lambda3.indra.response.RelatednessPairResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RelatednessResourceImpl implements RelatednessResource {
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+public final class RelatednessResourceImpl implements RelatednessResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
-    RelatednessResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+    public RelatednessResourceImpl(IndraDriver driver) {
+        this.driver = Objects.requireNonNull(driver);
     }
 
     @Override
     public RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
         logger.trace("getRelatedness - User Request: {}", request);
-        request.validate();
-        RelatednessPairResponse response = this.driver.getRelatedness(request);
+        RequestValidator.validate(request);
+
+        List<ScoredTextPair> relatedness = this.driver.getRelatedness(request);
+        RelatednessPairResponse response = new RelatednessPairResponse(request, relatedness);
         logger.trace("Response: {}", response);
 
         return response;
@@ -54,8 +62,11 @@ class RelatednessResourceImpl implements RelatednessResource {
 
     @Override
     public RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
-        request.validate();
-        RelatednessOneToManyResponse response = this.driver.getRelatedness(request);
+        logger.trace("getRelatedness - User Request: {}", request);
+        RequestValidator.validate(request);
+
+        Map<String, Double> relatedness = this.driver.getRelatedness(request);
+        RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, relatedness);
         logger.trace("Response: {}", response);
 
         return response;

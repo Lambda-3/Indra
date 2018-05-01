@@ -27,13 +27,12 @@ package org.lambda3.indra.mongo;
  */
 
 import com.mongodb.MongoClient;
-import org.lambda3.indra.client.AbstractBasicRequest;
-import org.lambda3.indra.core.IndraDriver;
-import org.lambda3.indra.core.VectorSpaceFactory;
-import org.lambda3.indra.core.composition.VectorComposer;
-import org.lambda3.indra.core.exception.ModelNoFound;
+import org.lambda3.indra.request.AbstractBasicRequest;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.exception.ModelNotFoundException;
 import org.lambda3.indra.core.translation.IndraTranslator;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -52,14 +51,12 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
     }
 
     @Override
-    public MongoVectorSpace doCreate(AbstractBasicRequest request) throws ModelNoFound {
+    public MongoVectorSpace doCreate(AbstractBasicRequest request) throws ModelNotFoundException {
         if (getAvailableModels().contains(getDBName(request))) {
-            VectorComposer termComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TERM_COMPOSTION);
-            VectorComposer translationComposer = this.vectorComposerFactory.getComposer(IndraDriver.DEFAULT_TRANSLATION_COMPOSTION);
-            return new MongoVectorSpace(mongoClient, getDBName(request), termComposer, translationComposer);
+            return new MongoVectorSpace(mongoClient, getDBName(request));
         }
 
-        throw new ModelNoFound(getDBName(request));
+        throw new ModelNotFoundException(getDBName(request));
     }
 
     @Override
@@ -83,5 +80,11 @@ public final class MongoVectorSpaceFactory extends VectorSpaceFactory {
             }
         }
         return availableModels;
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        mongoClient.close();
     }
 }

@@ -26,9 +26,11 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.function.RelatednessFunction;
+import org.lambda3.indra.*;
+import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.core.translation.IndraTranslator;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.request.RelatednessRequest;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -39,8 +41,8 @@ import java.util.stream.Collectors;
 class TranslationBasedRelatednessClient extends RelatednessClient {
     private IndraTranslator translator;
 
-    TranslationBasedRelatednessClient(RelatednessRequest request, VectorSpace vectorSpace, RelatednessFunction func, IndraTranslator translator) {
-        super(request, vectorSpace, func);
+    TranslationBasedRelatednessClient(IndraTranslator translator, RelatednessRequest request, VectorSpace vectorSpace) {
+        super(request, vectorSpace);
         if (translator == null) {
             throw new IllegalArgumentException("translator can't be null");
         }
@@ -53,17 +55,18 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
         if (translator != null) {
             translator.translate(analyzedTerms);
+            IndraAnalyzer targetAnalyzer = vectorSpace.getAnalyzer();
 
             for (MutableTranslatedTerm term : analyzedTerms) {
                 Map<String, List<String>> transTokens = term.getTranslatedTokens();
                 for (String token : transTokens.keySet()) {
-                    term.putAnalyzedTranslatedTokens(token, IndraAnalyzer.stem(transTokens.get(token),
-                            IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE, vectorSpace.getMetadata().getApplyStemmer()));
+                    term.putAnalyzedTranslatedTokens(token, targetAnalyzer.stem(transTokens.get(token)));
                 }
             }
 
         } else {
             logger.error("IndraTranslator is not available, but getParams().translate is true.");
+            //TODO throw new exception here
         }
     }
 
@@ -74,8 +77,7 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
         List<AnalyzedPair> analyzedPairs = new ArrayList<>(pairs.size());
         List<MutableTranslatedTerm> analyzedTerms = new LinkedList<>();
 
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraAnalyzer analyzer = translator.getAnalyzer();
 
         for (TextPair pair : pairs) {
             AnalyzedTranslatedPair analyzedPair = analyzer.analyze(pair, AnalyzedTranslatedPair.class);
@@ -93,12 +95,13 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
     @Override
     @SuppressWarnings("unchecked")
     protected List<AnalyzedTerm> doAnalyze(String one, List<String> terms) {
-        IndraAnalyzer analyzer = new IndraAnalyzer(request.getLanguage(),
-                ModelMetadata.createTranslationVersion(vectorSpace.getMetadata()));
+        IndraAnalyzer analyzer = translator.getAnalyzer();
 
         List analyzedTerms = terms.stream().map(m -> new MutableTranslatedTerm(m, analyzer.analyze(m)))
                 .collect(Collectors.toList());
-        analyzedTerms.add(new MutableTranslatedTerm(one, analyzer.analyze(one)));
+        if (one != null) {
+            analyzedTerms.add(new MutableTranslatedTerm(one, analyzer.analyze(one)));
+        }
 
         translate((List<MutableTranslatedTerm>) analyzedTerms);
         return (List<AnalyzedTerm>) analyzedTerms;
@@ -106,7 +109,7 @@ class TranslationBasedRelatednessClient extends RelatednessClient {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
-        return vectorSpace.getTranslatedVectorPairs((List<AnalyzedTranslatedPair>) analyzedPairs);
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs, VectorComposer termComposer, VectorComposer translationComposer) {
+        return vectorSpace.getTranslatedVectorPairs((List<AnalyzedTranslatedPair>) analyzedPairs, termComposer, translationComposer);
     }
 }

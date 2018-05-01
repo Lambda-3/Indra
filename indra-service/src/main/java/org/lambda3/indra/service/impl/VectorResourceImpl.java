@@ -26,34 +26,38 @@ package org.lambda3.indra.service.impl;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.web.VectorResource;
 import org.lambda3.indra.core.IndraDriver;
+import org.lambda3.indra.request.VectorRequest;
+import org.lambda3.indra.response.DenseVectorResponse;
+import org.lambda3.indra.response.SparseVectorResponse;
+import org.lambda3.indra.response.VectorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Objects;
 
-public class VectorResourceImpl implements VectorResource {
+public final class VectorResourceImpl implements VectorResource {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private IndraDriver driver;
 
     public VectorResourceImpl(IndraDriver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("driver can't be null.");
-        }
-        this.driver = driver;
+        this.driver = Objects.requireNonNull(driver);
     }
 
     @Override
     public VectorResponse getVector(VectorRequest request) {
         logger.trace("getVector - User Request: {}", request);
+        RequestValidator.validate(request);
+
         VectorResponse response;
 
         if (this.driver.isSparseModel(request)) {
-            Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request.getTerms(), request);
+            Map<String, Map<Integer, Double>> results = this.driver.getVectorsAsMap(request);
             response = new SparseVectorResponse(request, results);
         } else {
-            Map<String, double[]> results = this.driver.getVectorsAsArray(request.getTerms(), request);
+            Map<String, double[]> results = this.driver.getVectorsAsArray(request);
             response = new DenseVectorResponse(request, results);
         }
 

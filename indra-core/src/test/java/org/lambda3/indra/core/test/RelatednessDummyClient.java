@@ -26,12 +26,15 @@ package org.lambda3.indra.core.test;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.*;
+import org.lambda3.indra.AnalyzedPair;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.TextPair;
 import org.lambda3.indra.core.RelatednessClient;
 import org.lambda3.indra.core.VectorPair;
-import org.lambda3.indra.core.composition.AveragedVectorComposer;
-import org.lambda3.indra.core.composition.UniqueSumVectorComposer;
-import org.lambda3.indra.core.function.CosineRelatednessFunction;
+import org.lambda3.indra.composition.VectorComposer;
+import org.lambda3.indra.relatedness.RelatednessFunction;
+import org.lambda3.indra.request.RelatednessPairRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,13 +47,11 @@ public class RelatednessDummyClient extends RelatednessClient {
     private static Random rnd = new Random();
 
     protected RelatednessDummyClient() {
-        super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"),
-                new MockCachedVectorSpace(new UniqueSumVectorComposer(), new AveragedVectorComposer()),
-                new CosineRelatednessFunction());
+        super(new RelatednessPairRequest().corpus("corpus").language("EN").model("ESA"), new MockCachedVectorSpace());
     }
 
     @Override
-    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs) {
+    protected List<ScoredTextPair> compute(Map<? extends AnalyzedPair, VectorPair> vectorPairs, RelatednessFunction func) {
         return vectorPairs.keySet().stream().map(p -> new ScoredTextPair(p, rnd.nextDouble())).
                 collect(Collectors.toList());
     }
@@ -68,7 +69,9 @@ public class RelatednessDummyClient extends RelatednessClient {
     }
 
     @Override
-    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs) {
+    protected Map<? extends AnalyzedPair, VectorPair> getVectors(List<? extends AnalyzedPair> analyzedPairs,
+                                                                 VectorComposer termComposer,
+                                                                 VectorComposer translationComposer) {
         return analyzedPairs.stream().collect(Collectors.toMap(p -> p, p -> new VectorPair()));
     }
 }

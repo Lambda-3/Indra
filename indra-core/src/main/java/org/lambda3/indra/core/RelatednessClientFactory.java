@@ -26,43 +26,41 @@ package org.lambda3.indra.core;
  * ==========================License-End===============================
  */
 
-import org.lambda3.indra.client.RelatednessRequest;
-import org.lambda3.indra.core.function.RelatednessFunction;
-import org.lambda3.indra.core.function.RelatednessFunctionFactory;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.exception.TranslatorNotFoundException;
+import org.lambda3.indra.request.RelatednessRequest;
 
 import java.util.Objects;
 
 public final class RelatednessClientFactory extends IndraCachedFactory<RelatednessClient, RelatednessRequest> {
     private VectorSpaceFactory vectorSpaceFactory;
-    private RelatednessFunctionFactory relatednessFunctionFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private TranslatorFactory translatorFactory;
 
-
-    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+    public RelatednessClientFactory(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
-        this.relatednessFunctionFactory = new RelatednessFunctionFactory();
+        this.translatorFactory = translatorFactory;
     }
 
     @Override
     protected RelatednessClient doCreate(RelatednessRequest request) {
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
-        RelatednessFunction relatednessFunction = relatednessFunctionFactory.create(request.getScoreFunction());
 
         if (request.isMt()) {
             if (translatorFactory == null) {
-                throw new IllegalStateException("Translation-based relatedness not activated.");
+                throw new TranslatorNotFoundException();
             }
-            return new TranslationBasedRelatednessClient(request, vectorSpace, relatednessFunction,
-                    translatorFactory.create(request));
+
+            return new TranslationBasedRelatednessClient(translatorFactory.create(request), request, vectorSpace);
         } else {
-            return new StandardRelatednessClient(request, vectorSpace, relatednessFunction);
+            return new StandardRelatednessClient(request, vectorSpace);
         }
     }
 
     @Override
     protected String createKey(RelatednessRequest request) {
-        return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt();
+        //todo threshold is stateless should not be into the relatedness client.
+        return request.getCorpus() + request.getLanguage() + request.getModel() + request.isMt() + request.getThreshold();
     }
 }

@@ -28,103 +28,132 @@ package org.lambda3.indra.core;
 
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorUtil;
-import org.lambda3.indra.client.*;
-import org.lambda3.indra.core.composition.VectorComposition;
+import org.lambda3.indra.AnalyzedTerm;
+import org.lambda3.indra.MutableTranslatedTerm;
+import org.lambda3.indra.ScoredTextPair;
+import org.lambda3.indra.composition.VectorComposer;
 import org.lambda3.indra.core.translation.IndraTranslator;
-import org.lambda3.indra.core.translation.IndraTranslatorFactory;
+import org.lambda3.indra.core.translation.TranslatorFactory;
+import org.lambda3.indra.core.vs.VectorSpace;
+import org.lambda3.indra.core.vs.VectorSpaceFactory;
+import org.lambda3.indra.corpus.CorpusMetadata;
+import org.lambda3.indra.exception.TranslatorNotFoundException;
+import org.lambda3.indra.filter.Filter;
+import org.lambda3.indra.relatedness.RelatednessFunction;
+import org.lambda3.indra.request.*;
+import org.lambda3.indra.threshold.Threshold;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class IndraDriver {
-    public static final VectorComposition DEFAULT_TERM_COMPOSTION = VectorComposition.UNIQUE_SUM;
-    public static final VectorComposition DEFAULT_TRANSLATION_COMPOSTION = VectorComposition.AVERAGE;
-
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private VectorSpaceFactory vectorSpaceFactory;
-    private IndraTranslatorFactory translatorFactory;
+    private TranslatorFactory translatorFactory;
     private RelatednessClientFactory relatednessClientFactory;
+    private SuperFactory sf = new SuperFactory();
 
-    public IndraDriver(VectorSpaceFactory vectorSpaceFactory, IndraTranslatorFactory translatorFactory) {
+    public IndraDriver(VectorSpaceFactory vectorSpaceFactory, TranslatorFactory translatorFactory) {
         this.vectorSpaceFactory = Objects.requireNonNull(vectorSpaceFactory);
-        this.translatorFactory = Objects.requireNonNull(translatorFactory);
+        this.translatorFactory = translatorFactory;
         this.relatednessClientFactory = new RelatednessClientFactory(vectorSpaceFactory, translatorFactory);
     }
 
-    public final RelatednessPairResponse getRelatedness(RelatednessPairRequest request) {
+    public final List<ScoredTextPair> getRelatedness(RelatednessPairRequest request) {
         logger.trace("getting relatedness for {} pairs (request={})", request.getPairs().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs());
-        RelatednessPairResponse response = new RelatednessPairResponse(request, scoredPairs);
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
+        List<ScoredTextPair> scoredPairs = relatednessClient.getRelatedness(request.getPairs(), func, termComposer,
+                TranslationComposer);
         logger.trace("done");
-        return response;
+
+        return scoredPairs;
     }
 
-    public final RelatednessOneToManyResponse getRelatedness(RelatednessOneToManyRequest request) {
+    public final Map<String, Double> getRelatedness(RelatednessOneToManyRequest request) {
         logger.trace("getting relatedness for one {} to many (size){} (request={})", request.getOne(),
                 request.getMany().size(), request);
 
         RelatednessClient relatednessClient = relatednessClientFactory.create(request);
-        Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(), request.isMt());
-        RelatednessOneToManyResponse response = new RelatednessOneToManyResponse(request, scores);
+
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
+        Map<String, Double> scores = relatednessClient.getRelatedness(request.getOne(), request.getMany(),
+                threshold, request.isMt(), func, termComposer, TranslationComposer);
         logger.trace("done");
-        return response;
+
+        return scores;
     }
 
     public final boolean isSparseModel(VectorRequest request) {
-        return vectorSpaceFactory.create(request).getMetadata().isSparse();
+        return vectorSpaceFactory.create(request).getMetadata().sparse;
     }
 
-    public final Map<String, RealVector> getVectors(List<String> terms, VectorRequest request) {
-        logger.trace("getting vectors for {} terms (params={})", terms.size(), request);
+    public final Map<String, RealVector> getVectors(VectorRequest request) {
+        logger.trace("getting vectors for {} terms (request={})", request.getTerms().size(), request);
         VectorSpace vectorSpace = vectorSpaceFactory.create(request);
-        ModelMetadata modelMetadata = vectorSpace.getMetadata();
+        CorpusMetadata corpusMetadata = vectorSpace.getMetadata().corpusMetadata;
+        IndraAnalyzer targetAnalyzer = vectorSpace.getAnalyzer();
+
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+
 
         if (request.isMt()) {
-            ModelMetadata translationModelMetadata = vectorSpace.getMetadata();
-            IndraAnalyzer nativeLangAnalyzer = new IndraAnalyzer(request.getLanguage(), translationModelMetadata);
-
             logger.trace("applying translation");
+
+            if(translatorFactory == null) {
+                throw new TranslatorNotFoundException();
+            }
+
+            IndraTranslator translator = translatorFactory.create(request);
+            IndraAnalyzer nativeLangAnalyzer = translator.getAnalyzer();
+
             List<MutableTranslatedTerm> translatedTerms = new LinkedList<>();
-            for (String term : terms) {
+            for (String term : request.getTerms()) {
                 List<String> analyzedTokens = nativeLangAnalyzer.analyze(term);
                 translatedTerms.add(new MutableTranslatedTerm(term, analyzedTokens));
             }
 
-            IndraTranslator translator = translatorFactory.create(request);
             translator.translate(translatedTerms);
 
             for (MutableTranslatedTerm term : translatedTerms) {
                 for (String token : term.getTranslatedTokens().keySet()) {
                     List<String> translatedTokens = term.getTranslatedTokens().get(token);
-                    if (modelMetadata.getApplyStemmer() > 0) {
-                        translatedTokens = IndraAnalyzer.stem(translatedTokens, IndraTranslator.DEFAULT_TRANSLATION_TARGET_LANGUAGE,
-                                modelMetadata.getApplyStemmer());
+                    if (corpusMetadata.applyStemmer > 0) {
+                        translatedTokens = targetAnalyzer.stem(translatedTokens);
                     }
 
                     term.putAnalyzedTranslatedTokens(token, translatedTokens);
                 }
             }
+
+            VectorComposer translationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
+
             logger.trace("done");
-            return vectorSpace.getTranslatedVectors(translatedTerms);
+            return vectorSpace.getTranslatedVectors(translatedTerms, termComposer, translationComposer);
 
         } else {
-            IndraAnalyzer basicAnalyzer = new IndraAnalyzer(request.getLanguage(), modelMetadata);
             List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
-            for (String term : terms) {
-                analyzedTerms.add(new AnalyzedTerm(term, basicAnalyzer.analyze(term)));
+            for (String term : request.getTerms()) {
+                analyzedTerms.add(new AnalyzedTerm(term, targetAnalyzer.analyze(term)));
             }
+
             logger.trace("done");
-            return vectorSpace.getVectors(analyzedTerms);
+            return vectorSpace.getVectors(analyzedTerms, termComposer);
         }
     }
 
-    public final Map<String, double[]> getVectorsAsArray(List<String> terms, VectorRequest request) {
-        Map<String, RealVector> inVectors = getVectors(terms, request);
+    public final Map<String, double[]> getVectorsAsArray(VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(request);
 
         Map<String, double[]> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
@@ -136,8 +165,8 @@ public class IndraDriver {
         return outVectors;
     }
 
-    public final Map<String, Map<Integer, Double>> getVectorsAsMap(List<String> terms, VectorRequest request) {
-        Map<String, RealVector> inVectors = getVectors(terms, request);
+    public final Map<String, Map<Integer, Double>> getVectorsAsMap(VectorRequest request) {
+        Map<String, RealVector> inVectors = getVectors(request);
 
         Map<String, Map<Integer, Double>> outVectors = new HashMap<>();
         for (String term : inVectors.keySet()) {
@@ -149,5 +178,48 @@ public class IndraDriver {
         return outVectors;
     }
 
+    public final Map<String, Map<String, RealVector>> getNeighborsVectors(NeighborsVectorsRequest request) {
+        logger.trace("getting neighbors vectors for {} terms (request={})", request.getTerms().size(), request);
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
 
+        IndraAnalyzer analyzer = vectorSpace.getAnalyzer();
+        List<AnalyzedTerm> analyzedTerms = new LinkedList<>();
+
+        for (String term : request.getTerms()) {
+            analyzedTerms.add(new AnalyzedTerm(term, analyzer.analyze(term)));
+        }
+
+        Map<String, Map<String, RealVector>> results = new ConcurrentHashMap<>();
+        analyzedTerms.stream().parallel().forEach(at -> {
+            Map<String, RealVector> vectors = vectorSpace.getNearestVectors(at, request.getTopk(), filter);
+            results.put(at.getTerm(), vectors);
+        });
+
+        logger.trace("done");
+        return results;
+    }
+
+    public final Map<String, Map<String, Double>> getNeighborRelatedness(NeighborRelatednessRequest request) {
+        logger.trace("getting neighbors relatedness for {} terms (request={})", request.getTerms().size(), request);
+        RelatednessClient relatednessClient = relatednessClientFactory.create(request);
+        Threshold threshold = sf.create(request.getThreshold(), Threshold.class);
+        Filter filter = sf.create(request.getFilter(), Filter.class);
+
+        RelatednessFunction func = sf.create(request.getScoreFunction(), RelatednessFunction.class);
+        VectorComposer termComposer = sf.create(request.getTermComposition(), VectorComposer.class);
+        VectorComposer TranslationComposer = sf.create(request.getTranslationComposition(), VectorComposer.class);
+        Map<String, Map<String, Double>> relatedness = relatednessClient.getNeighborRelatedness(request.getTerms(),
+                request.getTopk(), threshold, filter, func, termComposer, TranslationComposer);
+
+        logger.trace("done");
+        return relatedness;
+    }
+
+    public final Collection<String> getNeighborsByVector(NeighborsByVectorRequest request) {
+        logger.trace("getting neighbors by vector for {} terms (request={})", request.getVector(), request);
+        VectorSpace vectorSpace = vectorSpaceFactory.create(request);
+
+        return vectorSpace.getNearestTerms(request.getVector(), request.getTopk());
+    }
 }
