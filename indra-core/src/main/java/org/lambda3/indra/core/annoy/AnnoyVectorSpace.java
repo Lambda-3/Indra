@@ -86,10 +86,10 @@ public class AnnoyVectorSpace extends AbstractVectorSpace {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(Pattern.quote("|"));
-                int id = Integer.parseInt(parts[0]);
-                this.idToWord[id] = parts[1];
-                this.wordToId.put(parts[1], id);
+                int i = line.indexOf('|');
+                int id = Integer.parseInt(line.substring(0, i));
+                this.idToWord[id] = line.substring(i + 1);
+                this.wordToId.put(this.idToWord[id], id);
             }
         } catch (IOException e) {
             String msg = String.format("errors when loading mappings. BASEDIR=%s | MAPPING_GILE=%s", dataDir, WORD_MAPPING_FILE);
