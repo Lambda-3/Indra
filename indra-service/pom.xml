@@ -12,12 +12,14 @@
     <parent>
         <groupId>org.lambda3.indra</groupId>
         <artifactId>indra-parent</artifactId>
-        <version>2.2.0-rc8</version>
+        <version>2.2.1</version>
     </parent>
 
     <properties>
         <server.mainClass>org.lambda3.indra.service.Indra</server.mainClass>
-        <jersey.version>2.22.3</jersey.version>
+        <jersey.version>2.26</jersey.version>
+        <jackson.version>2.9.7</jackson.version>
+
     </properties>
 
     <profiles>
@@ -119,7 +121,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
+                <version>1.0.0</version>
                 <configuration>
                     <dockerDirectory>${project.build.directory}/docker-resources</dockerDirectory>
                     <pushImage>false</pushImage>
@@ -155,6 +157,13 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
         </plugins>
@@ -193,11 +202,16 @@
             <artifactId>jersey-container-grizzly2-http</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
 
         <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>

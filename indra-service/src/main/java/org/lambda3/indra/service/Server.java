@@ -26,10 +26,10 @@ package org.lambda3.indra.service;
  * ==========================License-End===============================
  */
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.lambda3.indra.core.IndraDriver;
 import org.lambda3.indra.core.annoy.AnnoyVectorSpaceFactory;
@@ -73,8 +73,8 @@ public final class Server {
         this.baseUri = String.format("%s://%s:%s", PROTOCOL, host, port);
         logger.info("Initializing Indra Service v. {}.", new VersionResponse().getVersion());
         ResourceConfig rc = new ResourceConfig();
-        rc.register(LoggingFilter.class);
-        rc.register(JacksonFeature.class);
+        rc.register(LoggingFeature.class);
+        rc.register(JacksonJsonProvider.class);
         rc.register(CatchAllExceptionMapper.class);
         rc.register(SerializationExceptionMapper.class);
 
