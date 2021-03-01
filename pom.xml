@@ -46,6 +46,8 @@
         <slf4j-version>1.7.12</slf4j-version>
         <lucene.version>7.1.0</lucene.version>
         <license.licenseName>mit</license.licenseName>
+        <jackson.version>2.9.7</jackson.version>
+        <jaxb.version>2.3.2</jaxb.version>
     </properties>
 
     <profiles>
@@ -184,20 +186,6 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.20</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
@@ -249,6 +237,17 @@
                 <version>${lucene.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jaxb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
