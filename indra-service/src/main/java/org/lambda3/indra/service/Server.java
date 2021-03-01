@@ -138,19 +138,19 @@ public final class Server {
         logger.info("Terminating Indra Service.");
         httpServer.shutdownNow();
         try {
-            spaceFactory.close();
+            if (spaceFactory != null) {
+                spaceFactory.close();
+            }
         } catch (IOException e) {
             logger.error("error closing the vector space factory.");
-            e.printStackTrace();
         } finally {
             try {
-                translatorFactory.close();
+                if (translatorFactory != null) {
+                    translatorFactory.close();
+                }
             } catch (IOException e) {
                 logger.error("error closing the translator factory.");
-                e.printStackTrace();
             }
         }
     }
-
-
 }
