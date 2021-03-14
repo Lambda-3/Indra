@@ -19,7 +19,6 @@
         <server.mainClass>org.lambda3.indra.service.Indra</server.mainClass>
         <jersey.version>2.26</jersey.version>
         <jackson.version>2.9.7</jackson.version>
-
     </properties>
 
     <profiles>
@@ -30,6 +29,8 @@
             <id>docker</id>
             <properties>
                 <skipDocker>true</skipDocker>
+                <server.image>lambdacube/indra</server.image>
+                <credHelper>pass</credHelper> <!-- defaults to docker-credential-pass -->
             </properties>
         </profile>
     </profiles>
@@ -57,24 +58,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/distribution.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
@@ -96,76 +79,46 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.2</version>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>dockerBuild</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/docker-resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/docker</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
                 <configuration>
-                    <dockerDirectory>${project.build.directory}/docker-resources</dockerDirectory>
-                    <pushImage>false</pushImage>
-                    <imageName>lambdacube/indra:${project.version}-${buildNumber}</imageName>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <includes>
-                                <include>*.tar.gz</include>
-                            </includes>
-                        </resource>
-                    </resources>
+                    <skip>${skipDocker}</skip>
+                    <from>
+                         <!-- adoptopenjdk:11-jre-openj9 - pinned to have an always reproducible image -->
+                        <image>adoptopenjdk@sha256:ba0932092f38cdb9fb06cd6fdf0423ff1e4b7c0a288fb4fa396092af00f8c3ad</image>
+                    </from>
+                    <to>
+                        <image>${server.image}</image>
+                        <credHelper>${credHelper}</credHelper>
+                        <tags>
+                            <tag>${project.version}-${buildNumber}</tag>
+                        </tags>
+                    </to>
+                    <container>
+                        <mainClass>${server.mainClass}</mainClass>
+                        <jvmFlags>
+                            <jvmFlag>-Xmx4g</jvmFlag>
+                            <jvmFlag>-Djava.net.preferIPv4Stack=true</jvmFlag>
+                            <jvmFlag>-Dfile.encoding=UTF-8</jvmFlag>
+                            <jvmFlag>-Dindra.http.host=0.0.0.0</jvmFlag>
+                            <jvmFlag>-Dindra.luceneVectorsBaseDir=/data/lucene</jvmFlag>
+                            <jvmFlag>-Dindra.annoyBaseDir=/data/annoy</jvmFlag>
+                            <jvmFlag>-Dindra.luceneTranslationBaseDir=/data/translation</jvmFlag>
+                        </jvmFlags>
+                        <ports>
+                            <port>8916</port>
+                        </ports>
+                    </container>
                 </configuration>
-
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>tag-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tag</goal>
-                        </goals>
-                        <configuration>
-                            <image>lambdacube/indra:${project.version}-${buildNumber}</image>
-                            <newName>lambdacube/indra:${project.version}</newName>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.activation</groupId>
-                        <artifactId>activation</artifactId>
-                        <version>1.1.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
-
         </plugins>
     </build>
 
@@ -181,10 +134,21 @@
             <artifactId>indra-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.lambda3.indra</groupId>
             <artifactId>indra-mongo</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
 
         <dependency>

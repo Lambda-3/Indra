@@ -20,4 +20,4 @@ This is a REST Service that interfaces with the Java Indra Client.
 		"t2": "car",
 		"t1": "engine"
 	}]
-    }' "http://localhost:8916/indra/v1/relatedness"
+    }' "http://localhost:8916/relatedness"
